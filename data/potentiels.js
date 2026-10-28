@@ -710,7 +710,7 @@ window.SEVEN_DS_POTENTIELS = {
    "Renforce la puissance de la compétence normale de [#1A7331]50%[-], ou [#1A7331]60%[-] lorsque l'effet [#0F5CD8][Surchauffe][-] est actif.",
    "Inflige des dégâts égaux à [#1A7331]65%[-] de la défense aux ennemis proches en subissant une attaque alors qu'une [#0F5CD8]barrière de Feu[-] est active.\nL'attaque spéciale inflige des dégâts égaux à [#1A7331]20%[-] de la défense aux ennemis à portée toutes les [#1A7331]1.3s[-] pendant [#1A7331]20s[-] lorsque l'effet [#0F5CD8][Surchauffe][-] est actif.",
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
-   "Augmente les dégâts supplémentaires de l'attaque ultime de [#1A7331]80%[-] tant que l'effet [#0F5CD8][Surchauffe][-] est actif.",
+   "Renforce les dégâts supplémentaires de l'attaque ultime de [#1A7331]80%[-] tant que l'effet [#0F5CD8][Surchauffe][-] est actif.",
    "L'attaque ultime inflige des dégâts égaux à [#1A7331]25%[-] de la défense aux ennemis proches toutes les [#1A7331]1s[-] pendant [#1A7331]20s[-]."
   ],
   "Epee 2 mains": [
@@ -724,6 +724,44 @@ window.SEVEN_DS_POTENTIELS = {
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
    "Renforce la puissance de l'attaque ultime de [#1A7331]70%[-]. Augmente la réduction des dégâts infligés par les ennemis affectés par [#0F5CD8]Inflammation[-] de [#1A7331]15%[-].",
    "Inflige [#1A7331]1[-] cumul(s) de [#0F5CD8]Flamme divine[-] pendant [#1A7331]20s[-] en attaquant un ennemi. (Max : [#1A7331]10 fois[-])\nUtiliser l'attaque spéciale permet l'utilisation d'une attaque spéciale améliorée dans les [#1A7331]20s[-].\nL'attaque spéciale améliorée inflige des dégâts égaux à [#1A7331]150%[-] de l'attaque, puis inflige des dégâts supplémentaires égaux à [#1A7331]85%[-] de l'attaque en attaquant un ennemi affecté par [#0F5CD8]Flamme divine[-].\n\n※ [#0F5CD8]Flamme divine[-] : augmente les dégâts d'Inflammation subis de [#1A7331]15%[-]."
+  ]
+ },
+ "estia": {
+  "Livre": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]30%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de la compétence de relève de [#1A7331]50%[-].",
+   "Augmente de [#1A7331]1[-] le nombre d'Orbes aquatiques générés par la compétence normale. L'utilisation de la compétence normale augmente encore la récupération de la jauge de magie à hauteur de [#1A7331]1%[-] de l'attaque du héros. (Max : [#1A7331]200[-])",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]50%[-].\nAugmente le boost de dégâts d'attaque ultime issu de l'attaque spéciale de [#1A7331]10%[-] supplémentaires.",
+   "L'attaque spéciale crée une zone à l'emplacement de la dernière frappe.\nLa zone dure [#1A7331]4s[-], inflige des dégâts égaux à [#1A7331]15%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.3s[-] et augmente les dégâts crit. d'attaque ultime des alliés à portée de [#1A7331]30%[-] toutes les [#1A7331]1s[-] pendant [#1A7331]30s[-].",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]300%[-].",
+   "Faire mouche avec la compétence normale inflige [#0F5CD8]Courant océanique[-] pendant [#1A7331]30s[-].\nAugmente les dégâts d'attaque ultime infligés par les héros alliés aux ennemis affectés par [#0F5CD8]Courant océanique[-] de [#1A7331]80%[-].\n\n※[#0F5CD8]Courant océanique[-] : réduit la vitesse de déplacement de [#1A7331]30%[-]."
+  ],
+  "Rapiere": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]10%[-] et ses dégâts supplémentaires de [#1A7331]15%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]15%[-] et ses dégâts supplémentaires de [#1A7331]25%[-].",
+   "Augmente légèrement la portée d'[#3C22D6]Attaque spéciale : Vortex aquatique[-] et augmente le nombre de cumuls de [#0F5CD8]Submersion[-] appliqués de [#1A7331]2[-].\nAugmente légèrement la portée d'[#3C22D6]Attaque spéciale : Maelstrom[-] et augmente le nombre de cumuls de [#0F5CD8]Submersion[-] appliqués de [#1A7331]4[-].\nRéinitialise le temps de recharge de l'attaque ultime du héros lors de l'activation d'[#3C22D6]Attaque spéciale : Maelstrom[-].",
+   "Le passif octroie un boost de l'attaque de Froid cumulable [#1A7331]25 fois[-]. Le montant de ce boost est augmenté de [#1A7331]0.5%[-] supplémentaires.\nChaque coup porté sur un ennemi avec une attaque normale réduit le temps de recharge de la compétence normale de [#1A7331]3s[-].",
+   "Utiliser l'attaque ultime remplace cette dernière par [#3C22D6]Attaque ultime : Diminuendo glacial[-], qui ne consomme pas de magie, pendant [#1A7331]10s[-].\n\n[#3C22D6]Diminuendo glacial[-]\nInflige des dégâts égaux à [#1A7331]380%[-] de l'attaque.\nChaque coup de l'attaque inflige des dégâts supplémentaires égaux à [#1A7331]40%[-] de l'attaque par tranche de [#1A7331]2 cumul(s)[-] de [#0F5CD8]Submersion[-] sur l'ennemi.",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance d'[#3C22D6]Attaque ultime : Crescendo glacial[-] de [#1A7331]35%[-] et ses dégâts supplémentaires de [#1A7331]50%[-].\nRenforce la puissance d'[#3C22D6]Attaque ultime : Diminuendo glacial[-] de [#1A7331]25%[-] et ses dégâts supplémentaires de [#1A7331]35%[-].",
+   "Attaquer l'ennemi augmente les dégâts d'attaque ultime de [#1A7331]30%[-] des dégâts crit. (max : [#1A7331]100%[-]) et l'attaque de Froid de [#1A7331]10%[-] des dégâts crit. (Max : [#1A7331]30%[-])\nAugmente le percement de défense de [#1A7331]15%[-] en attaquant un ennemi [#0F5CD8]submergé[-]."
+  ],
+  "Baguette": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]30%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Augmente l'efficacité des barrières de [#1A7331]25%[-] et l'efficacité de guérison de [#1A7331]15%[-].",
+   "Renforce la récupération de PV octroyée par les Palourdes protectrices de la compétence normale de [#1A7331]40%[-].\nAugmente les dégâts infligés par tous les héros alliés aux ennemis affectés par [#0F5CD8]Attaque delphinienne[-] de [#1A7331]20%[-].",
+   "En outre, réduit de [#1A7331]15%[-] les dégâts subis par les héros alliés bénéficiant d'une [#0F5CD8]barrière[-] issue de l'attaque ultime d'Estia et les immunise contre les réactions.",
+   "Augmente de [#1A7331]6[-] le nombre de Palourdes protectrices générées par la compétence normale.",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la récupération de PV fournie par l'attaque ultime de [#1A7331]30%[-] et son effet de [#0F5CD8]barrière[-] de [#1A7331]40%[-].\nAugmente la durée de la [#0F5CD8]barrière[-] issue de l'attaque ultime de [#1A7331]5s[-].",
+   "Réduit la consommation de points de magie de l'attaque ultime de [#1A7331]1[-].\nAugmente le boost de dégâts crit. issu du passif de [#1A7331]60%[-] supplémentaires."
   ]
  },
  "gowther": {
@@ -999,11 +1037,11 @@ window.SEVEN_DS_POTENTIELS = {
    "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
    "Renforce la puissance de l'attaque ultime de [#1A7331]20%[-].",
    "Augmente l'attaque de Froid du héros de [#1A7331]30%[-].\nChaque coup de [#3C22D6]Attaque spéciale : Percée glaciale[-] sur un ennemi affecté par [#0F5CD8]Marque de Givre[-] restaure la jauge de relève de [#1A7331]15[-].",
-   "Augmente la puissance de [#3C22D6]Attaque spéciale : Percée glaciale[-] de [#1A7331]50%[-] et renforce les dégâts de compétence de relève avec [#0F5CD8]Marque de Givre[-] de [#1A7331]15%[-].",
+   "Augmente la puissance d'[#3C22D6]Attaque spéciale : Percée glaciale[-] de [#1A7331]50%[-] et les dégâts de compétence de relève infligés avec [#0F5CD8]Marque de Givre[-] de [#1A7331]15%[-].",
    "Utiliser l'attaque spéciale augmente les chances crit. du héros de [#1A7331]20%[-] pendant [#1A7331]12s[-]. Réussir [#3C22D6]Attaque spéciale : Percée glaciale[-] sur un ennemi affecté par [#0F5CD8]Marque de Givre[-] augmente les dégâts crit. de [#1A7331]15%[-] pour chaque tranche de [#1A7331]1 cumul(s)[-].",
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
    "Augmente les dégâts de compétence de relève avec [#0F5CD8]Marque de Givre[-] de [#1A7331]55%[-].",
-   "Renforce de [#1A7331]100%[-] le boost de dégâts crit. octroyé par l'attaque ultime et les attaques combinées avec l'attaque ultime du héros en tant que base. Inflige des dégâts égaux à [#1A7331]50%[-] de l'attaque toutes les [#1A7331]1s[-] pendant [#1A7331]11s[-] avec la dernière frappe."
+   "Augmente de [#1A7331]100%[-] le boost de dégâts crit. octroyé par l'attaque ultime et les attaques combinées avec l'attaque ultime du héros en tant que base. La dernière frappe inflige des dégâts égaux à [#1A7331]50%[-] de l'attaque toutes les [#1A7331]1s[-] pendant [#1A7331]11s[-]."
   ],
   "Baton": [
    "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",

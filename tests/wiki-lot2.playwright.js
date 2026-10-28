@@ -120,10 +120,10 @@ let EFFECTIFS = null;
     await page.locator("#wikiFilterWeaponGrade").selectOption("");
     await attendreTuiles(ARMES);
 
-    /* Le filtre passif : 109 armes sur 170 en portent un. Les 61 autres sont
+    /* Le filtre passif : 110 armes sur 171 en portent un. Les 61 autres sont
        listées quand même — leur fiche ne doit simplement rien inventer. */
     await page.locator("#wikiFilterWeaponPassive").selectOption("oui");
-    await attendreTuiles(109);
+    await attendreTuiles(110);
     await page.locator("#wikiFilterWeaponPassive").selectOption("non");
     await attendreTuiles(61);
     await page.locator("#wikiFilterWeaponPassive").selectOption("");
@@ -192,7 +192,7 @@ let EFFECTIFS = null;
     await page.locator("#wikiCategoryArmes").click();
     await attendreTuiles(ARMES);
     await page.locator("#wikiFilterWeaponPassive").selectOption("oui");
-    await attendreTuiles(109);
+    await attendreTuiles(110);
     await tuiles().first().click();
     await page.locator("#wikiItemOverlay.on").waitFor();
 

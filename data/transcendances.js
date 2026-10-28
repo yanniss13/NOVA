@@ -120,6 +120,15 @@ window.SEVEN_DS_TRANSCENDANCES = {
     { id:"eplb_escanor_d", nom:"Transcendance protectrice : Résistance", texte:"Lorsqu'un héros allié subit une attaque ennemie, 20% de chances d'augmenter la résistance élémentaire de tous les héros alliés correspondant à l'attaque subie de 15% pendant 20 s.",
       tenue:"7ds-armures-ssr/Armure liee/Dignité dorée.webp", promotion:3, arme:"Shield" }
   ],
+  "estia":[
+    { id:"eplb_estia_b", nom:"Transcendance de puissance : Frappe mortelle", texte:"Augmente les dégâts d'attaque ultime de 50%.",
+      tenue:"7ds-armures-ssr/Armure liee/Robe bubulle.webp", promotion:3, arme:"Rapier",
+      regle:{ cible:"ultimate", valeur:5000, phrase:"Augmente les dégâts d'attaque ultime de " } },
+    { id:"eplb_estia_c", nom:"Transcendance protectrice : Résistance", texte:"Lorsqu'un héros allié subit une attaque ennemie, 20% de chances d'augmenter la résistance élémentaire de tous les héros alliés correspondant à l'attaque subie de 15% pendant 20 s.",
+      tenue:"7ds-armures-ssr/Armure liee/Inspectrice de la qualité de l'eau.webp", promotion:3, arme:"Wand" },
+    { id:"eplb_estia_d", nom:"Transcendance de soutien : Amélioration", texte:"Augmente tous les dégâts élémentaires de tous les héros alliés de 25% pendant 10 s lorsqu'un héros allié utilise une compétence de relève.",
+      tenue:"7ds-armures-ssr/Armure liee/Ondulations lacustres.webp", promotion:3, arme:"Book" }
+  ],
   "gil-thunder":[
     { id:"eplb_gilthunder_b", nom:"Transcendance explosive : Amplification", texte:"Augmente l'efficacité de Déluge de Foudre de tous les héros alliés de 15%.",
       tenue:"7ds-armures-ssr/Armure liee/Chevalier sacré de la foudre.webp", promotion:3, arme:"Sword1h" },

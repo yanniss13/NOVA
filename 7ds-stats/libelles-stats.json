@@ -19,8 +19,8 @@
   "taux": true
  },
  "AllElement_Add": {
-  "fr": "Attaque de tous les éléments",
-  "en": "All Element Attack",
+  "fr": "Toutes les attaques élémentaires",
+  "en": "All Elemental Attack",
   "taux": false
  },
  "AllElement_Rate": {
@@ -29,8 +29,8 @@
   "taux": true
  },
  "AllElement_Res": {
-  "fr": "Défense de tous les éléments",
-  "en": "All Element Defense",
+  "fr": "Toutes les défenses élémentaires",
+  "en": "All Elemental Defense",
   "taux": false
  },
  "B_Atk": {

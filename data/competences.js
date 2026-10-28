@@ -3296,6 +3296,273 @@ window.SEVEN_DS_COMPETENCES = {
    "weaponType": "Sword2h"
   }
  ],
+ "estia": [
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 101.0
+    }
+   ],
+   "coups": null,
+   "gameId": "estia_book_jumpatk",
+   "nature": "direct",
+   "nom": "Bubble Beat",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 101.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Book"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [],
+   "coups": null,
+   "gameId": "estia_book_skill_e",
+   "nature": "non-chiffree",
+   "nom": "Bubble Countdown",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 18.0,
+   "repartition": [],
+   "weaponType": "Book"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 76.0
+    }
+   ],
+   "coups": null,
+   "gameId": "estia_book_skill_q",
+   "nature": "direct",
+   "nom": "Penguin Wave",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 76.0,
+   "recharge": 12.0,
+   "repartition": [],
+   "weaponType": "Book"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 212.0
+    }
+   ],
+   "coups": null,
+   "gameId": "estia_book_skill_r",
+   "nature": "direct",
+   "nom": "Polar Finale",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 212.0,
+   "recharge": 10.0,
+   "repartition": [],
+   "weaponType": "Book"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 62.0
+    }
+   ],
+   "coups": null,
+   "gameId": "estia_book_skill_tag",
+   "nature": "direct",
+   "nom": "Penguin Cannon",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 62.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Book"
+  },
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 187.0
+    }
+   ],
+   "coups": null,
+   "gameId": "estia_rapier_jumpatk",
+   "nature": "direct",
+   "nom": "Ripple Pierce",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 187.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 262.0
+    }
+   ],
+   "coups": null,
+   "gameId": "estia_rapier_skill_e",
+   "nature": "direct",
+   "nom": "Frozen Tempest",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 262.0,
+   "recharge": 16.0,
+   "repartition": [],
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [],
+   "coups": null,
+   "gameId": "estia_rapier_skill_q",
+   "nature": "non-chiffree",
+   "nom": "Aqua Vortex",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 11.0,
+   "repartition": [],
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 463.0
+    }
+   ],
+   "coups": null,
+   "gameId": "estia_rapier_skill_r",
+   "nature": "direct",
+   "nom": "Freezing Crescendo",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 463.0,
+   "recharge": 10.0,
+   "repartition": [],
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 135.0
+    }
+   ],
+   "coups": null,
+   "gameId": "estia_rapier_skill_tag",
+   "nature": "direct",
+   "nom": "Blue Spire",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 135.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 113.0
+    }
+   ],
+   "coups": null,
+   "gameId": "estia_wand_jumpatk",
+   "nature": "direct",
+   "nom": "Aqua Parade",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 113.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Wand"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [],
+   "coups": null,
+   "gameId": "estia_wand_skill_e",
+   "nature": "non-chiffree",
+   "nom": "Tidal Grove",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 26.0,
+   "repartition": [],
+   "weaponType": "Wand"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [],
+   "coups": null,
+   "gameId": "estia_wand_skill_q_ready",
+   "nature": "non-chiffree",
+   "nom": "Dolphin Drive",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 16.0,
+   "repartition": [],
+   "weaponType": "Wand"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 236.0
+    }
+   ],
+   "coups": null,
+   "gameId": "estia_wand_skill_r",
+   "nature": "direct",
+   "nom": "Heavenly Deluge",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 236.0,
+   "recharge": 10.0,
+   "repartition": [],
+   "weaponType": "Wand"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 77.0
+    }
+   ],
+   "coups": null,
+   "gameId": "estia_wand_skill_tag",
+   "nature": "direct",
+   "nom": "Ocean Ensemble",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 77.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Wand"
+  }
+ ],
  "gil-thunder": [
   {
    "categorie": "NORMAL",
@@ -6365,7 +6632,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 140.0,
-   "recharge": 17.0,
+   "recharge": 17.8,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -6384,7 +6651,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 73.0,
-   "recharge": 10.0,
+   "recharge": 10.6,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -6403,7 +6670,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 353.0,
-   "recharge": null,
+   "recharge": 10.0,
    "repartition": [],
    "weaponType": "Staff"
   },

@@ -36,6 +36,9 @@ SANS_IMPACT_SPECIFIQUES = {
     "potential:elaine:Book:4": "buff-suppose-actif",
     "potential:elizabeth:Staff:5": "ressources-illimitees",
     "potential:guila:Rapier:7": "ressources-illimitees-et-brulure-deja-maximale",
+    # Ensemble d'Halloween (2.3) : efficacite de charge de magie et soin sur
+    # competence de releve. Les ressources sont illimitees dans le comparateur.
+    "set:equip_t5_halloween:two": "ressources-illimitees",
 }
 
 NON_INCLUS_SPECIFIQUES = {
@@ -219,6 +222,15 @@ NON_INCLUS_SPECIFIQUES = {
     # Seul l'anglais a change (« all allied heroes » -> « the entire team ») :
     # le bonus de Terre reste un effet d'equipe, classe tel quel jusqu'ici.
     "skill:elizabeth_wand_skill_e": "effet-equipe",
+    # --- Estia, octobre 2026 ---------------------------------------------
+    #
+    # Le passif de la baguette donne +40 % de degats crit. aux HEROS ALLIES
+    # apres la competence normale. La tournure « allied heroes' », sans
+    # « all », echappe au motif EQUIPE ; c'est pourtant le meme buff d'equipe.
+    "hero-passive:estia_wand_passive": "effet-equipe",
+    # T10 renforce ce meme buff d'equipe (+60 %) ; l'economie de magie est
+    # sans effet, les ressources etant illimitees.
+    "potential:estia:Wand:10": "effet-equipe",
 }
 
 NOTES_MODELISE = {
@@ -254,6 +266,12 @@ NOTES_MODELISE = {
     # de la phrase suivante reste hors du catalogue des competences.
     "skill:calla_gauntlets_skill_e":
         "bonus-indexe-sur-degats-crit-compte-au-plafond-bombe-toupie-hors-schema",
+    # Estia, rapiere T9 : « renforce la puissance de Crescendo glacial de 35 %
+    # et ses degats supplementaires de 50 % ». Seuls les 35 % sont comptes,
+    # comme potential:khala:Cudgel3c:4. La seconde phrase vise Diminuendo
+    # glacial, ultime de remplacement absent de data/competences.js.
+    "potential:estia:Rapier:9":
+        "degats-supplementaires-d-ultime-hors-schema-et-diminuendo-hors-catalogue",
 }
 
 PLAFONDS_BUFF_RETENUS = {
@@ -1198,4 +1216,25 @@ REGLES_SPECIFIQUES = {
         ]
         for niveau, terre, recharge in ((1, 2400, 1400), (2, 2800, 1700), (3, 3200, 2000))
     },
+    # Estia, rapiere T9. « Ultimate Move: Freezing Crescendo » nomme l'ultime :
+    # le nom propre empeche la regle generique de lire la puissance d'ultime,
+    # comme pour potential:derieri:Gauntlets:6.
+    "potential:estia:Rapier:9": [
+        {
+            "type": "bonus-degats",
+            "cible": "ultimate",
+            "valeur": 3500,
+        }
+    ],
+    # Estia, ultime du livre : « decreases the target's All Elemental
+    # Resistance by 20 % ». Le motif generique attend « All Element », la
+    # tournure des 28 autres heros ; meme regle que celle qu'il produirait.
+    "skill:estia_book_skill_r": [
+        {
+            "type": "resistance-elementaire",
+            "element": "all",
+            "valeur": -2000,
+            "mode": "passif-max",
+        }
+    ],
 }

@@ -265,6 +265,30 @@
     }
    ]
   },
+  "estia": {
+   "nom": "Estia",
+   "rarete": "SSR",
+   "armes": [
+    {
+     "type": "Rapier",
+     "arme": "Rapière",
+     "element": "Glace",
+     "role": "Attaquant"
+    },
+    {
+     "type": "Wand",
+     "arme": "Baguette",
+     "element": "Sacré",
+     "role": "Gardien"
+    },
+    {
+     "type": "Book",
+     "arme": "Grimoire",
+     "element": "Glace",
+     "role": "Soutien"
+    }
+   ]
+  },
   "gil-thunder": {
    "nom": "Gil Thunder",
    "rarete": "SR",
@@ -2479,6 +2503,170 @@
     "relanceDes": null
    }
   ],
+  "estia": [
+   {
+    "type": "Book",
+    "categorie": "NORMAL",
+    "nom": "Bulles rythmiques",
+    "description": "Inflige des dégâts égaux à 76% de l'attaque.\n1er coup : 11%\n2e coup : 13%\n3e coup : 20%\n4e coup : 32%",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Book",
+    "categorie": "NORMAL_SKILL",
+    "nom": "Compte à rebours à bulles",
+    "description": "Crée un Orbe aquatique qui suit les ennemis pendant 12s.\nLorsqu'il entre en contact avec un ennemi ou expire, l'Orbe aquatique inflige des dégâts égaux à 127% de l'attaque et réduit la défense crit. de la cible de 12% pendant 30s. (Max : 4 fois)",
+    "recharge": 18,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Book",
+    "categorie": "ACTIVE_THIRD",
+    "nom": "Vague du pingouin",
+    "description": "Inflige des dégâts égaux à 76% de l'attaque à l'ennemi et augmente les dégâts d'attaque ultime qu'il subit de 30% pendant 30s.",
+    "recharge": 12,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Book",
+    "categorie": "TAG_SKILL",
+    "nom": "Canon à pingouin",
+    "description": "Inflige des dégâts égaux à 62% de l'attaque.",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Book",
+    "categorie": "ULTIMATE",
+    "nom": "Final polaire",
+    "description": "Inflige des dégâts égaux à 212% de l'attaque et réduit la résistance à tous les éléments de la cible de 20% pendant 30s.",
+    "recharge": 10,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Book",
+    "categorie": "PASSIVE",
+    "nom": "Curiosité bleue",
+    "description": "Lorsqu'un héros allié active une attaque combinée, augmente les dégâts crit. d'attaque ultime de tous les héros alliés de 40% pendant 30s et leur octroie Froid cruel pendant 10s.\nChaque coup de l'attaque ultime d'un héros allié augmente les chances crit. de tous les héros alliés de 1% pendant 20s. (Max : 20 fois)\nLe boost de chances crit. est retiré en passant la relève.\n\n※ Froid cruel : réinitialise le temps de recharge de l'attaque spéciale et de la compétence normale après avoir utilisé l'attaque ultime 3 fois, puis retire l'effet Froid cruel.",
+    "recharge": 0,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "NORMAL",
+    "nom": "Percée ondulante",
+    "description": "Inflige des dégâts égaux à 162% de l'attaque.\n1er coup : 24%\n2e coup : 26%\n3e coup : 42%\n4e coup : 70%",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "NORMAL_SKILL",
+    "nom": "Tempête glaciale",
+    "description": "Inflige des dégâts égaux à 262% de l'attaque.\nEn cas de chevauchement avec Attaque spéciale : Vortex aquatique du héros, active Attaque spéciale : Maelstrom.\n\nMaelstrom\nInflige des dégâts égaux à 322% de l'attaque.\nLa première frappe inflige 3 cumul(s) de Submersion pendant 30s. (Max : 10 fois)\n\n※ Submersion : augmente les dégâts crit. causés par Estia de 5%.",
+    "recharge": 16,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "ACTIVE_THIRD",
+    "nom": "Vortex aquatique",
+    "description": "Immunise contre les réactions pendant l'utilisation de la compétence. Inflige des dégâts égaux à 8% de l'attaque aux ennemis à portée toutes les 0.3s pendant 8s.\nLa première frappe inflige 1 cumul(s) de Submersion pendant 30s. (Max : 10 fois)\n\n※ Submersion : augmente les dégâts crit. causés par Estia de 5%.",
+    "recharge": 11,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "TAG_SKILL",
+    "nom": "Flèche bleue",
+    "description": "Inflige des dégâts égaux à 135% de l'attaque.",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "ULTIMATE",
+    "nom": "Crescendo glacial",
+    "description": "Réinitialise le temps de recharge de l'attaque spéciale du héros, puis inflige des dégâts égaux à 463% de l'attaque.\nChaque coup de l'attaque inflige des dégâts supplémentaires égaux à 30% de l'attaque par tranche de 2 cumul(s) de Submersion sur l'ennemi.",
+    "recharge": 10,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "PASSIVE",
+    "nom": "Torrent silencieux",
+    "description": "Si l'équipe comporte au moins 3 héros d'attribut Froid, augmente le percement de défense du héros de 10% et son attaque de Froid de 5000.\nChaque fois que le héros touche un ennemi submergé, augmente l'attaque de Froid de tous les héros alliés de 2.5% pendant 30s. (Max : 20 fois)\nChaque fois que le héros touche un ennemi submergé, réduit sa défense crit. de 2% pendant 30s. (Max : 10 fois)\nRéduit les dégâts infligés par les ennemis submergés de 20%.",
+    "recharge": 0,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Wand",
+    "categorie": "NORMAL",
+    "nom": "Parade aquatique",
+    "description": "Inflige des dégâts égaux à 88% de l'attaque.\n1er coup : 13%\n2e coup : 14%\n3e coup : 23%\n4e coup : 38%",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Wand",
+    "categorie": "NORMAL_SKILL",
+    "nom": "Bosquet des marées",
+    "description": "Restaure les PV des alliés à portée de 1% des PV max + 15% de la défense toutes les 1s pendant 20s.\nGénère 6 Palourde(s) protectrice(s) et 6 Étoile(s) de mer explosive(s) autour du héros.\nRestaure 5% des PV max + 100% de la défense aux alliés qui entrent en contact avec une Palourde protectrice.\nInflige des dégâts égaux à 150% de l'attaque aux ennemis qui entrent en contact avec une Étoile de mer explosive et réduit leur résistance à tous les éléments de 15% pendant 40s.",
+    "recharge": 26,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Wand",
+    "categorie": "ACTIVE_THIRD",
+    "nom": "Élan delphinien",
+    "description": "Immunise contre les réactions tant que la posture est maintenue, augmente la vitesse de déplacement de 50% et inflige des dégâts égaux à 19% en entrant en contact avec un ennemi.\nLa posture dure 4,5s, et réutiliser ou laisser prendre fin la compétence retire la posture, inflige des dégâts égaux à 88% de l'attaque à l'ennemi, puis lui applique Attaque delphinienne pendant 40s.\n\n※ Attaque delphinienne : réduit la résistance crit. de 20%.",
+    "recharge": 16,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Wand",
+    "categorie": "TAG_SKILL",
+    "nom": "Symphonie océanique",
+    "description": "Inflige des dégâts égaux à 77% de l'attaque.",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Wand",
+    "categorie": "ULTIMATE",
+    "nom": "Déluge céleste",
+    "description": "Inflige des dégâts égaux à 236% de l'attaque.\nRestaure les PV des alliés à portée à hauteur de 10% des PV max + 200% de la défense, puis leur octroie une barrière égale à 300% de la défense pendant 10s.",
+    "recharge": 10,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Wand",
+    "categorie": "PASSIVE",
+    "nom": "Compagnons aquatiques",
+    "description": "Augmente les dégâts crit. des héros alliés de 40% pendant 30s lorsque le héros utilise la compétence normale.\nRéduit les dégâts causés aux héros alliés par les ennemis affectés par Attaque delphinienne de 15%.",
+    "recharge": 0,
+    "dureeAnimation": null,
+    "relanceDes": null
+   }
+  ],
   "gil-thunder": [
    {
     "type": "Lance",
@@ -4142,7 +4330,7 @@
     "type": "Gauntlets",
     "categorie": "ACTIVE_THIRD",
     "nom": "Tir d'ancrage",
-    "description": "Inflige des dégâts égaux à 72% de l'attaque, puis inflige Tir d'ancrage pendant 20s.\n\n※ Tir d'ancrage : inflige des dégâts de Terre égaux à 10% de l'attaque toutes les 1s. Inflige des dégâts de Terre égaux à 120% de l'attaque lorsque l'effet est retiré. Inflige des dégâts supplémentaires égaux à 10% des dégâts subis avec une attaque spéciale ou une compétence normale de Terre.",
+    "description": "Inflige des dégâts égaux à 72% de l'attaque, puis inflige Tir d'ancrage pendant 20s.\n\n※ Tir d'ancrage : inflige des dégâts de Terre égaux à 10% de l'attaque toutes les 1s. Inflige des dégâts supplémentaires égaux à 10% des dégâts subis avec une attaque spéciale ou une compétence normale de Terre. Inflige des dégâts de Terre égaux à 120% de l'attaque lorsque l'effet est retiré.",
     "recharge": 20,
     "dureeAnimation": 1.167,
     "relanceDes": 0
@@ -5668,7 +5856,7 @@
     "Renforce la puissance de la compétence normale de 50%, ou 60% lorsque l'effet [Surchauffe] est actif.",
     "Inflige des dégâts égaux à 65% de la défense aux ennemis proches en subissant une attaque alors qu'une barrière de Feu est active.\nL'attaque spéciale inflige des dégâts égaux à 20% de la défense aux ennemis à portée toutes les 1.3s pendant 20s lorsque l'effet [Surchauffe] est actif.",
     "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
-    "Augmente les dégâts supplémentaires de l'attaque ultime de 80% tant que l'effet [Surchauffe] est actif.",
+    "Renforce les dégâts supplémentaires de l'attaque ultime de 80% tant que l'effet [Surchauffe] est actif.",
     "L'attaque ultime inflige des dégâts égaux à 25% de la défense aux ennemis proches toutes les 1s pendant 20s."
    ],
    "Sword2h": [
@@ -5694,6 +5882,44 @@
     "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
     "Renforce la puissance de l'attaque ultime de 60%. Augmente la réduction des dégâts de Flamboiement de 20%.",
     "L'attaque spéciale inflige des dégâts égaux à 5% / 7% / 12% de l'attaque + 0.42% / 0.60% / 1.05% des PV restants du héros toutes les 1s pendant 20s en fonction du niveau de charge.\nAugmente les dégâts infligés par le héros aux ennemis à portée de 5% / 10% / 20%.\nAugmente la réduction des dégâts de 30% en chargeant l'attaque spéciale."
+   ]
+  },
+  "estia": {
+   "Wand": [
+    "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%.",
+    "Renforce la puissance de l'attaque spéciale de 30%.",
+    "Augmente l'attaque de 10%, la défense de 8% et les PV max de 3%.",
+    "Augmente l'efficacité des barrières de 25% et l'efficacité de guérison de 15%.",
+    "Renforce la récupération de PV octroyée par les Palourdes protectrices de la compétence normale de 40%.\nAugmente les dégâts infligés par tous les héros alliés aux ennemis affectés par Attaque delphinienne de 20%.",
+    "En outre, réduit de 15% les dégâts subis par les héros alliés bénéficiant d'une barrière issue de l'attaque ultime d'Estia et les immunise contre les réactions.",
+    "Augmente de 6 le nombre de Palourdes protectrices générées par la compétence normale.",
+    "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
+    "Renforce la récupération de PV fournie par l'attaque ultime de 30% et son effet de barrière de 40%.\nAugmente la durée de la barrière issue de l'attaque ultime de 5s.",
+    "Réduit la consommation de points de magie de l'attaque ultime de 1.\nAugmente le boost de dégâts crit. issu du passif de 60% supplémentaires."
+   ],
+   "Book": [
+    "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%.",
+    "Renforce la puissance de l'attaque spéciale de 30%.",
+    "Augmente l'attaque de 10%, la défense de 8% et les PV max de 3%.",
+    "Renforce la puissance de la compétence de relève de 50%.",
+    "Augmente de 1 le nombre d'Orbes aquatiques générés par la compétence normale. L'utilisation de la compétence normale augmente encore la récupération de la jauge de magie à hauteur de 1% de l'attaque du héros. (Max : 200)",
+    "Renforce la puissance de l'attaque spéciale de 50%.\nAugmente le boost de dégâts d'attaque ultime issu de l'attaque spéciale de 10% supplémentaires.",
+    "L'attaque spéciale crée une zone à l'emplacement de la dernière frappe.\nLa zone dure 4s, inflige des dégâts égaux à 15% de l'attaque aux ennemis à portée toutes les 0.3s et augmente les dégâts crit. d'attaque ultime des alliés à portée de 30% toutes les 1s pendant 30s.",
+    "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
+    "Renforce la puissance de l'attaque spéciale de 300%.",
+    "Faire mouche avec la compétence normale inflige Courant océanique pendant 30s.\nAugmente les dégâts d'attaque ultime infligés par les héros alliés aux ennemis affectés par Courant océanique de 80%.\n\n※Courant océanique : réduit la vitesse de déplacement de 30%."
+   ],
+   "Rapier": [
+    "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%.",
+    "Renforce la puissance de l'attaque ultime de 10% et ses dégâts supplémentaires de 15%.",
+    "Augmente l'attaque de 10%, la défense de 8% et les PV max de 3%.",
+    "Renforce la puissance de l'attaque ultime de 15% et ses dégâts supplémentaires de 25%.",
+    "Augmente légèrement la portée d'Attaque spéciale : Vortex aquatique et augmente le nombre de cumuls de Submersion appliqués de 2.\nAugmente légèrement la portée d'Attaque spéciale : Maelstrom et augmente le nombre de cumuls de Submersion appliqués de 4.\nRéinitialise le temps de recharge de l'attaque ultime du héros lors de l'activation d'Attaque spéciale : Maelstrom.",
+    "Le passif octroie un boost de l'attaque de Froid cumulable 25 fois. Le montant de ce boost est augmenté de 0.5% supplémentaires.\nChaque coup porté sur un ennemi avec une attaque normale réduit le temps de recharge de la compétence normale de 3s.",
+    "Utiliser l'attaque ultime remplace cette dernière par Attaque ultime : Diminuendo glacial, qui ne consomme pas de magie, pendant 10s.\n\nDiminuendo glacial\nInflige des dégâts égaux à 380% de l'attaque.\nChaque coup de l'attaque inflige des dégâts supplémentaires égaux à 40% de l'attaque par tranche de 2 cumul(s) de Submersion sur l'ennemi.",
+    "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
+    "Renforce la puissance d'Attaque ultime : Crescendo glacial de 35% et ses dégâts supplémentaires de 50%.\nRenforce la puissance d'Attaque ultime : Diminuendo glacial de 25% et ses dégâts supplémentaires de 35%.",
+    "Attaquer l'ennemi augmente les dégâts d'attaque ultime de 30% des dégâts crit. (max : 100%) et l'attaque de Froid de 10% des dégâts crit. (Max : 30%)\nAugmente le percement de défense de 15% en attaquant un ennemi submergé."
    ]
   },
   "gil-thunder": {
@@ -6221,11 +6447,11 @@
     "Augmente l'attaque de 10%, la défense de 8% et les PV max de 3%.",
     "Renforce la puissance de l'attaque ultime de 20%.",
     "Augmente l'attaque de Froid du héros de 30%.\nChaque coup de Attaque spéciale : Percée glaciale sur un ennemi affecté par Marque de Givre restaure la jauge de relève de 15.",
-    "Augmente la puissance de Attaque spéciale : Percée glaciale de 50% et renforce les dégâts de compétence de relève avec Marque de Givre de 15%.",
+    "Augmente la puissance d'Attaque spéciale : Percée glaciale de 50% et les dégâts de compétence de relève infligés avec Marque de Givre de 15%.",
     "Utiliser l'attaque spéciale augmente les chances crit. du héros de 20% pendant 12s. Réussir Attaque spéciale : Percée glaciale sur un ennemi affecté par Marque de Givre augmente les dégâts crit. de 15% pour chaque tranche de 1 cumul(s).",
     "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
     "Augmente les dégâts de compétence de relève avec Marque de Givre de 55%.",
-    "Renforce de 100% le boost de dégâts crit. octroyé par l'attaque ultime et les attaques combinées avec l'attaque ultime du héros en tant que base. Inflige des dégâts égaux à 50% de l'attaque toutes les 1s pendant 11s avec la dernière frappe."
+    "Augmente de 100% le boost de dégâts crit. octroyé par l'attaque ultime et les attaques combinées avec l'attaque ultime du héros en tant que base. La dernière frappe inflige des dégâts égaux à 50% de l'attaque toutes les 1s pendant 11s."
    ]
   },
   "slader": {
@@ -6373,6 +6599,13 @@
    "ensemble": "equip_t5_darksand"
   },
   {
+   "nom": "Anneau de l'avidité incarnée",
+   "fichier": "7ds-bijoux/Anneau/Anneau de l'avidité incarnée.webp",
+   "categorie": "bijou",
+   "type": "Anneau",
+   "ensemble": "equip_t5_greed_2"
+  },
+  {
    "nom": "Anneau de l'éclat spectral",
    "fichier": "7ds-bijoux/Anneau/Anneau de l'éclat spectral.webp",
    "categorie": "bijou",
@@ -6458,6 +6691,13 @@
    "categorie": "bijou",
    "type": "Anneau",
    "ensemble": "accessory_t5_corruption"
+  },
+  {
+   "nom": "Anneau en bonbon à la citrouille",
+   "fichier": "7ds-bijoux/Anneau/Anneau en bonbon à la citrouille.webp",
+   "categorie": "bijou",
+   "type": "Anneau",
+   "ensemble": "equip_t5_halloween"
   },
   {
    "nom": "Arrogance adéquate",
@@ -6658,6 +6898,13 @@
    "categorie": "armure",
    "type": "Bas",
    "ensemble": "armor_t5_fortrees"
+  },
+  {
+   "nom": "Bas de l'avidité incarnée",
+   "fichier": "7ds-armures-ssr/Bas/Bas de l'avidité incarnée.webp",
+   "categorie": "armure",
+   "type": "Bas",
+   "ensemble": "equip_t5_greed_2"
   },
   {
    "nom": "Bas de l'éclat spectral",
@@ -6930,6 +7177,13 @@
    "ensemble": "armor_t5_fortrees"
   },
   {
+   "nom": "Bottes de combat de l'avidité incarnée",
+   "fichier": "7ds-armures-ssr/Bottes/Bottes de combat de l'avidité incarnée.webp",
+   "categorie": "armure",
+   "type": "Bottes",
+   "ensemble": "equip_t5_greed_2"
+  },
+  {
    "nom": "Bottes de combat de l'éclat spectral",
    "fichier": "7ds-armures-ssr/Bottes/Bottes de combat de l'éclat spectral.webp",
    "categorie": "armure",
@@ -7062,6 +7316,13 @@
    "ensemble": "equip_t5_darksand"
   },
   {
+   "nom": "Boucles d'oreilles de l'avidité incarnée",
+   "fichier": "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'avidité incarnée.webp",
+   "categorie": "bijou",
+   "type": "Boucle d'oreille",
+   "ensemble": "equip_t5_greed_2"
+  },
+  {
    "nom": "Boucles d'oreilles de l'éclat spectral",
    "fichier": "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'éclat spectral.webp",
    "categorie": "bijou",
@@ -7149,6 +7410,13 @@
    "ensemble": "accessory_t5_corruption"
   },
   {
+   "nom": "Boucles d'oreilles en bonbon à la citrouille",
+   "fichier": "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles en bonbon à la citrouille.webp",
+   "categorie": "bijou",
+   "type": "Boucle d'oreille",
+   "ensemble": "equip_t5_halloween"
+  },
+  {
    "nom": "Ceinture d'écailles ensanglantées",
    "fichier": "7ds-armures-ssr/Ceinture/Ceinture d'écailles ensanglantées.webp",
    "categorie": "armure",
@@ -7171,6 +7439,13 @@
    "categorie": "armure",
    "type": "Ceinture",
    "ensemble": "armor_t5_fortrees"
+  },
+  {
+   "nom": "Ceinture de l'avidité incarnée",
+   "fichier": "7ds-armures-ssr/Ceinture/Ceinture de l'avidité incarnée.webp",
+   "categorie": "armure",
+   "type": "Ceinture",
+   "ensemble": "equip_t5_greed_2"
   },
   {
    "nom": "Ceinture de l'éclat spectral",
@@ -7448,6 +7723,13 @@
    "ensemble": "equip_t5_darksand"
   },
   {
+   "nom": "Collier de l'avidité incarnée",
+   "fichier": "7ds-bijoux/Collier/Collier de l'avidité incarnée.webp",
+   "categorie": "bijou",
+   "type": "Collier",
+   "ensemble": "equip_t5_greed_2"
+  },
+  {
    "nom": "Collier de l'éclat spectral",
    "fichier": "7ds-bijoux/Collier/Collier de l'éclat spectral.webp",
    "categorie": "bijou",
@@ -7523,6 +7805,13 @@
    "categorie": "bijou",
    "type": "Collier",
    "ensemble": "accessory_t5_corruption"
+  },
+  {
+   "nom": "Collier en bonbon à la citrouille",
+   "fichier": "7ds-bijoux/Collier/Collier en bonbon à la citrouille.webp",
+   "categorie": "bijou",
+   "type": "Collier",
+   "ensemble": "equip_t5_halloween"
   },
   {
    "nom": "Courtoisie minimale",
@@ -8626,6 +8915,13 @@
    "ensemble": "armor_t5_fortrees"
   },
   {
+   "nom": "Haut de l'avidité incarnée",
+   "fichier": "7ds-armures-ssr/Haut/Haut de l'avidité incarnée.webp",
+   "categorie": "armure",
+   "type": "Haut",
+   "ensemble": "equip_t5_greed_2"
+  },
+  {
    "nom": "Haut de l'éclat spectral",
    "fichier": "7ds-armures-ssr/Haut/Haut de l'éclat spectral.webp",
    "categorie": "armure",
@@ -8770,6 +9066,17 @@
    "passif": {
     "niveau": 3,
     "texte": "Réussir l'attaque spéciale sur un ennemi qui souffre de dégâts sur la durée augmente la durée des dégâts sur la durée de 10 s et réduit le temps de recharge de l'attaque spéciale de 100%. (Temps de recharge : 15 s)"
+   }
+  },
+  {
+   "nom": "Inspectrice de la qualité de l'eau",
+   "fichier": "7ds-armures-ssr/Armure liee/Inspectrice de la qualité de l'eau.webp",
+   "categorie": "gravee",
+   "type": "Armure gravée",
+   "heros": "estia",
+   "passif": {
+    "niveau": 3,
+    "texte": "L'utilisation de la compétence normale augmente toutes les attaques élémentaires de tous les héros alliés de 15% pendant 20 s.\nLorsqu'un héros allié attaque un ennemi dont la résistance élémentaire est réduite, augmente les dégâts crit. de tous les héros alliés de 40% pendant 20 s. (Temps de recharge : 20 s)"
    }
   },
   {
@@ -9201,6 +9508,17 @@
    }
   },
   {
+   "nom": "Ondulations lacustres",
+   "fichier": "7ds-armures-ssr/Armure liee/Ondulations lacustres.webp",
+   "categorie": "gravee",
+   "type": "Armure gravée",
+   "heros": "estia",
+   "passif": {
+    "niveau": 3,
+    "texte": "Lorsqu'un héros allié utilise une attaque combinée, celle-ci augmente les dégâts d'attaque ultime de tous les héros alliés de 40% pendant 30 s.\nChaque fois que des héros alliés font mouche avec des attaques combinées pendant la durée de l'effet, réduit la résistance à tous les éléments de l'ennemi de 3%. (Max : 30%)"
+   }
+  },
+  {
    "nom": "Pas légers",
    "fichier": "7ds-armures-ssr/Armure liee/Pas légers.webp",
    "categorie": "gravee",
@@ -9337,6 +9655,16 @@
    }
   },
   {
+   "nom": "Rapière de l'ombre de la rupture",
+   "fichier": "7ds-armes/Rapiere/Rapière de l'ombre de la rupture.webp",
+   "categorie": "arme",
+   "type": "Rapière",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque coup porté sur un ennemi dont la défense crit. est diminuée augmente l'attaque de Froid de 2.4% pendant 20s. (Max : 72%)\nAugmente les dégâts d'attaque ultime de 40% pendant 10s lorsque l'effet atteint le max."
+   }
+  },
+  {
    "nom": "Rapière de la flamme cramoisie",
    "fichier": "7ds-armes/Rapiere/Rapière de la flamme cramoisie.webp",
    "categorie": "arme",
@@ -9439,6 +9767,17 @@
    "passif": {
     "niveau": 3,
     "texte": "Augmente les dégâts d'attaque normale de 20% pendant 20 s à chaque obtention de Givre.\nPendant la durée de l'effet, chaque coup porté avec l'attaque normale en augmente la durée de 0.4 s et les dégâts de Froid de 3%. (Max : 45%)"
+   }
+  },
+  {
+   "nom": "Robe bubulle",
+   "fichier": "7ds-armures-ssr/Armure liee/Robe bubulle.webp",
+   "categorie": "gravee",
+   "type": "Armure gravée",
+   "heros": "estia",
+   "passif": {
+    "niveau": 3,
+    "texte": "Chaque coup critique augmente les dégâts crit. de 5% pendant 10 s. (Max : 50%)\nAugmente les dégâts infligés par les héros alliés aux ennemis affectés par Submersion de 35% pendant 10 s lorsque l'effet atteint le max."
    }
   },
   {
@@ -9930,6 +10269,36 @@
     {
      "pieces": 7,
      "texte": "Percement de défense +10%\nL'utilisation de la compétence de relève augmente les chances crit. de 6% pendant 20s.\nL'utilisation de la compétence de relève alors que cet effet est actif le remplace par un effet qui augmente les chances crit. de 12% et le percement de défense de 12% pendant 20s. (Non cumulable jusqu'à la fin de sa durée)"
+    }
+   ]
+  },
+  "equip_t5_greed_2": {
+   "nom": "Avidité incarnée",
+   "paliers": [
+    {
+     "pieces": 3,
+     "texte": "Chances crit. +10%"
+    },
+    {
+     "pieces": 5,
+     "texte": "Dégâts crit. +25%\nL'utilisation de la compétence de relève augmente les chances crit. de 10% et le percement de défense de 10% pendant 20s."
+    },
+    {
+     "pieces": 7,
+     "texte": "Percement de défense +10%\nL'utilisation de la compétence de relève augmente les chances crit. de 15% et le percement de défense de 15% pendant 20s."
+    }
+   ]
+  },
+  "equip_t5_halloween": {
+   "nom": "Farce ou friandise",
+   "paliers": [
+    {
+     "pieces": 2,
+     "texte": "Efficacité de recharge de la magie +10%\n70% chances de restaurer 3% des PV max en utilisant une compétence de relève."
+    },
+    {
+     "pieces": 3,
+     "texte": "Efficacité de durée des bonus +10%"
     }
    ]
   },

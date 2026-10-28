@@ -9,10 +9,10 @@
 // heros seraient indiscernables d une extraction jamais relancee.
 window.SEVEN_DS_ULTIMES_COMBINES_PROVENANCE = {
  "source": "Table/Skill/CombineSkillTable",
- "exporteLe": "2026-10-08",
- "lignesLues": 716,
- "lignesRetenues": 716,
- "lanceurs": 25,
+ "exporteLe": "2026-10-28",
+ "lignesLues": 762,
+ "lignesRetenues": 762,
+ "lanceurs": 26,
  "competences": [
   "ban_gauntlets_skill_r",
   "bug_book_skill_q",
@@ -24,6 +24,7 @@ window.SEVEN_DS_ULTIMES_COMBINES_PROVENANCE = {
   "elaine_wand_skill_q",
   "elizabeth_staff_skill_r",
   "escanor_axe_skill_q",
+  "estia_book_skill_r",
   "gil_thunder_sword1h_skill_q",
   "gowther_staff_skill_r",
   "howzer_lance_skill_q",
@@ -101,6 +102,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "ban_gauntlets_skill_r",
   "partenaires": [
+   "estia_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "ban_gauntlets_skill_r",
+  "partenaires": [
    "gil_thunder_sword1h_skill_q"
   ]
  },
@@ -228,6 +235,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "bug_book_skill_q",
   "partenaires": [
    "escanor_axe_skill_q"
+  ]
+ },
+ {
+  "lanceur": "bug_book_skill_q",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -395,6 +408,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "partenaires": [
    "escanor_axe_skill_q",
    "elizabeth_staff_skill_r"
+  ]
+ },
+ {
+  "lanceur": "daisy_book_skill_q",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -646,6 +665,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "derieri_sword2h_skill_r",
   "partenaires": [
    "escanor_axe_skill_q"
+  ]
+ },
+ {
+  "lanceur": "derieri_sword2h_skill_r",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -839,6 +864,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "diane_axe_skill_q",
   "partenaires": [
+   "estia_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "diane_axe_skill_q",
+  "partenaires": [
    "gil_thunder_sword1h_skill_q"
   ]
  },
@@ -1001,6 +1032,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "partenaires": [
    "escanor_axe_skill_q",
    "elizabeth_staff_skill_r"
+  ]
+ },
+ {
+  "lanceur": "drake_sword2h_skill_q",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -1208,6 +1245,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "dreyfus_sword1h_skill_q",
   "partenaires": [
+   "estia_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "dreyfus_sword1h_skill_q",
+  "partenaires": [
    "gil_thunder_sword1h_skill_q"
   ]
  },
@@ -1391,6 +1434,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "partenaires": [
    "escanor_axe_skill_q",
    "merlin_wand_skill_r"
+  ]
+ },
+ {
+  "lanceur": "elaine_wand_skill_q",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -1696,6 +1745,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "elizabeth_staff_skill_r",
   "partenaires": [
+   "estia_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "elizabeth_staff_skill_r",
+  "partenaires": [
    "gil_thunder_sword1h_skill_q"
   ]
  },
@@ -1989,6 +2044,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "escanor_axe_skill_q",
   "partenaires": [
+   "estia_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "escanor_axe_skill_q",
+  "partenaires": [
    "gil_thunder_sword1h_skill_q"
   ]
  },
@@ -2121,6 +2182,144 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   ]
  },
  {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "ban_gauntlets_skill_r"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "bug_book_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "daisy_book_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "derieri_sword2h_skill_r"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "diane_axe_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "drake_sword2h_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "dreyfus_sword1h_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "elaine_wand_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "elizabeth_staff_skill_r"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "escanor_axe_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "gil_thunder_sword1h_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "gowther_staff_skill_r"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "howzer_lance_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "manny_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "manny_sworddual_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "meliodas_sword1h_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "merlin_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "merlin_staff_skill_r"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "merlin_wand_skill_r"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "tioreh_book_skill_q"
+  ]
+ },
+ {
+  "lanceur": "estia_book_skill_r",
+  "partenaires": [
+   "tristan_sworddual_skill_q"
+  ]
+ },
+ {
   "lanceur": "gil_thunder_sword1h_skill_q",
   "partenaires": [
    "ban_gauntlets_skill_r"
@@ -2213,6 +2412,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "partenaires": [
    "escanor_axe_skill_q",
    "elizabeth_staff_skill_r"
+  ]
+ },
+ {
+  "lanceur": "gil_thunder_sword1h_skill_q",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -2450,6 +2655,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "partenaires": [
    "escanor_axe_skill_q",
    "elizabeth_staff_skill_r"
+  ]
+ },
+ {
+  "lanceur": "gowther_staff_skill_r",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -2708,6 +2919,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "partenaires": [
    "escanor_axe_skill_q",
    "merlin_wand_skill_r"
+  ]
+ },
+ {
+  "lanceur": "howzer_lance_skill_q",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -2957,6 +3174,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "king_staff_skill_q",
   "partenaires": [
+   "estia_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "king_staff_skill_q",
+  "partenaires": [
    "gil_thunder_sword1h_skill_q"
   ]
  },
@@ -3089,6 +3312,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "lancelot_staff_skill_r_enchant",
   "partenaires": [
+   "estia_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
    "gil_thunder_sword1h_skill_q"
   ]
  },
@@ -3221,6 +3450,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "manny_staff_skill_q",
   "partenaires": [
+   "estia_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "manny_staff_skill_q",
+  "partenaires": [
    "gil_thunder_sword1h_skill_q"
   ]
  },
@@ -3347,6 +3582,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "manny_sworddual_skill_q",
   "partenaires": [
+   "estia_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "manny_sworddual_skill_q",
+  "partenaires": [
    "gil_thunder_sword1h_skill_q"
   ]
  },
@@ -3468,6 +3709,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "meliodas_sword1h_skill_q",
   "partenaires": [
    "escanor_axe_skill_q"
+  ]
+ },
+ {
+  "lanceur": "meliodas_sword1h_skill_q",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -3611,6 +3858,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "merlin_book_skill_r",
   "partenaires": [
+   "estia_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "merlin_book_skill_r",
+  "partenaires": [
    "gil_thunder_sword1h_skill_q"
   ]
  },
@@ -3768,6 +4021,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "merlin_staff_skill_r",
   "partenaires": [
    "escanor_axe_skill_q"
+  ]
+ },
+ {
+  "lanceur": "merlin_staff_skill_r",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -3958,6 +4217,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "partenaires": [
    "escanor_axe_skill_q",
    "elizabeth_staff_skill_r"
+  ]
+ },
+ {
+  "lanceur": "merlin_wand_skill_r",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -4183,6 +4448,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "tioreh_book_skill_q",
   "partenaires": [
    "escanor_axe_skill_q"
+  ]
+ },
+ {
+  "lanceur": "tioreh_book_skill_q",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {
@@ -4426,6 +4697,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "tristan_sworddual_skill_q",
   "partenaires": [
    "escanor_axe_skill_q"
+  ]
+ },
+ {
+  "lanceur": "tristan_sworddual_skill_q",
+  "partenaires": [
+   "estia_book_skill_r"
   ]
  },
  {

@@ -724,6 +724,66 @@ window.SEVEN_DS_MAGIE_ROTATION = {
   "recharge": 225,
   "cout": 0
  },
+ "estia_book_jumpatk": {
+  "recharge": 57,
+  "cout": 0
+ },
+ "estia_book_skill_e": {
+  "recharge": 200,
+  "cout": 0
+ },
+ "estia_book_skill_q": {
+  "recharge": 56,
+  "cout": 0
+ },
+ "estia_book_skill_r": {
+  "recharge": 0,
+  "cout": 2
+ },
+ "estia_book_skill_tag": {
+  "recharge": 350,
+  "cout": 0
+ },
+ "estia_rapier_jumpatk": {
+  "recharge": 35,
+  "cout": 0
+ },
+ "estia_rapier_skill_e": {
+  "recharge": 116,
+  "cout": 0
+ },
+ "estia_rapier_skill_q": {
+  "recharge": 34,
+  "cout": 0
+ },
+ "estia_rapier_skill_r": {
+  "recharge": 0,
+  "cout": 2
+ },
+ "estia_rapier_skill_tag": {
+  "recharge": 225,
+  "cout": 0
+ },
+ "estia_wand_jumpatk": {
+  "recharge": 103,
+  "cout": 0
+ },
+ "estia_wand_skill_e": {
+  "recharge": 511,
+  "cout": 0
+ },
+ "estia_wand_skill_q_ready": {
+  "recharge": 134,
+  "cout": 0
+ },
+ "estia_wand_skill_r": {
+  "recharge": 0,
+  "cout": 3
+ },
+ "estia_wand_skill_tag": {
+  "recharge": 650,
+  "cout": 0
+ },
  "gil_thunder_lance_jumpatk": {
   "recharge": 78,
   "cout": 0

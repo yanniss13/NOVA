@@ -422,6 +422,28 @@ window.SEVEN_DS_META = {
    }
   ]
  },
+ "estia": {
+  "element": "ICE",
+  "rarity": "SSR",
+  "role": "ATTACKER",
+  "weapons": [
+   {
+    "role": "Attacker",
+    "weapon": "Rapier",
+    "element": "Ice"
+   },
+   {
+    "role": "Warden",
+    "weapon": "Wand",
+    "element": "Holy"
+   },
+   {
+    "role": "Supporter",
+    "weapon": "Book",
+    "element": "Ice"
+   }
+  ]
+ },
  "gowther": {
   "element": "THUNDER",
   "rarity": "SSR",

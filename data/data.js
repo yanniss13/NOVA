@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-10-09 23:51:43",
+    "generatedAt":  "2026-10-28 15:01:54",
     "personnages":  [
                         {
                             "id":  "ban",
@@ -57,6 +57,11 @@ window.SEVEN_DS_DATA = {
                             "id":  "escanor",
                             "name":  "Escanor",
                             "file":  "7ds-personnages/escanor.webp"
+                        },
+                        {
+                            "id":  "estia",
+                            "name":  "Estia",
+                            "file":  "7ds-personnages/estia.webp"
                         },
                         {
                             "id":  "gil-thunder",
@@ -821,6 +826,10 @@ window.SEVEN_DS_DATA = {
                                       "file":  "7ds-armes/Rapiere/Rapière de l\u0027âme vorace.webp"
                                   },
                                   {
+                                      "name":  "Rapière de l\u0027ombre de la rupture",
+                                      "file":  "7ds-armes/Rapiere/Rapière de l\u0027ombre de la rupture.webp"
+                                  },
+                                  {
                                       "name":  "Rapière des ailes de la flamme noire",
                                       "file":  "7ds-armes/Rapiere/Rapière des ailes de la flamme noire.webp"
                                   },
@@ -863,6 +872,10 @@ window.SEVEN_DS_DATA = {
                                  {
                                      "name":  "Haut de l\u0027armure du vigile",
                                      "file":  "7ds-armures-ssr/Haut/Haut de l\u0027armure du vigile.webp"
+                                 },
+                                 {
+                                     "name":  "Haut de l\u0027avidité incarnée",
+                                     "file":  "7ds-armures-ssr/Haut/Haut de l\u0027avidité incarnée.webp"
                                  },
                                  {
                                      "name":  "Haut de l\u0027éclat spectral",
@@ -951,6 +964,10 @@ window.SEVEN_DS_DATA = {
                                     "file":  "7ds-armures-ssr/Bas/Bas de l\u0027armure du vigile.webp"
                                 },
                                 {
+                                    "name":  "Bas de l\u0027avidité incarnée",
+                                    "file":  "7ds-armures-ssr/Bas/Bas de l\u0027avidité incarnée.webp"
+                                },
+                                {
                                     "name":  "Bas de l\u0027éclat spectral",
                                     "file":  "7ds-armures-ssr/Bas/Bas de l\u0027éclat spectral.webp"
                                 },
@@ -1033,6 +1050,10 @@ window.SEVEN_DS_DATA = {
                                        "file":  "7ds-armures-ssr/Bottes/Bottes de combat de l\u0027armure du vigile.webp"
                                    },
                                    {
+                                       "name":  "Bottes de combat de l\u0027avidité incarnée",
+                                       "file":  "7ds-armures-ssr/Bottes/Bottes de combat de l\u0027avidité incarnée.webp"
+                                   },
+                                   {
                                        "name":  "Bottes de combat de l\u0027éclat spectral",
                                        "file":  "7ds-armures-ssr/Bottes/Bottes de combat de l\u0027éclat spectral.webp"
                                    },
@@ -1109,6 +1130,10 @@ window.SEVEN_DS_DATA = {
                                      {
                                          "name":  "Ceinture de l\u0027armure du vigile",
                                          "file":  "7ds-armures-ssr/Ceinture/Ceinture de l\u0027armure du vigile.webp"
+                                     },
+                                     {
+                                         "name":  "Ceinture de l\u0027avidité incarnée",
+                                         "file":  "7ds-armures-ssr/Ceinture/Ceinture de l\u0027avidité incarnée.webp"
                                      },
                                      {
                                          "name":  "Ceinture de l\u0027éclat spectral",
@@ -1349,6 +1374,10 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Honneur au vieux soldat.webp"
                                         },
                                         {
+                                            "name":  "Inspectrice de la qualité de l\u0027eau",
+                                            "file":  "7ds-armures-ssr/Armure liee/Inspectrice de la qualité de l\u0027eau.webp"
+                                        },
+                                        {
                                             "name":  "Instinct incisif",
                                             "file":  "7ds-armures-ssr/Armure liee/Instinct incisif.webp"
                                         },
@@ -1433,6 +1462,10 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Ombre du roi des fées.webp"
                                         },
                                         {
+                                            "name":  "Ondulations lacustres",
+                                            "file":  "7ds-armures-ssr/Armure liee/Ondulations lacustres.webp"
+                                        },
+                                        {
                                             "name":  "Pas légers",
                                             "file":  "7ds-armures-ssr/Armure liee/Pas légers.webp"
                                         },
@@ -1471,6 +1504,10 @@ window.SEVEN_DS_DATA = {
                                         {
                                             "name":  "Rituel sacré",
                                             "file":  "7ds-armures-ssr/Armure liee/Rituel sacré.webp"
+                                        },
+                                        {
+                                            "name":  "Robe bubulle",
+                                            "file":  "7ds-armures-ssr/Armure liee/Robe bubulle.webp"
                                         },
                                         {
                                             "name":  "Robe de printemps",
@@ -1597,6 +1634,10 @@ window.SEVEN_DS_DATA = {
                                       "file":  "7ds-bijoux/Anneau/Anneau de l\u0027araignée de l\u0027ombre.webp"
                                   },
                                   {
+                                      "name":  "Anneau de l\u0027avidité incarnée",
+                                      "file":  "7ds-bijoux/Anneau/Anneau de l\u0027avidité incarnée.webp"
+                                  },
+                                  {
                                       "name":  "Anneau de l\u0027éclat spectral",
                                       "file":  "7ds-bijoux/Anneau/Anneau de l\u0027éclat spectral.webp"
                                   },
@@ -1635,6 +1676,10 @@ window.SEVEN_DS_DATA = {
                                   {
                                       "name":  "Anneau du vigile corrompu",
                                       "file":  "7ds-bijoux/Anneau/Anneau du vigile corrompu.webp"
+                                  },
+                                  {
+                                      "name":  "Anneau en bonbon à la citrouille",
+                                      "file":  "7ds-bijoux/Anneau/Anneau en bonbon à la citrouille.webp"
                                   }
                               ],
                    "Collier":  [
@@ -1657,6 +1702,10 @@ window.SEVEN_DS_DATA = {
                                    {
                                        "name":  "Collier de l\u0027araignée de l\u0027ombre",
                                        "file":  "7ds-bijoux/Collier/Collier de l\u0027araignée de l\u0027ombre.webp"
+                                   },
+                                   {
+                                       "name":  "Collier de l\u0027avidité incarnée",
+                                       "file":  "7ds-bijoux/Collier/Collier de l\u0027avidité incarnée.webp"
                                    },
                                    {
                                        "name":  "Collier de l\u0027éclat spectral",
@@ -1693,6 +1742,10 @@ window.SEVEN_DS_DATA = {
                                    {
                                        "name":  "Collier du vigile corrompu",
                                        "file":  "7ds-bijoux/Collier/Collier du vigile corrompu.webp"
+                                   },
+                                   {
+                                       "name":  "Collier en bonbon à la citrouille",
+                                       "file":  "7ds-bijoux/Collier/Collier en bonbon à la citrouille.webp"
                                    }
                                ],
                    "Boucle d\u0027oreille":  [
@@ -1707,6 +1760,10 @@ window.SEVEN_DS_DATA = {
                                                  {
                                                      "name":  "Boucles d\u0027oreilles de l\u0027araignée de l\u0027ombre",
                                                      "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles de l\u0027araignée de l\u0027ombre.webp"
+                                                 },
+                                                 {
+                                                     "name":  "Boucles d\u0027oreilles de l\u0027avidité incarnée",
+                                                     "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles de l\u0027avidité incarnée.webp"
                                                  },
                                                  {
                                                      "name":  "Boucles d\u0027oreilles de l\u0027éclat spectral",
@@ -1747,6 +1804,10 @@ window.SEVEN_DS_DATA = {
                                                  {
                                                      "name":  "Boucles d\u0027oreilles du vigile corrompu",
                                                      "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles du vigile corrompu.webp"
+                                                 },
+                                                 {
+                                                     "name":  "Boucles d\u0027oreilles en bonbon à la citrouille",
+                                                     "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles en bonbon à la citrouille.webp"
                                                  }
                                              ]
                }

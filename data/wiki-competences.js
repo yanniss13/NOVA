@@ -1810,6 +1810,170 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "weaponType": "Sword2h"
   }
  ],
+ "estia": [
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]76%[-] de l'attaque.\n1er coup : 11%\n2e coup : 13%\n3e coup : 20%\n4e coup : 32%",
+   "gameId": "estia_book_jumpatk",
+   "icone": "common_Book_normalAttack.webp",
+   "nomFr": "Bulles rythmiques",
+   "recharge": null,
+   "weaponType": "Book"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Crée un Orbe aquatique qui suit les ennemis pendant [#1A7331]12s[-].\nLorsqu'il entre en contact avec un ennemi ou expire, l'Orbe aquatique inflige des dégâts égaux à [#1A7331]127%[-] de l'attaque et réduit la défense crit. de la cible de [#1A7331]12%[-] pendant [#1A7331]30s[-]. (Max : [#1A7331]4 fois[-])",
+   "gameId": "estia_book_skill_e",
+   "icone": "Estia_Book_NormalSkill.webp",
+   "nomFr": "Compte à rebours à bulles",
+   "recharge": 18.0,
+   "weaponType": "Book"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]76%[-] de l'attaque à l'ennemi et augmente les dégâts d'attaque ultime qu'il subit de [#1A7331]30%[-] pendant [#1A7331]30s[-].",
+   "gameId": "estia_book_skill_q",
+   "icone": "Estia_Book_ActiveThird.webp",
+   "nomFr": "Vague du pingouin",
+   "recharge": 12.0,
+   "weaponType": "Book"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]62%[-] de l'attaque.",
+   "gameId": "estia_book_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Canon à pingouin",
+   "recharge": null,
+   "weaponType": "Book"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]212%[-] de l'attaque et réduit la résistance à tous les éléments de la cible de [#1A7331]20%[-] pendant [#1A7331]30s[-].",
+   "gameId": "estia_book_skill_r",
+   "icone": "Estia_Book_UltimateSkill.webp",
+   "nomFr": "Final polaire",
+   "recharge": 10.0,
+   "weaponType": "Book"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Lorsqu'un héros allié active une attaque combinée, augmente les dégâts crit. d'attaque ultime de tous les héros alliés de [#1A7331]40%[-] pendant [#1A7331]30s[-] et leur octroie [#0F5CD8]Froid cruel[-] pendant [#1A7331]10s[-].\nChaque coup de l'attaque ultime d'un héros allié augmente les chances crit. de tous les héros alliés de [#1A7331]1%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]20 fois[-])\nLe boost de chances crit. est retiré en passant la relève.\n\n※ [#0F5CD8]Froid cruel[-] : réinitialise le temps de recharge de l'attaque spéciale et de la compétence normale après avoir utilisé l'attaque ultime [#1A7331]3 fois[-], puis retire l'effet [#0F5CD8]Froid cruel[-].",
+   "gameId": "estia_book_passive",
+   "icone": "Estia_Book_SkillPassive.webp",
+   "nomFr": "Curiosité bleue",
+   "recharge": 0.0,
+   "weaponType": "Book"
+  },
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]162%[-] de l'attaque.\n1er coup : 24%\n2e coup : 26%\n3e coup : 42%\n4e coup : 70%",
+   "gameId": "estia_rapier_jumpatk",
+   "icone": "common_Rapier_normalAttack.webp",
+   "nomFr": "Percée ondulante",
+   "recharge": null,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]262%[-] de l'attaque.\nEn cas de chevauchement avec [#3C22D6]Attaque spéciale : Vortex aquatique[-] du héros, active [#3C22D6]Attaque spéciale : Maelstrom[-].\n\n[#3C22D6]Maelstrom[-]\nInflige des dégâts égaux à [#1A7331]322%[-] de l'attaque.\nLa première frappe inflige [#1A7331]3 cumul(s)[-] de [#0F5CD8]Submersion[-] pendant [#1A7331]30s[-]. (Max : [#1A7331]10 fois[-])\n\n※ [#0F5CD8]Submersion[-] : augmente les dégâts crit. causés par Estia de [#1A7331]5%[-].",
+   "gameId": "estia_rapier_skill_e",
+   "icone": "Estia_Rapier_NormalSkill.webp",
+   "nomFr": "Tempête glaciale",
+   "recharge": 16.0,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Immunise contre les réactions pendant l'utilisation de la compétence. Inflige des dégâts égaux à [#1A7331]8%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.3s[-] pendant [#1A7331]8s[-].\nLa première frappe inflige [#1A7331]1 cumul(s)[-] de [#0F5CD8]Submersion[-] pendant [#1A7331]30s[-]. (Max : [#1A7331]10 fois[-])\n\n※ [#0F5CD8]Submersion[-] : augmente les dégâts crit. causés par Estia de [#1A7331]5%[-].",
+   "gameId": "estia_rapier_skill_q",
+   "icone": "Estia_Rapier_ActiveThird.webp",
+   "nomFr": "Vortex aquatique",
+   "recharge": 11.0,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]135%[-] de l'attaque.",
+   "gameId": "estia_rapier_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Flèche bleue",
+   "recharge": null,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Réinitialise le temps de recharge de l'attaque spéciale du héros, puis inflige des dégâts égaux à [#1A7331]463%[-] de l'attaque.\nChaque coup de l'attaque inflige des dégâts supplémentaires égaux à [#1A7331]30%[-] de l'attaque par tranche de [#1A7331]2 cumul(s)[-] de [#0F5CD8]Submersion[-] sur l'ennemi.",
+   "gameId": "estia_rapier_skill_r",
+   "icone": "Estia_Rapier_UltimateSkill.webp",
+   "nomFr": "Crescendo glacial",
+   "recharge": 10.0,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Si l'équipe comporte au moins [#1A7331]3[-] héros d'attribut Froid, augmente le percement de défense du héros de [#1A7331]10%[-] et son attaque de Froid de [#1A7331]5000[-].\nChaque fois que le héros touche un ennemi [#0F5CD8]submergé[-], augmente l'attaque de Froid de tous les héros alliés de [#1A7331]2.5%[-] pendant [#1A7331]30s[-]. (Max : [#1A7331]20 fois[-])\nChaque fois que le héros touche un ennemi [#0F5CD8]submergé[-], réduit sa défense crit. de [#1A7331]2%[-] pendant [#1A7331]30s[-]. (Max : [#1A7331]10 fois[-])\nRéduit les dégâts infligés par les ennemis [#0F5CD8]submergés[-] de [#1A7331]20%[-].",
+   "gameId": "estia_rapier_passive",
+   "icone": "Estia_Rapier_SkillPassive.webp",
+   "nomFr": "Torrent silencieux",
+   "recharge": 0.0,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]88%[-] de l'attaque.\n1er coup : 13%\n2e coup : 14%\n3e coup : 23%\n4e coup : 38%",
+   "gameId": "estia_wand_jumpatk",
+   "icone": "common_Wand_normalAttack.webp",
+   "nomFr": "Parade aquatique",
+   "recharge": null,
+   "weaponType": "Wand"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Restaure les PV des alliés à portée de [#1A7331]1%[-] des PV max + [#1A7331]15%[-] de la défense toutes les [#1A7331]1s[-] pendant [#1A7331]20s[-].\nGénère [#1A7331]6[-] Palourde(s) protectrice(s) et [#1A7331]6[-] Étoile(s) de mer explosive(s) autour du héros.\nRestaure [#1A7331]5%[-] des PV max + [#1A7331]100%[-] de la défense aux alliés qui entrent en contact avec une Palourde protectrice.\nInflige des dégâts égaux à [#1A7331]150%[-] de l'attaque aux ennemis qui entrent en contact avec une Étoile de mer explosive et réduit leur résistance à tous les éléments de [#1A7331]15%[-] pendant [#1A7331]40s[-].",
+   "gameId": "estia_wand_skill_e",
+   "icone": "Estia_Wand_NormalSkill.webp",
+   "nomFr": "Bosquet des marées",
+   "recharge": 26.0,
+   "weaponType": "Wand"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Immunise contre les réactions tant que la posture est maintenue, augmente la vitesse de déplacement de [#1A7331]50%[-] et inflige des dégâts égaux à [#1A7331]19%[-] en entrant en contact avec un ennemi.\nLa posture dure [#1A7331]4,5s[-], et réutiliser ou laisser prendre fin la compétence retire la posture, inflige des dégâts égaux à [#1A7331]88%[-] de l'attaque à l'ennemi, puis lui applique [#0F5CD8]Attaque delphinienne[-] pendant [#1A7331]40s[-].\n\n※ [#0F5CD8]Attaque delphinienne[-] : réduit la résistance crit. de [#1A7331]20%[-].",
+   "gameId": "estia_wand_skill_q_ready",
+   "icone": "Estia_Wand_ActiveThird.webp",
+   "nomFr": "Élan delphinien",
+   "recharge": 16.0,
+   "weaponType": "Wand"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]77%[-] de l'attaque.",
+   "gameId": "estia_wand_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Symphonie océanique",
+   "recharge": null,
+   "weaponType": "Wand"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]236%[-] de l'attaque.\nRestaure les PV des alliés à portée à hauteur de [#1A7331]10%[-] des PV max + [#1A7331]200%[-] de la défense, puis leur octroie une [#0F5CD8]barrière[-] égale à [#1A7331]300%[-] de la défense pendant [#1A7331]10s[-].",
+   "gameId": "estia_wand_skill_r",
+   "icone": "Estia_Wand_UltimateSkill.webp",
+   "nomFr": "Déluge céleste",
+   "recharge": 10.0,
+   "weaponType": "Wand"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Augmente les dégâts crit. des héros alliés de [#1A7331]40%[-] pendant [#1A7331]30s[-] lorsque le héros utilise la compétence normale.\nRéduit les dégâts causés aux héros alliés par les ennemis affectés par [#0F5CD8]Attaque delphinienne[-] de [#1A7331]15%[-].",
+   "gameId": "estia_wand_passive",
+   "icone": "Estia_Wand_SkillPassive.webp",
+   "nomFr": "Compagnons aquatiques",
+   "recharge": 0.0,
+   "weaponType": "Wand"
+  }
+ ],
  "gil-thunder": [
   {
    "categorie": "NORMAL",
@@ -3471,7 +3635,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
   },
   {
    "categorie": "ACTIVE_THIRD",
-   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]72%[-] de l'attaque, puis inflige [#0F5CD8]Tir d'ancrage[-] pendant [#1A7331]20s[-].\n\n※ [#0F5CD8]Tir d'ancrage[-] : inflige des dégâts de Terre égaux à [#1A7331]10%[-] de l'attaque toutes les [#1A7331]1s[-]. Inflige des dégâts de Terre égaux à [#1A7331]120%[-] de l'attaque lorsque l'effet est retiré. Inflige des dégâts supplémentaires égaux à [#1A7331]10%[-] des dégâts subis avec une attaque spéciale ou une compétence normale de Terre.",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]72%[-] de l'attaque, puis inflige [#0F5CD8]Tir d'ancrage[-] pendant [#1A7331]20s[-].\n\n※ [#0F5CD8]Tir d'ancrage[-] : inflige des dégâts de Terre égaux à [#1A7331]10%[-] de l'attaque toutes les [#1A7331]1s[-]. Inflige des dégâts supplémentaires égaux à [#1A7331]10%[-] des dégâts subis avec une attaque spéciale ou une compétence normale de Terre. Inflige des dégâts de Terre égaux à [#1A7331]120%[-] de l'attaque lorsque l'effet est retiré.",
    "gameId": "lancelot_gauntlets_skill_q",
    "icone": "Lancelot_Gauntlets_ActiveThird.webp",
    "nomFr": "Tir d'ancrage",

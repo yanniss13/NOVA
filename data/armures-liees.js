@@ -1,6 +1,6 @@
 // Généré manuellement depuis la page publique du team builder 7dsorigin.app.
 // Héros absents de cette page : tables du jeu, via 7ds-stats/contenu-jeu.json.
-// Date de génération : 2026-10-09T23:51:42+02:00
+// Date de génération : 2026-10-28T15:02:17+01:00
 // Instantané local : aucun appel réseau n'est effectué par index.html.
 window.SEVEN_DS_ARMURES_LIEES = {
   "ban": [
@@ -63,6 +63,11 @@ window.SEVEN_DS_ARMURES_LIEES = {
     "7ds-armures-ssr/Armure liee/Arrogance adéquate.webp",
     "7ds-armures-ssr/Armure liee/Dignité dorée.webp",
     "7ds-armures-ssr/Armure liee/Violence nordique.webp"
+  ],
+  "estia": [
+    "7ds-armures-ssr/Armure liee/Inspectrice de la qualité de l'eau.webp",
+    "7ds-armures-ssr/Armure liee/Ondulations lacustres.webp",
+    "7ds-armures-ssr/Armure liee/Robe bubulle.webp"
   ],
   "gil-thunder": [
     "7ds-armures-ssr/Armure liee/Aventure exemplaire.webp",

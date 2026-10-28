@@ -1,6 +1,6 @@
 [
  {
-  "id": "cmv0oh619052t2loifd7fl630",
+  "id": "cmvrvlq1a059t2lkrn1o2lv1w",
   "gameId": "132705008",
   "slug": "100-day-earrings-never-used",
   "slugFr": "boucles-d-oreilles-des-100-jours-jamais-portees",
@@ -815,7 +815,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052u2loinlzapk6o",
+  "id": "cmvrvlq1a059u2lkrgkw5fbul",
   "gameId": "132605008",
   "slug": "100-day-necklace-never-used",
   "slugFr": "collier-des-100-jours-jamais-porte",
@@ -1459,8 +1459,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -1753,7 +1753,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052v2loizh0kuaar",
+  "id": "cmvrvlq1a059v2lkrjqonh68u",
   "gameId": "132805008",
   "slug": "100-day-ring-never-used",
   "slugFr": "anneau-des-100-jours-jamais-porte",
@@ -1845,8 +1845,8 @@
     ]
    },
    "subStatLabel": {
-    "nameEn": "All Element Attack",
-    "nameFr": "Attaque de tous les éléments"
+    "nameEn": "All Elemental Attack",
+    "nameFr": "Toutes les attaques élémentaires"
    },
    "mainReinforce": {
     "base": 0,
@@ -2397,8 +2397,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -2691,7 +2691,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050h2loi2xdc2olt",
+  "id": "cmvrvlq19057b2lkrblrrahye",
   "gameId": "132314013",
   "slug": "abyssal-predator-belt",
   "slugFr": "ceinture-de-predateur-abyssal",
@@ -2708,7 +2708,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -3049,7 +3050,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050g2loiyx7641kn",
+  "id": "cmvrvlq19057a2lkrr6gt9afd",
   "gameId": "132214013",
   "slug": "abyssal-predator-bottoms",
   "slugFr": "bas-de-predateur-abyssal",
@@ -3066,7 +3067,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -3407,7 +3409,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050i2loivqnsw1br",
+  "id": "cmvrvlq19057c2lkrnk0aqjmw",
   "gameId": "132414013",
   "slug": "abyssal-predator-combat-boots",
   "slugFr": "bottes-de-combat-de-predateur-abyssal",
@@ -3424,7 +3426,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -3765,7 +3768,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052j2loifxnuuybx",
+  "id": "cmvrvlq1a059j2lkru2c5gog5",
   "gameId": "132705013",
   "slug": "abyssal-predator-earrings",
   "slugFr": "boucles-d-oreilles-de-predateur-abyssal",
@@ -3782,7 +3785,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -4579,7 +4583,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052k2loi60z2qz60",
+  "id": "cmvrvlq1a059k2lkrduulf87m",
   "gameId": "132605013",
   "slug": "abyssal-predator-necklace",
   "slugFr": "collier-de-predateur-abyssal",
@@ -4596,7 +4600,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -5222,8 +5227,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -5516,7 +5521,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052l2loiheq2yktq",
+  "id": "cmvrvlq1a059l2lkrpqa08cfk",
   "gameId": "132805013",
   "slug": "abyssal-predator-ring",
   "slugFr": "anneau-de-predateur-abyssal",
@@ -5533,7 +5538,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -6159,8 +6165,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -6453,7 +6459,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050f2loi5q14japc",
+  "id": "cmvrvlq1905792lkrykye2zjr",
   "gameId": "132114013",
   "slug": "abyssal-predator-top",
   "slugFr": "haut-de-predateur-abyssal",
@@ -6470,7 +6476,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -6811,7 +6818,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404t72loimgx2iiil",
+  "id": "cmvrvlq1604zu2lkrpmf8xsit",
   "gameId": "132311001",
   "slug": "adventurer-s-belt",
   "slugFr": "ceinture-d-aventurier",
@@ -7138,7 +7145,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tb2loi789b5ybq",
+  "id": "cmvrvlq1604zy2lkrv89vsdpo",
   "gameId": "132312001",
   "slug": "adventurer-s-belt-132312001",
   "slugFr": "ceinture-d-aventurier-132312001",
@@ -7465,7 +7472,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tf2loim80mooxj",
+  "id": "cmvrvlq1605022lkr1mkhfles",
   "gameId": "132313001",
   "slug": "adventurer-s-belt-132313001",
   "slugFr": "ceinture-d-aventurier-132313001",
@@ -7829,7 +7836,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404t62loi335d78br",
+  "id": "cmvrvlq1604zt2lkrcfkaq8b1",
   "gameId": "132211001",
   "slug": "adventurer-s-bottoms",
   "slugFr": "bas-d-aventurier",
@@ -8156,7 +8163,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ta2loixp0fhcgv",
+  "id": "cmvrvlq1604zx2lkrvnwhzv5q",
   "gameId": "132212001",
   "slug": "adventurer-s-bottoms-132212001",
   "slugFr": "bas-d-aventurier-132212001",
@@ -8483,7 +8490,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404te2loi0vwhl2l5",
+  "id": "cmvrvlq1605012lkrfskatg4i",
   "gameId": "132213001",
   "slug": "adventurer-s-bottoms-132213001",
   "slugFr": "bas-d-aventurier-132213001",
@@ -8847,7 +8854,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404t82loi287qng78",
+  "id": "cmvrvlq1604zv2lkr28kcmc3e",
   "gameId": "132411001",
   "slug": "adventurer-s-combat-boots",
   "slugFr": "bottes-de-combat-d-aventurier",
@@ -9174,7 +9181,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tc2loimvk4v2rf",
+  "id": "cmvrvlq1604zz2lkrxrwaz2rp",
   "gameId": "132412001",
   "slug": "adventurer-s-combat-boots-132412001",
   "slugFr": "bottes-de-combat-d-aventurier-132412001",
@@ -9501,7 +9508,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tg2loiixnq2mv7",
+  "id": "cmvrvlq1605032lkrlkypce33",
   "gameId": "132413001",
   "slug": "adventurer-s-combat-boots-132413001",
   "slugFr": "bottes-de-combat-d-aventurier-132413001",
@@ -9865,7 +9872,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404t52loif0dnldvq",
+  "id": "cmvrvlq1604zs2lkr6d4sgue0",
   "gameId": "132111001",
   "slug": "adventurer-s-top",
   "slugFr": "haut-d-aventurier",
@@ -10192,7 +10199,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404t92loi0j14evdu",
+  "id": "cmvrvlq1604zw2lkrnoeihhox",
   "gameId": "132112001",
   "slug": "adventurer-s-top-132112001",
   "slugFr": "haut-d-aventurier-132112001",
@@ -10519,7 +10526,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404td2loix3mnomu0",
+  "id": "cmvrvlq1605002lkrj72ypvcw",
   "gameId": "132113001",
   "slug": "adventurer-s-top-132113001",
   "slugFr": "haut-d-aventurier-132113001",
@@ -10883,7 +10890,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zl2loib7mis5pl",
+  "id": "cmvrvlq18056b2lkrcn0j21th",
   "gameId": "132325005",
   "slug": "arachne-s-melody-belt",
   "slugFr": "ceinture-de-la-melodie-d-arachnee",
@@ -11247,7 +11254,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zk2loi4kpis0nl",
+  "id": "cmvrvlq18056a2lkr48d6p4qd",
   "gameId": "132225005",
   "slug": "arachne-s-melody-bottoms",
   "slugFr": "bas-de-la-melodie-d-arachnee",
@@ -11611,7 +11618,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zm2loi59ca8oxq",
+  "id": "cmvrvlq18056c2lkrt74xpwop",
   "gameId": "132425005",
   "slug": "arachne-s-melody-combat-boots",
   "slugFr": "bottes-de-combat-de-la-melodie-d-arachnee",
@@ -11975,7 +11982,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051s2loi3jg0sx5b",
+  "id": "cmvrvlq19058m2lkrgqnz891o",
   "gameId": "132705005",
   "slug": "arachne-s-melody-earrings",
   "slugFr": "boucles-d-oreilles-de-la-melodie-d-arachnee",
@@ -12795,7 +12802,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051t2loimo5m45oz",
+  "id": "cmvrvlq19058n2lkrwmphwm8o",
   "gameId": "132605005",
   "slug": "arachne-s-melody-necklace",
   "slugFr": "collier-de-la-melodie-d-arachnee",
@@ -12888,8 +12895,8 @@
     ]
    },
    "subStatLabel": {
-    "nameEn": "All Element Defense",
-    "nameFr": "Défense de tous les éléments"
+    "nameEn": "All Elemental Defense",
+    "nameFr": "Toutes les défenses élémentaires"
    },
    "mainReinforce": {
     "base": 0,
@@ -13440,8 +13447,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -13738,7 +13745,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051u2loi36lqh855",
+  "id": "cmvrvlq19058o2lkrklzh9hs9",
   "gameId": "132805005",
   "slug": "arachne-s-melody-ring",
   "slugFr": "anneau-de-la-melodie-d-arachnee",
@@ -14383,8 +14390,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -14681,7 +14688,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zj2loih8a9movp",
+  "id": "cmvrvlq1805692lkrr0r5hadz",
   "gameId": "132125005",
   "slug": "arachne-s-melody-top",
   "slugFr": "haut-de-la-melodie-d-arachnee",
@@ -15045,7 +15052,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404uj2loidilr1wzj",
+  "id": "cmvrvlq1605162lkr3dt55lwh",
   "gameId": "132311010",
   "slug": "artisan-s-fine-belt",
   "slugFr": "ceinture-d-artisan-delicat",
@@ -15372,7 +15379,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404un2loiw7n2kxwt",
+  "id": "cmvrvlq16051a2lkrmk6dgv1m",
   "gameId": "132312010",
   "slug": "artisan-s-fine-belt-132312010",
   "slugFr": "ceinture-d-artisan-delicat-132312010",
@@ -15699,7 +15706,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ur2loihn6gvdj8",
+  "id": "cmvrvlq16051e2lkrg04mfr92",
   "gameId": "132313010",
   "slug": "artisan-s-fine-belt-132313010",
   "slugFr": "ceinture-d-artisan-delicat-132313010",
@@ -16063,7 +16070,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ui2loiejys1zfm",
+  "id": "cmvrvlq1605152lkrcnz4jh70",
   "gameId": "132211010",
   "slug": "artisan-s-fine-bottoms",
   "slugFr": "bas-d-artisan-delicat",
@@ -16390,7 +16397,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404um2loize16tvw9",
+  "id": "cmvrvlq1605192lkrfue4sk0p",
   "gameId": "132212010",
   "slug": "artisan-s-fine-bottoms-132212010",
   "slugFr": "bas-d-artisan-delicat-132212010",
@@ -16717,7 +16724,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404uq2loieu95vnja",
+  "id": "cmvrvlq16051d2lkrdwzx4e5m",
   "gameId": "132213010",
   "slug": "artisan-s-fine-bottoms-132213010",
   "slugFr": "bas-d-artisan-delicat-132213010",
@@ -17081,7 +17088,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404uk2loitm2svvmp",
+  "id": "cmvrvlq1605172lkr6v6sdxxk",
   "gameId": "132411010",
   "slug": "artisan-s-fine-combat-boots",
   "slugFr": "bottes-de-combat-d-artisan-delicat",
@@ -17408,7 +17415,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404uo2loi0ckhk2sm",
+  "id": "cmvrvlq16051b2lkrg7kezlgy",
   "gameId": "132412010",
   "slug": "artisan-s-fine-combat-boots-132412010",
   "slugFr": "bottes-de-combat-d-artisan-delicat-132412010",
@@ -17735,7 +17742,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404us2loic7q36ou4",
+  "id": "cmvrvlq16051f2lkro6hhweoy",
   "gameId": "132413010",
   "slug": "artisan-s-fine-combat-boots-132413010",
   "slugFr": "bottes-de-combat-d-artisan-delicat-132413010",
@@ -18099,7 +18106,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404uh2loi9ut1z0cn",
+  "id": "cmvrvlq1605142lkrkoiapp1z",
   "gameId": "132111010",
   "slug": "artisan-s-fine-top",
   "slugFr": "haut-d-artisan-delicat",
@@ -18426,7 +18433,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ul2loip6fr63u3",
+  "id": "cmvrvlq1605182lkr14jktcsj",
   "gameId": "132112010",
   "slug": "artisan-s-fine-top-132112010",
   "slugFr": "haut-d-artisan-delicat-132112010",
@@ -18753,7 +18760,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404up2loib81vmwl5",
+  "id": "cmvrvlq16051c2lkr2ptbwe5j",
   "gameId": "132113010",
   "slug": "artisan-s-fine-top-132113010",
   "slugFr": "haut-d-artisan-delicat-132113010",
@@ -19117,7 +19124,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tj2loidfah69sq",
+  "id": "cmvrvlq1605062lkrpx2kefx5",
   "gameId": "132331003",
   "slug": "blessed-belt",
   "slugFr": "ceinture-benie",
@@ -19444,7 +19451,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tn2loiavuo1of2",
+  "id": "cmvrvlq16050a2lkrb7z1jp9s",
   "gameId": "132332003",
   "slug": "blessed-belt-132332003",
   "slugFr": "ceinture-benie-132332003",
@@ -19771,7 +19778,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tr2loitn3sy9dt",
+  "id": "cmvrvlq16050e2lkrelqjdrqa",
   "gameId": "132333003",
   "slug": "blessed-belt-132333003",
   "slugFr": "ceinture-benie-132333003",
@@ -20135,7 +20142,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ti2loib0mi047g",
+  "id": "cmvrvlq1605052lkraeoa7hgl",
   "gameId": "132231003",
   "slug": "blessed-bottoms",
   "slugFr": "bas-beni",
@@ -20462,7 +20469,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tm2loi9b8ja056",
+  "id": "cmvrvlq1605092lkryk0yzi0b",
   "gameId": "132232003",
   "slug": "blessed-bottoms-132232003",
   "slugFr": "bas-beni-132232003",
@@ -20789,7 +20796,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tq2loi4ikqk0lc",
+  "id": "cmvrvlq16050d2lkr2gxgxw78",
   "gameId": "132233003",
   "slug": "blessed-bottoms-132233003",
   "slugFr": "bas-beni-132233003",
@@ -21153,7 +21160,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tk2loipyjymm1g",
+  "id": "cmvrvlq1605072lkrtdnasky9",
   "gameId": "132431003",
   "slug": "blessed-combat-boots",
   "slugFr": "bottes-de-combat-benies",
@@ -21480,7 +21487,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404to2loi4ummoy6d",
+  "id": "cmvrvlq16050b2lkrmmewhl41",
   "gameId": "132432003",
   "slug": "blessed-combat-boots-132432003",
   "slugFr": "bottes-de-combat-benies-132432003",
@@ -21807,7 +21814,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ts2loia1xmdkc3",
+  "id": "cmvrvlq16050f2lkr9l0yzouk",
   "gameId": "132433003",
   "slug": "blessed-combat-boots-132433003",
   "slugFr": "bottes-de-combat-benies-132433003",
@@ -22171,7 +22178,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404th2loifc8fsrjk",
+  "id": "cmvrvlq1605042lkrczuvxpml",
   "gameId": "132131003",
   "slug": "blessed-top",
   "slugFr": "haut-beni",
@@ -22498,7 +22505,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tl2loinecutvo4",
+  "id": "cmvrvlq1605082lkrw5ygbzcx",
   "gameId": "132132003",
   "slug": "blessed-top-132132003",
   "slugFr": "haut-beni-132132003",
@@ -22825,7 +22832,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tp2loiuc7d5lla",
+  "id": "cmvrvlq16050c2lkrptfkzelo",
   "gameId": "132133003",
   "slug": "blessed-top-132133003",
   "slugFr": "haut-beni-132133003",
@@ -23189,7 +23196,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050q2loidlvrapp0",
+  "id": "cmvrvlq19057k2lkrxoev13c7",
   "gameId": "132329004",
   "slug": "bloody-scale-belt",
   "slugFr": "ceinture-d-ecailles-ensanglantees",
@@ -23622,7 +23629,7 @@
   }
  },
  {
-  "id": "cmv0oh61805112loiklwvzob1",
+  "id": "cmvrvlq19057v2lkrtsuesn1n",
   "gameId": "132702001",
   "slug": "casual-earrings",
   "slugFr": "boucles-d-oreilles-decontractees",
@@ -23949,7 +23956,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805122loij9osgp12",
+  "id": "cmvrvlq19057w2lkrxt8kjvh2",
   "gameId": "132602001",
   "slug": "casual-necklace",
   "slugFr": "collier-decontracte",
@@ -24276,7 +24283,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805132loiq227kcks",
+  "id": "cmvrvlq19057x2lkr7eafrxtt",
   "gameId": "132802001",
   "slug": "casual-ring",
   "slugFr": "anneau-decontracte",
@@ -24603,7 +24610,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704z12loif7gi1j1d",
+  "id": "cmvrvlq18055r2lkrd6u3evy3",
   "gameId": "132324030",
   "slug": "corroded-desire-belt",
   "slugFr": "ceinture-du-desir-erode",
@@ -24972,7 +24979,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704z02loiqjl1cvyd",
+  "id": "cmvrvlq18055q2lkrdsvfecps",
   "gameId": "132224030",
   "slug": "corroded-desire-bottoms",
   "slugFr": "bas-du-desir-erode",
@@ -25341,7 +25348,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704z22loijo1yof8i",
+  "id": "cmvrvlq18055s2lkr61esfjp0",
   "gameId": "132424030",
   "slug": "corroded-desire-combat-boots",
   "slugFr": "bottes-de-combat-du-desir-erode",
@@ -25710,7 +25717,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yz2loibltbg5zc",
+  "id": "cmvrvlq18055p2lkr2rnypkmq",
   "gameId": "132124030",
   "slug": "corroded-desire-top",
   "slugFr": "haut-du-desir-erode",
@@ -26079,7 +26086,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051y2loi69dj563x",
+  "id": "cmvrvlq19058s2lkrjaprt31k",
   "gameId": "132704004",
   "slug": "corrupted-watcher-s-earrings",
   "slugFr": "boucles-d-oreilles-du-vigile-corrompu",
@@ -26899,7 +26906,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051z2loi27i242en",
+  "id": "cmvrvlq19058t2lkr3wwes2va",
   "gameId": "132604004",
   "slug": "corrupted-watcher-s-necklace",
   "slugFr": "collier-du-vigile-corrompu",
@@ -27544,8 +27551,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -27842,7 +27849,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805202loizzoaivck",
+  "id": "cmvrvlq19058u2lkrargzmnml",
   "gameId": "132804004",
   "slug": "corrupted-watcher-s-ring",
   "slugFr": "anneau-du-vigile-corrompu",
@@ -28487,8 +28494,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -28785,7 +28792,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052r2loieogvmswy",
+  "id": "cmvrvlq1a059r2lkrnge7i8vp",
   "gameId": "132809003",
   "slug": "crimson-flame-oath-ring",
   "slugFr": "anneau-du-serment-de-la-flamme-cramoisie",
@@ -29218,7 +29225,7 @@
   }
  },
  {
-  "id": "cmv0oh61805212loinxdr831r",
+  "id": "cmvrvlq19058v2lkrzlbf52lq",
   "gameId": "132705007",
   "slug": "cursed-pulse-earrings",
   "slugFr": "boucles-d-oreilles-de-pulsion-maudite",
@@ -30043,7 +30050,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805222loi41tu1ybq",
+  "id": "cmvrvlq19058w2lkr2pd4jzdp",
   "gameId": "132605007",
   "slug": "cursed-pulse-necklace",
   "slugFr": "collier-de-pulsion-maudite",
@@ -30689,8 +30696,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -30991,7 +30998,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805232loi9sz2aocv",
+  "id": "cmvrvlq19058x2lkracmma7y1",
   "gameId": "132805007",
   "slug": "cursed-pulse-ring",
   "slugFr": "anneau-de-pulsion-maudite",
@@ -31637,8 +31644,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -31939,7 +31946,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052p2loix509mgb7",
+  "id": "cmvrvlq1a059p2lkrsaezo8pb",
   "gameId": "132709001",
   "slug": "dark-chaos-earrings",
   "slugFr": "boucles-d-oreilles-du-chaos-tenebreux",
@@ -32372,7 +32379,7 @@
   }
  },
  {
-  "id": "cmv0oh618050l2loivh9m04q3",
+  "id": "cmvrvlq19057f2lkra6iaf0fa",
   "gameId": "132355002",
   "slug": "deathwraith-shard-belt",
   "slugFr": "ceinture-de-l-eclat-spectral",
@@ -32389,7 +32396,8 @@
   "qualityMinLive": 150,
   "qualityMaxLive": 150,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -32730,7 +32738,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050k2loijxhjyzkp",
+  "id": "cmvrvlq19057e2lkr95gxpc9o",
   "gameId": "132255002",
   "slug": "deathwraith-shard-bottoms",
   "slugFr": "bas-de-l-eclat-spectral",
@@ -32747,7 +32755,8 @@
   "qualityMinLive": 150,
   "qualityMaxLive": 150,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -33088,7 +33097,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050m2loi0tuwpo3x",
+  "id": "cmvrvlq19057g2lkr3v6890up",
   "gameId": "132455002",
   "slug": "deathwraith-shard-combat-boots",
   "slugFr": "bottes-de-combat-de-l-eclat-spectral",
@@ -33105,7 +33114,8 @@
   "qualityMinLive": 150,
   "qualityMaxLive": 150,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -33446,7 +33456,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052m2loi6gze97yo",
+  "id": "cmvrvlq1a059m2lkrcbfu7ega",
   "gameId": "132705010",
   "slug": "deathwraith-shard-earrings",
   "slugFr": "boucles-d-oreilles-de-l-eclat-spectral",
@@ -33463,7 +33473,8 @@
   "qualityMinLive": 150,
   "qualityMaxLive": 150,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -34260,7 +34271,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052n2loig29sgyfb",
+  "id": "cmvrvlq1a059n2lkrnbhrx34q",
   "gameId": "132605010",
   "slug": "deathwraith-shard-necklace",
   "slugFr": "collier-de-l-eclat-spectral",
@@ -34277,7 +34288,8 @@
   "qualityMinLive": 150,
   "qualityMaxLive": 150,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -34903,8 +34915,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -35197,7 +35209,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052o2loiaedkgfgl",
+  "id": "cmvrvlq1a059o2lkrsso53490",
   "gameId": "132805010",
   "slug": "deathwraith-shard-ring",
   "slugFr": "anneau-de-l-eclat-spectral",
@@ -35214,7 +35226,8 @@
   "qualityMinLive": 150,
   "qualityMaxLive": 150,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -35840,8 +35853,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -36134,7 +36147,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050j2loidkxdv1c3",
+  "id": "cmvrvlq19057d2lkrlvzfbq0b",
   "gameId": "132155002",
   "slug": "deathwraith-shard-top",
   "slugFr": "haut-de-l-eclat-spectral",
@@ -36151,7 +36164,8 @@
   "qualityMinLive": 150,
   "qualityMaxLive": 150,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -36492,7 +36506,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050y2loiufsrykdc",
+  "id": "cmvrvlq19057s2lkrk3xsztdh",
   "gameId": "132701001",
   "slug": "decorative-earrings",
   "slugFr": "boucles-d-oreilles-decoratives",
@@ -36819,7 +36833,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050z2loimfn9fljk",
+  "id": "cmvrvlq19057t2lkr5d6597wi",
   "gameId": "132601001",
   "slug": "decorative-necklace",
   "slugFr": "collier-decoratif",
@@ -37146,7 +37160,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805102lois1a7azny",
+  "id": "cmvrvlq19057u2lkrdvkb1kgc",
   "gameId": "132801001",
   "slug": "decorative-ring",
   "slugFr": "anneau-decoratif",
@@ -37473,7 +37487,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704z52loi936757x2",
+  "id": "cmvrvlq18055v2lkr7uizrca8",
   "gameId": "132335005",
   "slug": "destroyer-s-obsession-belt",
   "slugFr": "ceinture-de-l-obsession-du-destructeur",
@@ -37842,7 +37856,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704z42loi5p1qr9do",
+  "id": "cmvrvlq18055u2lkrbb65sneq",
   "gameId": "132235005",
   "slug": "destroyer-s-obsession-bottoms",
   "slugFr": "bas-de-l-obsession-du-destructeur",
@@ -38211,7 +38225,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704z62loiu1yt905z",
+  "id": "cmvrvlq18055w2lkria33rwgf",
   "gameId": "132435005",
   "slug": "destroyer-s-obsession-combat-boots",
   "slugFr": "bottes-de-combat-de-l-obsession-du-destructeur",
@@ -38580,7 +38594,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704z32loi74nj2b52",
+  "id": "cmvrvlq18055t2lkr42t6mabn",
   "gameId": "132135005",
   "slug": "destroyer-s-obsession-top",
   "slugFr": "haut-de-l-obsession-du-destructeur",
@@ -38949,7 +38963,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050s2loib5usue5i",
+  "id": "cmvrvlq19057m2lkresu0apkr",
   "gameId": "132129006",
   "slug": "eye-of-the-ominous-star-top",
   "slugFr": "haut-de-l-il-de-l-etoile-sinistre",
@@ -39382,7 +39396,7 @@
   }
  },
  {
-  "id": "cmv0oh61704yx2loi8t93edvw",
+  "id": "cmvrvlq18055n2lkrf23e5be7",
   "gameId": "132334026",
   "slug": "ferocious-watcher-s-belt",
   "slugFr": "ceinture-du-vigile-feroce",
@@ -39751,7 +39765,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yw2loickf5sbub",
+  "id": "cmvrvlq18055m2lkralekh2df",
   "gameId": "132234026",
   "slug": "ferocious-watcher-s-bottoms",
   "slugFr": "bas-du-vigile-feroce",
@@ -40120,7 +40134,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yy2loibtwxwcy1",
+  "id": "cmvrvlq18055o2lkr8zhxnvf0",
   "gameId": "132434026",
   "slug": "ferocious-watcher-s-combat-boots",
   "slugFr": "bottes-de-combat-du-vigile-feroce",
@@ -40489,7 +40503,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yv2lois6uyjc3q",
+  "id": "cmvrvlq18055l2lkriuw6ei8u",
   "gameId": "132134026",
   "slug": "ferocious-watcher-s-top",
   "slugFr": "haut-du-vigile-feroce",
@@ -40858,7 +40872,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xt2loi522zaod9",
+  "id": "cmvrvlq18054j2lkrzxn7oco0",
   "gameId": "132324001",
   "slug": "fiery-essence-belt-finest",
   "slugFr": "ceinture-de-l-essence-incandescente-incomparable",
@@ -41227,7 +41241,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xp2loi6vo7x8yz",
+  "id": "cmvrvlq18054f2lkrcoofwlnn",
   "gameId": "132323004",
   "slug": "fiery-essence-belt-sturdy",
   "slugFr": "ceinture-de-l-essence-incandescente-robuste",
@@ -41601,7 +41615,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xs2loitmzgbpm5",
+  "id": "cmvrvlq18054i2lkruhnz0jz6",
   "gameId": "132224001",
   "slug": "fiery-essence-bottoms-finest",
   "slugFr": "bas-de-l-essence-incandescente-incomparable",
@@ -41970,7 +41984,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xo2loifztfb8hi",
+  "id": "cmvrvlq18054e2lkrml1g0rg9",
   "gameId": "132223004",
   "slug": "fiery-essence-bottoms-sturdy",
   "slugFr": "bas-de-l-essence-incandescente-robuste",
@@ -42344,7 +42358,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xu2loillh1ccd0",
+  "id": "cmvrvlq18054k2lkrz68d85id",
   "gameId": "132424001",
   "slug": "fiery-essence-combat-boots-finest",
   "slugFr": "bottes-de-combat-de-l-essence-incandescente-incomparables",
@@ -42713,7 +42727,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xq2loi6fz3zva5",
+  "id": "cmvrvlq18054g2lkrg4bwfud6",
   "gameId": "132423004",
   "slug": "fiery-essence-combat-boots-sturdy",
   "slugFr": "bottes-de-combat-de-l-essence-incandescente-robustes",
@@ -43087,7 +43101,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xr2loi0awux6ye",
+  "id": "cmvrvlq18054h2lkr6a3yok4u",
   "gameId": "132124001",
   "slug": "fiery-essence-top-finest",
   "slugFr": "haut-de-l-essence-incandescente-incomparable",
@@ -43456,7 +43470,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xn2loip7sp82bl",
+  "id": "cmvrvlq18054d2lkrgql307e0",
   "gameId": "132123004",
   "slug": "fiery-essence-top-sturdy",
   "slugFr": "haut-de-l-essence-incandescente-robuste",
@@ -43830,7 +43844,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051a2loigi1p88qw",
+  "id": "cmvrvlq1905842lkrrivenxgq",
   "gameId": "132704003",
   "slug": "gentle-breeze-earrings-finest",
   "slugFr": "boucles-d-oreilles-de-la-brise-legere-incomparables",
@@ -44655,7 +44669,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805172loi9welttws",
+  "id": "cmvrvlq1905812lkrvs78bsb9",
   "gameId": "132703009",
   "slug": "gentle-breeze-earrings-sturdy",
   "slugFr": "boucles-d-oreilles-de-la-brise-legere-robustes",
@@ -45485,7 +45499,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051b2loibt2qloq7",
+  "id": "cmvrvlq1905852lkr7m2lcxvx",
   "gameId": "132604003",
   "slug": "gentle-breeze-necklace-finest",
   "slugFr": "collier-de-la-brise-legere-incomparable",
@@ -46131,8 +46145,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -46433,7 +46447,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805182loisntw8vju",
+  "id": "cmvrvlq1905822lkrtlg8xqwa",
   "gameId": "132603009",
   "slug": "gentle-breeze-necklace-sturdy",
   "slugFr": "collier-de-la-brise-legere-robuste",
@@ -47080,8 +47094,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -47386,7 +47400,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051c2loi56ghqy19",
+  "id": "cmvrvlq1905862lkrd8j5ynfo",
   "gameId": "132804003",
   "slug": "gentle-breeze-ring-finest",
   "slugFr": "anneau-de-la-brise-legere-incomparable",
@@ -48032,8 +48046,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -48334,7 +48348,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805192loip2htt3kj",
+  "id": "cmvrvlq1905832lkrnlxlbhon",
   "gameId": "132803009",
   "slug": "gentle-breeze-ring-sturdy",
   "slugFr": "anneau-de-la-brise-legere-robuste",
@@ -48981,8 +48995,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -49287,7 +49301,2658 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805092loicljg8guy",
+  "id": "cmvrvlq1905732lkrrnbd4hrw",
+  "gameId": "132325007",
+  "slug": "greed-incarnate-belt",
+  "slugFr": "ceinture-de-l-avidite-incarnee",
+  "nameFr": "Ceinture de l'avidité incarnée",
+  "nameEn": "Greed Incarnate Belt",
+  "grade": "grade5",
+  "slot": "Belt",
+  "mainStat": "B_MaxHP_Equip",
+  "subStat": "I_AtkAdd_Rate",
+  "setId": "equip_t5_greed_2",
+  "reinforceMax": 5,
+  "qualityMin": 161,
+  "qualityMax": 180,
+  "qualityMinLive": 170,
+  "qualityMaxLive": 170,
+  "tierBoundaries": [
+   160,
+   180
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "I_AtkAdd_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Attack Increase",
+    "nameFr": "Augmentation de l'attaque"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "I_AtkAdd_Rate",
+    "progression": [
+     3
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "I_AtkAdd_Rate",
+    "progression": [
+     330
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     78
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     10197
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmvrvlq1905722lkrfp5x4h82",
+  "gameId": "132225007",
+  "slug": "greed-incarnate-bottoms",
+  "slugFr": "bas-de-l-avidite-incarnee",
+  "nameFr": "Bas de l'avidité incarnée",
+  "nameEn": "Greed Incarnate Bottoms",
+  "grade": "grade5",
+  "slot": "Bottom",
+  "mainStat": "B_MaxHP_Equip",
+  "subStat": "C_Critical_Dam_Rate",
+  "setId": "equip_t5_greed_2",
+  "reinforceMax": 5,
+  "qualityMin": 161,
+  "qualityMax": 180,
+  "qualityMinLive": 170,
+  "qualityMaxLive": 170,
+  "tierBoundaries": [
+   160,
+   180
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "C_Critical_Dam_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Crit Damage",
+    "nameFr": "Dégâts crit."
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "C_Critical_Dam_Rate",
+    "progression": [
+     4
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "C_Critical_Dam_Rate",
+    "progression": [
+     417
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     96
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     12493
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmvrvlq1905742lkra9cchyqz",
+  "gameId": "132425007",
+  "slug": "greed-incarnate-combat-boots",
+  "slugFr": "bottes-de-combat-de-l-avidite-incarnee",
+  "nameFr": "Bottes de combat de l'avidité incarnée",
+  "nameEn": "Greed Incarnate Combat Boots",
+  "grade": "grade5",
+  "slot": "Shoes",
+  "mainStat": "B_Def_Equip",
+  "subStat": "D_Protect_CurRes_Rate",
+  "setId": "equip_t5_greed_2",
+  "reinforceMax": 5,
+  "qualityMin": 161,
+  "qualityMax": 180,
+  "qualityMinLive": 170,
+  "qualityMaxLive": 170,
+  "tierBoundaries": [
+   160,
+   180
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "D_Protect_CurRes_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Shatter Resistance",
+    "nameFr": "Résistance au percement"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Defense",
+    "nameFr": "Défense de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "D_Protect_CurRes_Rate",
+    "progression": [
+     2
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "D_Protect_CurRes_Rate",
+    "progression": [
+     164
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     28
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     3578
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmvrvlq1a059d2lkrj1vmodzm",
+  "gameId": "132705015",
+  "slug": "greed-incarnate-earrings",
+  "slugFr": "boucles-d-oreilles-de-l-avidite-incarnee",
+  "nameFr": "Boucles d'oreilles de l'avidité incarnée",
+  "nameEn": "Greed Incarnate Earrings",
+  "grade": "grade5",
+  "slot": "Earring",
+  "mainStat": "B_MaxHP_Equip",
+  "subStat": "Buff_Time_Rate",
+  "setId": "equip_t5_greed_2",
+  "reinforceMax": 5,
+  "qualityMin": 161,
+  "qualityMax": 180,
+  "qualityMinLive": 170,
+  "qualityMaxLive": 170,
+  "tierBoundaries": [
+   160,
+   180
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101062020",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "Buff_Time_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Buff Duration Efficiency",
+    "nameFr": "Efficacité de la durée des bonus"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 1,
+    "stats": [
+     {
+      "key": "I_MaxHPAdd_Rate",
+      "max": 313,
+      "min": 156,
+      "tiers": [
+       {
+        "max": 313,
+        "min": 305,
+        "tier": 1,
+        "chance": 600
+       },
+       {
+        "max": 297,
+        "min": 281,
+        "tier": 2,
+        "chance": 1200
+       },
+       {
+        "max": 274,
+        "min": 242,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 235,
+        "min": 203,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 196,
+        "min": 156,
+        "tier": 5,
+        "chance": 3200
+       }
+      ],
+      "chance": 10000,
+      "isRate": true,
+      "nameEn": "HP Increase",
+      "nameFr": "Augmentation des PV"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 130,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 170,
+     "gold": 710,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 560,
+     "gold": 2340,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1210,
+     "gold": 5070,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1750,
+     "gold": 7370,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 80,
+     "gold": 180,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 430,
+     "gold": 980,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1420,
+     "gold": 3200,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3080,
+     "gold": 6950,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 4460,
+     "gold": 10090,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 160,
+     "gold": 280,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 880,
+     "gold": 1510,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2890,
+     "gold": 4930,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 6270,
+     "gold": 10700,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 9090,
+     "gold": 15540,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 310,
+     "gold": 480,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1700,
+     "gold": 2560,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 5580,
+     "gold": 8390,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 12100,
+     "gold": 18190,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 17550,
+     "gold": 26420,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 600,
+     "gold": 870,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 3260,
+     "gold": 4670,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 10700,
+     "gold": 15290,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 23210,
+     "gold": 33170,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 33680,
+     "gold": 48170,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "Buff_Time_Rate",
+    "progression": [
+     10
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "Buff_Time_Rate",
+    "progression": [
+     1253
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     67
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     8746
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmvrvlq1a059e2lkrqgacz505",
+  "gameId": "132605015",
+  "slug": "greed-incarnate-necklace",
+  "slugFr": "collier-de-l-avidite-incarnee",
+  "nameFr": "Collier de l'avidité incarnée",
+  "nameEn": "Greed Incarnate Necklace",
+  "grade": "grade5",
+  "slot": "Necklace",
+  "mainStat": "B_Def_Equip",
+  "subStat": "D_Protect_CurRes_Rate",
+  "setId": "equip_t5_greed_2",
+  "reinforceMax": 5,
+  "qualityMin": 161,
+  "qualityMax": 180,
+  "qualityMinLive": 170,
+  "qualityMaxLive": 170,
+  "tierBoundaries": [
+   160,
+   180
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101062020",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "D_Protect_CurRes_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Shatter Resistance",
+    "nameFr": "Résistance au percement"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Defense",
+    "nameFr": "Défense de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 1,
+    "stats": [
+     {
+      "key": "D_Protect_CurRes_Rate",
+      "max": 262,
+      "min": 130,
+      "tiers": [
+       {
+        "max": 262,
+        "min": 254,
+        "tier": 1,
+        "chance": 600
+       },
+       {
+        "max": 250,
+        "min": 234,
+        "tier": 2,
+        "chance": 1200
+       },
+       {
+        "max": 230,
+        "min": 202,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 197,
+        "min": 169,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 166,
+        "min": 130,
+        "tier": 5,
+        "chance": 3200
+       }
+      ],
+      "chance": 10000,
+      "isRate": true,
+      "nameEn": "Shatter Resistance",
+      "nameFr": "Résistance au percement"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 130,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 170,
+     "gold": 710,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 560,
+     "gold": 2340,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1210,
+     "gold": 5070,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1750,
+     "gold": 7370,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 80,
+     "gold": 180,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 430,
+     "gold": 980,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1420,
+     "gold": 3200,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3080,
+     "gold": 6950,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 4460,
+     "gold": 10090,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 160,
+     "gold": 280,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 880,
+     "gold": 1510,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2890,
+     "gold": 4930,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 6270,
+     "gold": 10700,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 9090,
+     "gold": 15540,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 310,
+     "gold": 480,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1700,
+     "gold": 2560,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 5580,
+     "gold": 8390,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 12100,
+     "gold": 18190,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 17550,
+     "gold": 26420,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 600,
+     "gold": 870,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 3260,
+     "gold": 4670,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 10700,
+     "gold": 15290,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 23210,
+     "gold": 33170,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 33680,
+     "gold": 48170,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "D_Protect_CurRes_Rate",
+    "progression": [
+     3
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "D_Protect_CurRes_Rate",
+    "progression": [
+     366
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     25
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     3226
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmvrvlq1a059f2lkrru0s60jn",
+  "gameId": "132805015",
+  "slug": "greed-incarnate-ring",
+  "slugFr": "anneau-de-l-avidite-incarnee",
+  "nameFr": "Anneau de l'avidité incarnée",
+  "nameEn": "Greed Incarnate Ring",
+  "grade": "grade5",
+  "slot": "Ring",
+  "mainStat": "B_Atk_Equip",
+  "subStat": "D_Protect_Cur_Rate",
+  "setId": "equip_t5_greed_2",
+  "reinforceMax": 5,
+  "qualityMin": 161,
+  "qualityMax": 180,
+  "qualityMinLive": 170,
+  "qualityMaxLive": 170,
+  "tierBoundaries": [
+   160,
+   180
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101062020",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "D_Protect_Cur_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Defense Shatter",
+    "nameFr": "Percement de défense"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Atk_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Attack",
+    "nameFr": "Attaque de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 1,
+    "stats": [
+     {
+      "key": "C_Critical_Dam_Rate",
+      "max": 1341,
+      "min": 669,
+      "tiers": [
+       {
+        "max": 1341,
+        "min": 1305,
+        "tier": 1,
+        "chance": 600
+       },
+       {
+        "max": 1273,
+        "min": 1205,
+        "tier": 2,
+        "chance": 1200
+       },
+       {
+        "max": 1173,
+        "min": 1037,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 1006,
+        "min": 870,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 837,
+        "min": 669,
+        "tier": 5,
+        "chance": 3200
+       }
+      ],
+      "chance": 10000,
+      "isRate": true,
+      "nameEn": "Crit Damage",
+      "nameFr": "Dégâts crit."
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 130,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 170,
+     "gold": 710,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 560,
+     "gold": 2340,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1210,
+     "gold": 5070,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1750,
+     "gold": 7370,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 80,
+     "gold": 180,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 430,
+     "gold": 980,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1420,
+     "gold": 3200,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3080,
+     "gold": 6950,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 4460,
+     "gold": 10090,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 160,
+     "gold": 280,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 880,
+     "gold": 1510,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2890,
+     "gold": 4930,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 6270,
+     "gold": 10700,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 9090,
+     "gold": 15540,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 310,
+     "gold": 480,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1700,
+     "gold": 2560,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 5580,
+     "gold": 8390,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 12100,
+     "gold": 18190,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 17550,
+     "gold": 26420,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 600,
+     "gold": 870,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 3260,
+     "gold": 4670,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 10700,
+     "gold": 15290,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 23210,
+     "gold": 33170,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 33680,
+     "gold": 48170,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "D_Protect_Cur_Rate",
+    "progression": [
+     6
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "D_Protect_Cur_Rate",
+    "progression": [
+     693
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "B_Atk_Equip",
+    "progression": [
+     18
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "B_Atk_Equip",
+    "progression": [
+     2253
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmvrvlq1905712lkrlca61w2i",
+  "gameId": "132125007",
+  "slug": "greed-incarnate-top",
+  "slugFr": "haut-de-l-avidite-incarnee",
+  "nameFr": "Haut de l'avidité incarnée",
+  "nameEn": "Greed Incarnate Top",
+  "grade": "grade5",
+  "slot": "Top",
+  "mainStat": "B_Def_Equip",
+  "subStat": "C_Critical_DamRes_Rate",
+  "setId": "equip_t5_greed_2",
+  "reinforceMax": 5,
+  "qualityMin": 161,
+  "qualityMax": 180,
+  "qualityMinLive": 170,
+  "qualityMaxLive": 170,
+  "tierBoundaries": [
+   160,
+   180
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Crit Defense",
+    "nameFr": "Défense crit."
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Defense",
+    "nameFr": "Défense de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     7
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     825
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_19",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     35
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_19",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     4563
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmvrvlq19056z2lkr312xnf26",
   "gameId": "132325002",
   "slug": "greedy-ruler-belt",
   "slugFr": "ceinture-du-souverain-cupide",
@@ -49304,7 +51969,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -49645,7 +52311,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805082loi8c73s8o1",
+  "id": "cmvrvlq19056y2lkr4pqsa4l8",
   "gameId": "132225002",
   "slug": "greedy-ruler-bottoms",
   "slugFr": "bas-du-souverain-cupide",
@@ -49662,7 +52328,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -50003,7 +52670,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050a2loivew7nthy",
+  "id": "cmvrvlq1905702lkr6gx4lp2j",
   "gameId": "132425002",
   "slug": "greedy-ruler-combat-boots",
   "slugFr": "bottes-de-combat-du-souverain-cupide",
@@ -50020,7 +52687,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -50361,7 +53029,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052d2loiutvckfnz",
+  "id": "cmvrvlq19059a2lkr6m6an5t2",
   "gameId": "132705001",
   "slug": "greedy-ruler-earrings",
   "slugFr": "boucles-d-oreilles-du-souverain-cupide",
@@ -50378,7 +53046,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -51175,7 +53844,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052e2loi94rmatqa",
+  "id": "cmvrvlq1a059b2lkrz8wks148",
   "gameId": "132605001",
   "slug": "greedy-ruler-necklace",
   "slugFr": "collier-du-souverain-cupide",
@@ -51192,7 +53861,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -51818,8 +54488,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -52112,7 +54782,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052f2loifvbj96y2",
+  "id": "cmvrvlq1a059c2lkr7nwbfwe1",
   "gameId": "132805001",
   "slug": "greedy-ruler-ring",
   "slugFr": "anneau-du-souverain-cupide",
@@ -52129,7 +54799,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -52755,8 +55426,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -53049,7 +55720,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805072loiwipl0vtq",
+  "id": "cmvrvlq19056x2lkrvrnxf6zb",
   "gameId": "132125002",
   "slug": "greedy-ruler-top",
   "slugFr": "haut-du-souverain-cupide",
@@ -53066,7 +55737,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -53407,7 +56079,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tv2loix472edob",
+  "id": "cmvrvlq16050i2lkrxn8twud7",
   "gameId": "132321005",
   "slug": "guardian-s-belt",
   "slugFr": "ceinture-du-gardien",
@@ -53734,7 +56406,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tz2loiymvuwfdm",
+  "id": "cmvrvlq16050m2lkrv6oxkts1",
   "gameId": "132322005",
   "slug": "guardian-s-belt-132322005",
   "slugFr": "ceinture-du-gardien-132322005",
@@ -54061,7 +56733,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404u32loiqqo8m43n",
+  "id": "cmvrvlq16050q2lkrzsupp9zt",
   "gameId": "132323005",
   "slug": "guardian-s-belt-132323005",
   "slugFr": "ceinture-du-gardien-132323005",
@@ -54425,7 +57097,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tu2loioih2s8ed",
+  "id": "cmvrvlq16050h2lkr3neg1iuu",
   "gameId": "132221005",
   "slug": "guardian-s-bottoms",
   "slugFr": "bas-du-gardien",
@@ -54752,7 +57424,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ty2loiwmooy23h",
+  "id": "cmvrvlq16050l2lkr5fi35ahd",
   "gameId": "132222005",
   "slug": "guardian-s-bottoms-132222005",
   "slugFr": "bas-du-gardien-132222005",
@@ -55079,7 +57751,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404u22loi9j5qoykl",
+  "id": "cmvrvlq16050p2lkrqs6hrzhj",
   "gameId": "132223005",
   "slug": "guardian-s-bottoms-132223005",
   "slugFr": "bas-du-gardien-132223005",
@@ -55443,7 +58115,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tw2loioy7kkctf",
+  "id": "cmvrvlq16050j2lkr6adgeukr",
   "gameId": "132421005",
   "slug": "guardian-s-combat-boots",
   "slugFr": "bottes-de-combat-du-gardien",
@@ -55770,7 +58442,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404u02loi9usibjdd",
+  "id": "cmvrvlq16050n2lkre96bjupw",
   "gameId": "132422005",
   "slug": "guardian-s-combat-boots-132422005",
   "slugFr": "bottes-de-combat-du-gardien-132422005",
@@ -56097,7 +58769,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404u42loi1skk4pom",
+  "id": "cmvrvlq16050r2lkr15f9e54b",
   "gameId": "132423005",
   "slug": "guardian-s-combat-boots-132423005",
   "slugFr": "bottes-de-combat-du-gardien-132423005",
@@ -56461,7 +59133,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tt2loiioym8vqt",
+  "id": "cmvrvlq16050g2lkrvunhquq5",
   "gameId": "132121005",
   "slug": "guardian-s-top",
   "slugFr": "haut-du-gardien",
@@ -56788,7 +59460,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404tx2loi6gqsordp",
+  "id": "cmvrvlq16050k2lkrj7t1u44i",
   "gameId": "132122005",
   "slug": "guardian-s-top-132122005",
   "slugFr": "haut-du-gardien-132122005",
@@ -57115,7 +59787,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404u12loi16v2pf6l",
+  "id": "cmvrvlq16050o2lkrnyv3x3gk",
   "gameId": "132123005",
   "slug": "guardian-s-top-132123005",
   "slugFr": "haut-du-gardien-132123005",
@@ -57479,7 +60151,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052a2loiqhi4epwn",
+  "id": "cmvrvlq1905972lkrr6sfadj3",
   "gameId": "132704013",
   "slug": "hymn-of-regeneration-earrings",
   "slugFr": "boucles-d-oreilles-de-l-hymne-regenerateur",
@@ -58304,7 +60976,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052b2loiiu3713fu",
+  "id": "cmvrvlq1905982lkr0ngq1kke",
   "gameId": "132604013",
   "slug": "hymn-of-regeneration-necklace",
   "slugFr": "collier-de-l-hymne-regenerateur",
@@ -58950,8 +61622,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -59252,7 +61924,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052c2loixwlkpudi",
+  "id": "cmvrvlq1905992lkr6c5sfygc",
   "gameId": "132804013",
   "slug": "hymn-of-regeneration-ring",
   "slugFr": "anneau-de-l-hymne-regenerateur",
@@ -59898,8 +62570,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -60200,7 +62872,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805242loih6gpb2ga",
+  "id": "cmvrvlq1905912lkrm2ovk60a",
   "gameId": "132704001",
   "slug": "immortal-guardian-earrings",
   "slugFr": "boucles-d-oreilles-de-gardien-immortel",
@@ -61015,7 +63687,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61905252lois8rg23jv",
+  "id": "cmvrvlq1905922lkrpe94uxj2",
   "gameId": "132604001",
   "slug": "immortal-guardian-necklace",
   "slugFr": "collier-de-gardien-immortel",
@@ -61659,8 +64331,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -61953,7 +64625,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61905262loidito5cla",
+  "id": "cmvrvlq1905932lkrxuwfeypv",
   "gameId": "132804001",
   "slug": "immortal-guardian-ring",
   "slugFr": "anneau-de-gardien-immortel",
@@ -62597,8 +65269,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -62891,7 +65563,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zd2lois0wh3gti",
+  "id": "cmvrvlq1805632lkrc7a843w0",
   "gameId": "132314016",
   "slug": "immortal-watcher-belt",
   "slugFr": "ceinture-du-vigile-immortel",
@@ -63255,7 +65927,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zc2loi13k3c04g",
+  "id": "cmvrvlq1805622lkru5uegzz0",
   "gameId": "132214016",
   "slug": "immortal-watcher-bottoms",
   "slugFr": "bas-du-vigile-immortel",
@@ -63619,7 +66291,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704ze2loiq37bwyvs",
+  "id": "cmvrvlq1805642lkrd2qbicvp",
   "gameId": "132414016",
   "slug": "immortal-watcher-combat-boots",
   "slugFr": "bottes-de-combat-du-vigile-immortel",
@@ -63983,7 +66655,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zb2loi7bxhm294",
+  "id": "cmvrvlq1805612lkrjsohdsjk",
   "gameId": "132114016",
   "slug": "immortal-watcher-top",
   "slugFr": "haut-du-vigile-immortel",
@@ -64347,7 +67019,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zx2loinfr77ryj",
+  "id": "cmvrvlq19056n2lkr1hag1wnd",
   "gameId": "132335003",
   "slug": "jet-black-crystal-belt",
   "slugFr": "ceinture-du-cristal-noir-de-jais",
@@ -64706,7 +67378,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zw2loi6tl9tx8y",
+  "id": "cmvrvlq19056m2lkr6kyauaks",
   "gameId": "132235003",
   "slug": "jet-black-crystal-bottoms",
   "slugFr": "bas-du-cristal-noir-de-jais",
@@ -65065,7 +67737,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zy2loii7mcx12a",
+  "id": "cmvrvlq19056o2lkr8l056v46",
   "gameId": "132435003",
   "slug": "jet-black-crystal-combat-boots",
   "slugFr": "bottes-de-combat-du-cristal-noir-de-jais",
@@ -65424,7 +68096,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zv2loibk7zjzpg",
+  "id": "cmvrvlq19056l2lkruzawjpg7",
   "gameId": "132135003",
   "slug": "jet-black-crystal-top",
   "slugFr": "haut-du-cristal-noir-de-jais",
@@ -65783,7 +68455,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zp2loiy6s55s63",
+  "id": "cmvrvlq18056f2lkretwp2o7c",
   "gameId": "132325006",
   "slug": "life-crystal-belt",
   "slugFr": "ceinture-du-cristal-de-vie",
@@ -66147,7 +68819,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zo2loir4e4zo7t",
+  "id": "cmvrvlq18056e2lkr7h0cgcov",
   "gameId": "132225006",
   "slug": "life-crystal-bottoms",
   "slugFr": "bas-du-cristal-de-vie",
@@ -66511,7 +69183,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zq2loiyehg20ec",
+  "id": "cmvrvlq18056g2lkryajk26zh",
   "gameId": "132425006",
   "slug": "life-crystal-combat-boots",
   "slugFr": "bottes-de-combat-du-cristal-de-vie",
@@ -66875,7 +69547,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051v2loi0dyks3s7",
+  "id": "cmvrvlq19058p2lkr6belanna",
   "gameId": "132705006",
   "slug": "life-crystal-earrings",
   "slugFr": "boucles-d-oreilles-du-cristal-de-vie",
@@ -67695,7 +70367,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051w2loilr7h1i54",
+  "id": "cmvrvlq19058q2lkrt7omcreb",
   "gameId": "132605006",
   "slug": "life-crystal-necklace",
   "slugFr": "collier-du-cristal-de-vie",
@@ -67788,8 +70460,8 @@
     ]
    },
    "subStatLabel": {
-    "nameEn": "All Element Defense",
-    "nameFr": "Défense de tous les éléments"
+    "nameEn": "All Elemental Defense",
+    "nameFr": "Toutes les défenses élémentaires"
    },
    "mainReinforce": {
     "base": 0,
@@ -68340,8 +71012,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -68638,7 +71310,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051x2loi4gc4w0mt",
+  "id": "cmvrvlq19058r2lkrjlpp44ct",
   "gameId": "132805006",
   "slug": "life-crystal-ring",
   "slugFr": "anneau-du-cristal-de-vie",
@@ -69283,8 +71955,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -69581,7 +72253,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zn2loilzf33l89",
+  "id": "cmvrvlq18056d2lkrqeuwfv9z",
   "gameId": "132125006",
   "slug": "life-crystal-top",
   "slugFr": "haut-du-cristal-de-vie",
@@ -69945,7 +72617,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zh2loil6vhppmv",
+  "id": "cmvrvlq1805672lkr9gwiw26a",
   "gameId": "132325004",
   "slug": "mad-miner-belt",
   "slugFr": "ceinture-du-mineur-fou",
@@ -70314,7 +72986,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zg2loispd0z9ub",
+  "id": "cmvrvlq1805662lkr2yppj9nn",
   "gameId": "132225004",
   "slug": "mad-miner-bottoms",
   "slugFr": "bas-du-mineur-fou",
@@ -70683,7 +73355,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zi2loicxk8h9sp",
+  "id": "cmvrvlq1805682lkrhwdpkwfh",
   "gameId": "132425004",
   "slug": "mad-miner-combat-boots",
   "slugFr": "bottes-de-combat-du-mineur-fou",
@@ -71052,7 +73724,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051p2loiym8fgpvi",
+  "id": "cmvrvlq19058j2lkrqzukk4yw",
   "gameId": "132705004",
   "slug": "mad-miner-earrings",
   "slugFr": "boucles-d-oreilles-du-mineur-fou",
@@ -71877,7 +74549,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051q2loipa1k30nu",
+  "id": "cmvrvlq19058k2lkrhlg06gmb",
   "gameId": "132605004",
   "slug": "mad-miner-necklace",
   "slugFr": "collier-du-mineur-fou",
@@ -71971,8 +74643,8 @@
     ]
    },
    "subStatLabel": {
-    "nameEn": "All Element Defense",
-    "nameFr": "Défense de tous les éléments"
+    "nameEn": "All Elemental Defense",
+    "nameFr": "Toutes les défenses élémentaires"
    },
    "mainReinforce": {
     "base": 0,
@@ -72523,8 +75195,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -72825,7 +75497,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051r2loi8fkrt03q",
+  "id": "cmvrvlq19058l2lkr6220qkww",
   "gameId": "132805004",
   "slug": "mad-miner-ring",
   "slugFr": "anneau-du-mineur-fou",
@@ -73471,8 +76143,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -73773,7 +76445,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zf2loif3iwg2w6",
+  "id": "cmvrvlq1805652lkrs6lg2h6d",
   "gameId": "132125004",
   "slug": "mad-miner-top",
   "slugFr": "haut-du-mineur-fou",
@@ -74142,7 +76814,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yh2loi5uxm0sml",
+  "id": "cmvrvlq1805572lkrl85hccuf",
   "gameId": "132314005",
   "slug": "noble-hero-s-belt-finest",
   "slugFr": "ceinture-du-noble-heros-incomparable",
@@ -74516,7 +77188,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yd2loit8p4plhr",
+  "id": "cmvrvlq1805532lkrn7a8dqk8",
   "gameId": "132313019",
   "slug": "noble-hero-s-belt-sturdy",
   "slugFr": "ceinture-du-noble-heros-robuste",
@@ -74880,7 +77552,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yg2loiv9c330nm",
+  "id": "cmvrvlq1805562lkr6lh16e78",
   "gameId": "132214005",
   "slug": "noble-hero-s-bottoms-finest",
   "slugFr": "bas-du-noble-heros-incomparable",
@@ -75254,7 +77926,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yc2loibkcpebik",
+  "id": "cmvrvlq1805522lkratrlmsqv",
   "gameId": "132213019",
   "slug": "noble-hero-s-bottoms-sturdy",
   "slugFr": "bas-du-noble-heros-robuste",
@@ -75618,7 +78290,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yi2loiyb12yt8b",
+  "id": "cmvrvlq1805582lkrdzfndioy",
   "gameId": "132414005",
   "slug": "noble-hero-s-combat-boots-finest",
   "slugFr": "bottes-de-combat-du-noble-heros-incomparables",
@@ -75992,7 +78664,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704ye2loinlfu2c45",
+  "id": "cmvrvlq1805542lkrnxveskkm",
   "gameId": "132413019",
   "slug": "noble-hero-s-combat-boots-sturdy",
   "slugFr": "bottes-de-combat-du-noble-heros-robustes",
@@ -76356,7 +79028,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051m2loiaiz0wibs",
+  "id": "cmvrvlq19058g2lkrm8no83cd",
   "gameId": "132704007",
   "slug": "noble-hero-s-earrings-finest",
   "slugFr": "boucles-d-oreilles-du-noble-heros-incomparables",
@@ -77186,7 +79858,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051j2loivzi4uqcv",
+  "id": "cmvrvlq19058d2lkrrwj8r349",
   "gameId": "132703018",
   "slug": "noble-hero-s-earrings-sturdy",
   "slugFr": "boucles-d-oreilles-du-noble-heros-robustes",
@@ -78006,7 +80678,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051n2loitk7as0wu",
+  "id": "cmvrvlq19058h2lkrq9qu4ss2",
   "gameId": "132604007",
   "slug": "noble-hero-s-necklace-finest",
   "slugFr": "collier-du-noble-heros-incomparable",
@@ -78653,8 +81325,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -78959,7 +81631,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051k2loixlpegmg4",
+  "id": "cmvrvlq19058e2lkrrwnlaelu",
   "gameId": "132603018",
   "slug": "noble-hero-s-necklace-sturdy",
   "slugFr": "collier-du-noble-heros-robuste",
@@ -79604,8 +82276,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -79902,7 +82574,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051o2loi0yi0svkt",
+  "id": "cmvrvlq19058i2lkrhsu9ybe7",
   "gameId": "132804007",
   "slug": "noble-hero-s-ring-finest",
   "slugFr": "anneau-du-noble-heros-incomparable",
@@ -79997,8 +82669,8 @@
     ]
    },
    "subStatLabel": {
-    "nameEn": "All Element Attack",
-    "nameFr": "Attaque de tous les éléments"
+    "nameEn": "All Elemental Attack",
+    "nameFr": "Toutes les attaques élémentaires"
    },
    "mainReinforce": {
     "base": 0,
@@ -80549,8 +83221,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -80855,7 +83527,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051l2loiki7e4z8t",
+  "id": "cmvrvlq19058f2lkrp3moc82t",
   "gameId": "132803018",
   "slug": "noble-hero-s-ring-sturdy",
   "slugFr": "anneau-du-noble-heros-robuste",
@@ -80948,8 +83620,8 @@
     ]
    },
    "subStatLabel": {
-    "nameEn": "All Element Attack",
-    "nameFr": "Attaque de tous les éléments"
+    "nameEn": "All Elemental Attack",
+    "nameFr": "Toutes les attaques élémentaires"
    },
    "mainReinforce": {
     "base": 0,
@@ -81500,8 +84172,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -81798,7 +84470,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yf2loioibh8hyk",
+  "id": "cmvrvlq1805552lkr9g6ugh7k",
   "gameId": "132114005",
   "slug": "noble-hero-s-top-finest",
   "slugFr": "haut-du-noble-heros-incomparable",
@@ -82172,7 +84844,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yb2loi4bhmav0m",
+  "id": "cmvrvlq1805512lkrin2wdkti",
   "gameId": "132113019",
   "slug": "noble-hero-s-top-sturdy",
   "slugFr": "haut-du-noble-heros-robuste",
@@ -82536,7 +85208,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052w2loi8v9z8m5w",
+  "id": "cmvrvlq1a059w2lkr2q1ke0k0",
   "gameId": "132705009",
   "slug": "oasis-whisper-earrings",
   "slugFr": "boucles-d-oreilles-du-murmure-de-l-oasis",
@@ -82919,7 +85591,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052x2loirqzml4o9",
+  "id": "cmvrvlq1a059x2lkr113r69l9",
   "gameId": "132605009",
   "slug": "oasis-whisper-necklace",
   "slugFr": "collier-du-murmure-de-l-oasis",
@@ -83302,7 +85974,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052y2loinibp9v97",
+  "id": "cmvrvlq1a059y2lkr9gzd0dj6",
   "gameId": "132805009",
   "slug": "oasis-whisper-ring",
   "slugFr": "anneau-du-murmure-de-l-oasis",
@@ -83396,8 +86068,8 @@
     ]
    },
    "subStatLabel": {
-    "nameEn": "All Element Attack",
-    "nameFr": "Attaque de tous les éléments"
+    "nameEn": "All Elemental Attack",
+    "nameFr": "Toutes les attaques élémentaires"
    },
    "mainReinforce": {
     "base": 0,
@@ -83685,7 +86357,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052s2loic8us4muy",
+  "id": "cmvrvlq1a059s2lkrxxgbs2ni",
   "gameId": "132609004",
   "slug": "oath-talisman-necklace",
   "slugFr": "collier-au-talisman-du-serment",
@@ -84118,7 +86790,7 @@
   }
  },
  {
-  "id": "cmv0oh61704z92loid2pv2l3z",
+  "id": "cmvrvlq18055z2lkrl8xgc25d",
   "gameId": "132334029",
   "slug": "observer-of-truth-belt",
   "slugFr": "ceinture-de-l-observateur-de-la-verite",
@@ -84487,7 +87159,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704z82loi4hvy45v1",
+  "id": "cmvrvlq18055y2lkrv2owd5x8",
   "gameId": "132234029",
   "slug": "observer-of-truth-bottoms",
   "slugFr": "bas-de-l-observateur-de-la-verite",
@@ -84856,7 +87528,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704za2loiou09wzwc",
+  "id": "cmvrvlq1805602lkrd4ajvhto",
   "gameId": "132434029",
   "slug": "observer-of-truth-combat-boots",
   "slugFr": "bottes-de-combat-de-l-observateur-de-la-verite",
@@ -85225,7 +87897,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704z72loirjbqhy9r",
+  "id": "cmvrvlq18055x2lkr8p126jon",
   "gameId": "132134029",
   "slug": "observer-of-truth-top",
   "slugFr": "haut-de-l-observateur-de-la-verite",
@@ -85594,7 +88266,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805142loi8y1iaj4c",
+  "id": "cmvrvlq19057y2lkrtoy6e57k",
   "gameId": "132703001",
   "slug": "ordinary-earrings",
   "slugFr": "boucles-d-oreilles-ordinaires",
@@ -86414,7 +89086,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805152loi62iffqyw",
+  "id": "cmvrvlq19057z2lkrxeq85yys",
   "gameId": "132603001",
   "slug": "ordinary-necklace",
   "slugFr": "collier-ordinaire",
@@ -87059,8 +89731,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -87357,7 +90029,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805162loiog0f9h3d",
+  "id": "cmvrvlq1905802lkr2h509cx5",
   "gameId": "132803001",
   "slug": "ordinary-ring",
   "slugFr": "anneau-ordinaire",
@@ -88002,8 +90674,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -88300,7 +90972,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404u72loiw5o7gigw",
+  "id": "cmvrvlq16050u2lkrg6u0rdwi",
   "gameId": "132321008",
   "slug": "pursuer-s-belt",
   "slugFr": "ceinture-du-poursuiveur",
@@ -88627,7 +91299,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ub2loiatzk5inl",
+  "id": "cmvrvlq16050y2lkre548zvay",
   "gameId": "132322008",
   "slug": "pursuer-s-belt-132322008",
   "slugFr": "ceinture-du-poursuiveur-132322008",
@@ -88954,7 +91626,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404uf2loioxghwcwo",
+  "id": "cmvrvlq1605122lkregswjk0h",
   "gameId": "132323008",
   "slug": "pursuer-s-belt-132323008",
   "slugFr": "ceinture-du-poursuiveur-132323008",
@@ -89318,7 +91990,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404u62loibynfvrqx",
+  "id": "cmvrvlq16050t2lkriwyux96t",
   "gameId": "132221008",
   "slug": "pursuer-s-bottoms",
   "slugFr": "bas-du-poursuiveur",
@@ -89645,7 +92317,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ua2loi1yr2k7sf",
+  "id": "cmvrvlq16050x2lkrtjg5g784",
   "gameId": "132222008",
   "slug": "pursuer-s-bottoms-132222008",
   "slugFr": "bas-du-poursuiveur-132222008",
@@ -89972,7 +92644,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ue2loiz0g9rr83",
+  "id": "cmvrvlq1605112lkrczcnoo4x",
   "gameId": "132223008",
   "slug": "pursuer-s-bottoms-132223008",
   "slugFr": "bas-du-poursuiveur-132223008",
@@ -90336,7 +93008,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404u82loi88hvmrjy",
+  "id": "cmvrvlq16050v2lkrretcqxb1",
   "gameId": "132421008",
   "slug": "pursuer-s-combat-boots",
   "slugFr": "bottes-de-combat-du-poursuiveur",
@@ -90663,7 +93335,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404uc2loizgxfs7p5",
+  "id": "cmvrvlq16050z2lkrxel4qew4",
   "gameId": "132422008",
   "slug": "pursuer-s-combat-boots-132422008",
   "slugFr": "bottes-de-combat-du-poursuiveur-132422008",
@@ -90990,7 +93662,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ug2loihn4k4uyp",
+  "id": "cmvrvlq1605132lkr9t7tccw4",
   "gameId": "132423008",
   "slug": "pursuer-s-combat-boots-132423008",
   "slugFr": "bottes-de-combat-du-poursuiveur-132423008",
@@ -91354,7 +94026,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404u52loi8q3s48pk",
+  "id": "cmvrvlq16050s2lkrfuk7ua3u",
   "gameId": "132121008",
   "slug": "pursuer-s-top",
   "slugFr": "haut-du-poursuiveur",
@@ -91681,7 +94353,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404u92loi6180797x",
+  "id": "cmvrvlq16050w2lkrn85qmjub",
   "gameId": "132122008",
   "slug": "pursuer-s-top-132122008",
   "slugFr": "haut-du-poursuiveur-132122008",
@@ -92008,7 +94680,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61404ud2loisrrtj112",
+  "id": "cmvrvlq1605102lkrl8k3dhr9",
   "gameId": "132123008",
   "slug": "pursuer-s-top-132123008",
   "slugFr": "haut-du-poursuiveur-132123008",
@@ -92372,7 +95044,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yp2loixqljj3ve",
+  "id": "cmvrvlq18055f2lkriehj1lko",
   "gameId": "132324028",
   "slug": "revived-nightmare-belt",
   "slugFr": "ceinture-du-cauchemar-ressuscite",
@@ -92741,7 +95413,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yo2loi5qg5gn2d",
+  "id": "cmvrvlq18055e2lkrxx9kwthf",
   "gameId": "132224028",
   "slug": "revived-nightmare-bottoms",
   "slugFr": "bas-du-cauchemar-ressuscite",
@@ -93110,7 +95782,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yq2loirjc4i3og",
+  "id": "cmvrvlq18055g2lkr4vekovap",
   "gameId": "132424028",
   "slug": "revived-nightmare-combat-boots",
   "slugFr": "bottes-de-combat-du-cauchemar-ressuscite",
@@ -93479,7 +96151,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yn2loitewuiut4",
+  "id": "cmvrvlq18055d2lkr4hfzv7wa",
   "gameId": "132124028",
   "slug": "revived-nightmare-top",
   "slugFr": "haut-du-cauchemar-ressuscite",
@@ -93848,7 +96520,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zt2loiptuwi8wl",
+  "id": "cmvrvlq18056j2lkr2idowdtl",
   "gameId": "132325001",
   "slug": "ruler-of-the-ocean-belt",
   "slugFr": "ceinture-du-souverain-des-oceans",
@@ -94207,7 +96879,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zs2loiscjrzem2",
+  "id": "cmvrvlq18056i2lkr1kz9ywbv",
   "gameId": "132225001",
   "slug": "ruler-of-the-ocean-bottoms",
   "slugFr": "bas-du-souverain-des-oceans",
@@ -94566,7 +97238,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zu2loi0zmhacpi",
+  "id": "cmvrvlq19056k2lkr5bt4j87b",
   "gameId": "132425001",
   "slug": "ruler-of-the-ocean-combat-boots",
   "slugFr": "bottes-de-combat-du-souverain-des-oceans",
@@ -94925,7 +97597,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zr2loi0y53mcxd",
+  "id": "cmvrvlq18056h2lkr4iz4un55",
   "gameId": "132125001",
   "slug": "ruler-of-the-ocean-top",
   "slugFr": "haut-du-souverain-des-oceans",
@@ -95284,7 +97956,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604y92loimkgs3qf8",
+  "id": "cmvrvlq18054z2lkrgi49l90f",
   "gameId": "132324004",
   "slug": "scorching-gust-belt-finest",
   "slugFr": "ceinture-de-la-rafale-brulante-incomparable",
@@ -95653,7 +98325,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604y52loilvqj33u9",
+  "id": "cmvrvlq18054v2lkrwpqz96i7",
   "gameId": "132323016",
   "slug": "scorching-gust-belt-sturdy",
   "slugFr": "ceinture-de-la-rafale-brulante-robuste",
@@ -96027,7 +98699,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604y82loi5ha035wt",
+  "id": "cmvrvlq18054y2lkrxv19c81s",
   "gameId": "132224004",
   "slug": "scorching-gust-bottoms-finest",
   "slugFr": "bas-de-la-rafale-brulante-incomparable",
@@ -96396,7 +99068,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604y42loicjps2d2p",
+  "id": "cmvrvlq18054u2lkrn21yjbw8",
   "gameId": "132223016",
   "slug": "scorching-gust-bottoms-sturdy",
   "slugFr": "bas-de-la-rafale-brulante-robuste",
@@ -96770,7 +99442,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604ya2loi6f2pobhc",
+  "id": "cmvrvlq1805502lkrntemgh25",
   "gameId": "132424004",
   "slug": "scorching-gust-combat-boots-finest",
   "slugFr": "bottes-de-combat-de-la-rafale-brulante-incomparables",
@@ -97139,7 +99811,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604y62loihnn6qzk0",
+  "id": "cmvrvlq18054w2lkr27ml5tch",
   "gameId": "132423016",
   "slug": "scorching-gust-combat-boots-sturdy",
   "slugFr": "bottes-de-combat-de-la-rafale-brulante-robustes",
@@ -97513,7 +100185,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051g2loialdpibpg",
+  "id": "cmvrvlq19058a2lkrj6vxxlkh",
   "gameId": "132704006",
   "slug": "scorching-gust-earrings-finest",
   "slugFr": "boucles-d-oreilles-de-la-rafale-brulante-incomparable",
@@ -98338,7 +101010,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051d2loigcvkg7k3",
+  "id": "cmvrvlq1905872lkrrqypu8lg",
   "gameId": "132703015",
   "slug": "scorching-gust-earrings-sturdy",
   "slugFr": "boucles-d-oreilles-de-la-rafale-brulante-robustes",
@@ -99168,7 +101840,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051h2loil3fhs55x",
+  "id": "cmvrvlq19058b2lkrsk56sept",
   "gameId": "132604006",
   "slug": "scorching-gust-necklace-finest",
   "slugFr": "collier-de-la-rafale-brulante-incomparable",
@@ -99814,8 +102486,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -100116,7 +102788,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051e2loisziunvh8",
+  "id": "cmvrvlq1905882lkr64zzvr1k",
   "gameId": "132603015",
   "slug": "scorching-gust-necklace-sturdy",
   "slugFr": "collier-de-la-rafale-brulante-robuste",
@@ -100763,8 +103435,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -101069,7 +103741,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051i2loi0dezaw9j",
+  "id": "cmvrvlq19058c2lkrdgdox2sg",
   "gameId": "132804006",
   "slug": "scorching-gust-ring-finest",
   "slugFr": "anneau-de-la-rafale-brulante-incomparable",
@@ -101163,8 +103835,8 @@
     ]
    },
    "subStatLabel": {
-    "nameEn": "All Element Attack",
-    "nameFr": "Attaque de tous les éléments"
+    "nameEn": "All Elemental Attack",
+    "nameFr": "Toutes les attaques élémentaires"
    },
    "mainReinforce": {
     "base": 0,
@@ -101715,8 +104387,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -102017,7 +104689,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618051f2loimkvx8sgx",
+  "id": "cmvrvlq1905892lkrpl1g5883",
   "gameId": "132803015",
   "slug": "scorching-gust-ring-sturdy",
   "slugFr": "anneau-de-la-rafale-brulante-robuste",
@@ -102112,8 +104784,8 @@
     ]
    },
    "subStatLabel": {
-    "nameEn": "All Element Attack",
-    "nameFr": "Attaque de tous les éléments"
+    "nameEn": "All Elemental Attack",
+    "nameFr": "Toutes les attaques élémentaires"
    },
    "mainReinforce": {
     "base": 0,
@@ -102664,8 +105336,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -102970,7 +105642,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604y72loip8b1g8pc",
+  "id": "cmvrvlq18054x2lkrmynhp0sc",
   "gameId": "132124004",
   "slug": "scorching-gust-top-finest",
   "slugFr": "haut-de-la-rafale-brulante-incomparable",
@@ -103339,7 +106011,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604y32loifzsoitsh",
+  "id": "cmvrvlq18054t2lkrpnb0o4dy",
   "gameId": "132123016",
   "slug": "scorching-gust-top-sturdy",
   "slugFr": "haut-de-la-rafale-brulante-robuste",
@@ -103713,7 +106385,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050w2loilpkg6fcf",
+  "id": "cmvrvlq19057q2lkruhwlwqqk",
   "gameId": "132355003",
   "slug": "sea-wanderer-belt",
   "slugFr": "ceinture-de-vagabond-des-mers",
@@ -104072,7 +106744,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050v2loiegwlrfr7",
+  "id": "cmvrvlq19057p2lkrviqwlz3m",
   "gameId": "132255003",
   "slug": "sea-wanderer-bottoms",
   "slugFr": "bas-de-vagabond-des-mers",
@@ -104431,7 +107103,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050x2loirzr259jv",
+  "id": "cmvrvlq19057r2lkrcup7fuuu",
   "gameId": "132455003",
   "slug": "sea-wanderer-combat-boots",
   "slugFr": "bottes-de-combat-de-vagabond-des-mers",
@@ -104790,7 +107462,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050u2loiz2pr5p7d",
+  "id": "cmvrvlq19057o2lkrggyec0vm",
   "gameId": "132155003",
   "slug": "sea-wanderer-top",
   "slugFr": "haut-de-vagabond-des-mers",
@@ -105149,7 +107821,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050d2loi699kreu3",
+  "id": "cmvrvlq1905772lkr5ut7win2",
   "gameId": "132314027",
   "slug": "shadow-spider-breath-belt",
   "slugFr": "ceinture-de-l-araignee-de-l-ombre",
@@ -105166,7 +107838,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -105507,7 +108180,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050c2loit7e0mkrt",
+  "id": "cmvrvlq1905762lkr25eh7tdf",
   "gameId": "132214027",
   "slug": "shadow-spider-breath-bottoms",
   "slugFr": "bas-de-l-araignee-de-l-ombre",
@@ -105524,7 +108197,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -105865,7 +108539,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050e2loial8ei9v8",
+  "id": "cmvrvlq1905782lkre8auoutu",
   "gameId": "132414027",
   "slug": "shadow-spider-breath-combat-boots",
   "slugFr": "bottes-de-combat-de-l-araignee-de-l-ombre",
@@ -105882,7 +108556,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -106223,7 +108898,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052g2loi8vk50va1",
+  "id": "cmvrvlq1a059g2lkrfiljuxyf",
   "gameId": "132705011",
   "slug": "shadow-spider-breath-earrings",
   "slugFr": "boucles-d-oreilles-de-l-araignee-de-l-ombre",
@@ -106240,7 +108915,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -107037,7 +109713,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052h2loi3dassv5g",
+  "id": "cmvrvlq1a059h2lkrds4j9i60",
   "gameId": "132605011",
   "slug": "shadow-spider-breath-necklace",
   "slugFr": "collier-de-l-araignee-de-l-ombre",
@@ -107054,7 +109730,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -107680,8 +110357,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -107974,7 +110651,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052i2loikc9nbis4",
+  "id": "cmvrvlq1a059i2lkrrzpkjo94",
   "gameId": "132805011",
   "slug": "shadow-spider-breath-ring",
   "slugFr": "anneau-de-l-araignee-de-l-ombre",
@@ -107991,7 +110668,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -108065,8 +110743,8 @@
     ]
    },
    "subStatLabel": {
-    "nameEn": "All Element Attack",
-    "nameFr": "Attaque de tous les éléments"
+    "nameEn": "All Elemental Attack",
+    "nameFr": "Toutes les attaques élémentaires"
    },
    "mainReinforce": {
     "base": 0,
@@ -108617,8 +111295,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -108911,7 +111589,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050b2loihweoynu3",
+  "id": "cmvrvlq1905752lkr6r6tg8uf",
   "gameId": "132114027",
   "slug": "shadow-spider-breath-top",
   "slugFr": "haut-de-l-araignee-de-l-ombre",
@@ -108928,7 +111606,8 @@
   "qualityMinLive": 120,
   "qualityMaxLive": 160,
   "tierBoundaries": [
-   119
+   119,
+   160
   ],
   "growth": {
    "promotion": [
@@ -109269,7 +111948,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh619052q2loibnznbd9l",
+  "id": "cmvrvlq1a059q2lkrjlsklt5m",
   "gameId": "132609002",
   "slug": "shadowstorm-craftwork-necklace",
   "slugFr": "collier-d-artisanat-de-la-tempete-des-ombres",
@@ -109702,7 +112381,7 @@
   }
  },
  {
-  "id": "cmv0oh618050o2loiqeqnn2vc",
+  "id": "cmvrvlq19057i2lkr7lmjnfsv",
   "gameId": "132229002",
   "slug": "silent-watcher-bottoms",
   "slugFr": "bas-du-vigile-silencieux",
@@ -110135,7 +112814,7 @@
   }
  },
  {
-  "id": "cmv0oh61704yl2loi5oh1jsed",
+  "id": "cmvrvlq18055b2lkrrzhs7vth",
   "gameId": "132334022",
   "slug": "star-guardian-belt",
   "slugFr": "ceinture-du-gardien-des-etoiles",
@@ -110504,7 +113183,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yk2lois7594r60",
+  "id": "cmvrvlq18055a2lkrtckrw5f8",
   "gameId": "132234022",
   "slug": "star-guardian-bottoms",
   "slugFr": "bas-du-gardien-des-etoiles",
@@ -110873,7 +113552,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704ym2loie49owp9k",
+  "id": "cmvrvlq18055c2lkrj8go1e0l",
   "gameId": "132434022",
   "slug": "star-guardian-combat-boots",
   "slugFr": "bottes-de-combat-du-gardien-des-etoiles",
@@ -111242,7 +113921,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yj2loim0zr06is",
+  "id": "cmvrvlq1805592lkrvfsffe1r",
   "gameId": "132134022",
   "slug": "star-guardian-top",
   "slugFr": "haut-du-gardien-des-etoiles",
@@ -111611,7 +114290,1126 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604y12loirscp9oer",
+  "id": "cmvrvlq19058y2lkr657dynkt",
+  "gameId": "132705016",
+  "slug": "sweet-pumpkin-candy-earrings",
+  "slugFr": "boucles-d-oreilles-en-bonbon-a-la-citrouille",
+  "nameFr": "Boucles d'oreilles en bonbon à la citrouille",
+  "nameEn": "Sweet Pumpkin Candy Earrings",
+  "grade": "grade5",
+  "slot": "Earring",
+  "mainStat": "B_MaxHP_Equip",
+  "subStat": "MF_ChargeEffic_Rate",
+  "setId": "equip_t5_halloween",
+  "reinforceMax": 5,
+  "qualityMin": 106,
+  "qualityMax": 120,
+  "qualityMinLive": 120,
+  "qualityMaxLive": 120,
+  "tierBoundaries": [
+   105,
+   120
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101062020",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "MF_ChargeEffic_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Magic Charging Efficiency",
+    "nameFr": "Efficacité de recharge de la magie"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 1,
+    "stats": [
+     {
+      "key": "I_MaxHPAdd_Rate",
+      "max": 235,
+      "min": 235,
+      "chance": 10000,
+      "isRate": true,
+      "nameEn": "HP Increase",
+      "nameFr": "Augmentation des PV"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 130,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 170,
+     "gold": 710,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 560,
+     "gold": 2340,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1210,
+     "gold": 5070,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1750,
+     "gold": 7370,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 80,
+     "gold": 180,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 430,
+     "gold": 980,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1420,
+     "gold": 3200,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3080,
+     "gold": 6950,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 4460,
+     "gold": 10090,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 160,
+     "gold": 280,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 880,
+     "gold": 1510,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2890,
+     "gold": 4930,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 6270,
+     "gold": 10700,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 9090,
+     "gold": 15540,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 310,
+     "gold": 480,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1700,
+     "gold": 2560,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 5580,
+     "gold": 8390,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 12100,
+     "gold": 18190,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 17550,
+     "gold": 26420,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 600,
+     "gold": 870,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 3260,
+     "gold": 4670,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 10700,
+     "gold": 15290,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 23210,
+     "gold": 33170,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 33680,
+     "gold": 48170,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_18",
+    "abilityType": "MF_ChargeEffic_Rate",
+    "progression": [
+     14
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_18",
+    "abilityType": "MF_ChargeEffic_Rate",
+    "progression": [
+     753
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_18",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     82
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_18",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     4721
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmvrvlq19058z2lkrqtjjin58",
+  "gameId": "132605016",
+  "slug": "sweet-pumpkin-candy-necklace",
+  "slugFr": "collier-en-bonbon-a-la-citrouille",
+  "nameFr": "Collier en bonbon à la citrouille",
+  "nameEn": "Sweet Pumpkin Candy Necklace",
+  "grade": "grade5",
+  "slot": "Necklace",
+  "mainStat": "B_Def_Equip",
+  "subStat": "C_Critical_DamRes_Rate",
+  "setId": "equip_t5_halloween",
+  "reinforceMax": 5,
+  "qualityMin": 106,
+  "qualityMax": 120,
+  "qualityMinLive": 120,
+  "qualityMaxLive": 120,
+  "tierBoundaries": [
+   105,
+   120
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101062020",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Crit Defense",
+    "nameFr": "Défense crit."
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Defense",
+    "nameFr": "Défense de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 1,
+    "stats": [
+     {
+      "key": "I_DefAdd_Rate",
+      "max": 320,
+      "min": 320,
+      "chance": 10000,
+      "isRate": true,
+      "nameEn": "Defense Increase",
+      "nameFr": "Augmentation de la défense"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 130,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 170,
+     "gold": 710,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 560,
+     "gold": 2340,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1210,
+     "gold": 5070,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1750,
+     "gold": 7370,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 80,
+     "gold": 180,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 430,
+     "gold": 980,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1420,
+     "gold": 3200,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3080,
+     "gold": 6950,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 4460,
+     "gold": 10090,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 160,
+     "gold": 280,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 880,
+     "gold": 1510,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2890,
+     "gold": 4930,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 6270,
+     "gold": 10700,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 9090,
+     "gold": 15540,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 310,
+     "gold": 480,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1700,
+     "gold": 2560,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 5580,
+     "gold": 8390,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 12100,
+     "gold": 18190,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 17550,
+     "gold": 26420,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 600,
+     "gold": 870,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 3260,
+     "gold": 4670,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 10700,
+     "gold": 15290,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 23210,
+     "gold": 33170,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 33680,
+     "gold": 48170,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_18",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     19
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_18",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     1099
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_18",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     30
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_18",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     1690
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmvrvlq1905902lkr5hyu1tno",
+  "gameId": "132805016",
+  "slug": "sweet-pumpkin-candy-ring",
+  "slugFr": "anneau-en-bonbon-a-la-citrouille",
+  "nameFr": "Anneau en bonbon à la citrouille",
+  "nameEn": "Sweet Pumpkin Candy Ring",
+  "grade": "grade5",
+  "slot": "Ring",
+  "mainStat": "B_Atk_Equip",
+  "subStat": "AllElement_Add",
+  "setId": "equip_t5_halloween",
+  "reinforceMax": 5,
+  "qualityMin": 106,
+  "qualityMax": 120,
+  "qualityMinLive": 120,
+  "qualityMaxLive": 120,
+  "tierBoundaries": [
+   105,
+   120
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101062020",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "AllElement_Add",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "All Elemental Attack",
+    "nameFr": "Toutes les attaques élémentaires"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Atk_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Attack",
+    "nameFr": "Attaque de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 1,
+    "stats": [
+     {
+      "key": "I_AtkAdd_Rate",
+      "max": 398,
+      "min": 398,
+      "chance": 10000,
+      "isRate": true,
+      "nameEn": "Attack Increase",
+      "nameFr": "Augmentation de l'attaque"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 130,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 170,
+     "gold": 710,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 560,
+     "gold": 2340,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1210,
+     "gold": 5070,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1750,
+     "gold": 7370,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 80,
+     "gold": 180,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 430,
+     "gold": 980,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1420,
+     "gold": 3200,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3080,
+     "gold": 6950,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 4460,
+     "gold": 10090,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 160,
+     "gold": 280,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 880,
+     "gold": 1510,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2890,
+     "gold": 4930,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 6270,
+     "gold": 10700,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 9090,
+     "gold": 15540,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 310,
+     "gold": 480,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1700,
+     "gold": 2560,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 5580,
+     "gold": 8390,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 12100,
+     "gold": 18190,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 17550,
+     "gold": 26420,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 600,
+     "gold": 870,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 3260,
+     "gold": 4670,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 10700,
+     "gold": 15290,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 23210,
+     "gold": 33170,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 33680,
+     "gold": 48170,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_18",
+    "abilityType": "AllElement_Add",
+    "progression": [
+     5
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_18",
+    "abilityType": "AllElement_Add",
+    "progression": [
+     282
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_18",
+    "abilityType": "B_Atk_Equip",
+    "progression": [
+     21
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_18",
+    "abilityType": "B_Atk_Equip",
+    "progression": [
+     1216
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmvrvlq18054r2lkrklmlbtcx",
   "gameId": "132334003",
   "slug": "thunderous-belt-finest",
   "slugFr": "ceinture-tonitruante-incomparable",
@@ -111980,7 +115778,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xx2loi8pkmvf6o",
+  "id": "cmvrvlq18054n2lkrzq5p02fd",
   "gameId": "132333013",
   "slug": "thunderous-belt-sturdy",
   "slugFr": "ceinture-tonitruante-robuste",
@@ -112354,7 +116152,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604y02loidb95o8s0",
+  "id": "cmvrvlq18054q2lkrshiq1f9g",
   "gameId": "132234003",
   "slug": "thunderous-bottoms-finest",
   "slugFr": "bas-tonitruant-incomparable",
@@ -112723,7 +116521,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xw2loidxjl3v7z",
+  "id": "cmvrvlq18054m2lkrqb02ite3",
   "gameId": "132233013",
   "slug": "thunderous-bottoms-sturdy",
   "slugFr": "bas-tonitruant-robuste",
@@ -113097,7 +116895,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604y22loiy1264fsz",
+  "id": "cmvrvlq18054s2lkrdcoqi1lt",
   "gameId": "132434003",
   "slug": "thunderous-combat-boots-finest",
   "slugFr": "bottes-de-combat-tonitruantes-incomparables",
@@ -113466,7 +117264,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xy2loiodydfzsm",
+  "id": "cmvrvlq18054o2lkroa6a8pqj",
   "gameId": "132433013",
   "slug": "thunderous-combat-boots-sturdy",
   "slugFr": "bottes-de-combat-tonitruantes-robustes",
@@ -113840,7 +117638,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xz2loibxac7pgp",
+  "id": "cmvrvlq18054p2lkrwzcvhhtt",
   "gameId": "132134003",
   "slug": "thunderous-top-finest",
   "slugFr": "haut-tonitruant-incomparable",
@@ -114209,7 +118007,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61604xv2loip0appkmo",
+  "id": "cmvrvlq18054l2lkrxlak1tz5",
   "gameId": "132133013",
   "slug": "thunderous-top-sturdy",
   "slugFr": "haut-tonitruant-robuste",
@@ -114583,7 +118381,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050t2loihzs3h8ko",
+  "id": "cmvrvlq19057n2lkrdr63eu74",
   "gameId": "132429007",
   "slug": "twisted-hellfire-combat-boots",
   "slugFr": "bottes-de-combat-de-la-flamme-infernale-corrompue",
@@ -115016,7 +118814,7 @@
   }
  },
  {
-  "id": "cmv0oh618050p2loir7i3wqov",
+  "id": "cmvrvlq19057j2lkru14u9wba",
   "gameId": "132229003",
   "slug": "twisted-might-bottoms",
   "slugFr": "bas-de-la-puissance-retorse",
@@ -115449,7 +119247,7 @@
   }
  },
  {
-  "id": "cmv0oh61905272loi3xceuxfv",
+  "id": "cmvrvlq1905942lkr8ypxmn7i",
   "gameId": "132705002",
   "slug": "twisted-thought-earrings",
   "slugFr": "boucles-d-oreilles-de-la-pensee-pervertie",
@@ -116264,7 +120062,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61905282loikb79ty7b",
+  "id": "cmvrvlq1905952lkrah034hs4",
   "gameId": "132605002",
   "slug": "twisted-thought-necklace",
   "slugFr": "collier-de-la-pensee-pervertie",
@@ -116908,8 +120706,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Defense",
-      "nameFr": "Défense de tous les éléments"
+      "nameEn": "All Elemental Defense",
+      "nameFr": "Toutes les défenses élémentaires"
      },
      {
       "key": "D_Protect_CurRes_Rate",
@@ -117202,7 +121000,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61905292loihrdyw56w",
+  "id": "cmvrvlq1905962lkrpbs41vvw",
   "gameId": "132805002",
   "slug": "twisted-thought-ring",
   "slugFr": "anneau-de-la-pensee-pervertie",
@@ -117846,8 +121644,8 @@
       ],
       "chance": 714,
       "isRate": false,
-      "nameEn": "All Element Attack",
-      "nameFr": "Attaque de tous les éléments"
+      "nameEn": "All Elemental Attack",
+      "nameFr": "Toutes les attaques élémentaires"
      },
      {
       "key": "D_Protect_Cur_Rate",
@@ -118140,7 +121938,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yt2loih7y1z8sb",
+  "id": "cmvrvlq18055j2lkr3ga3fcty",
   "gameId": "132314024",
   "slug": "twisted-wish-belt",
   "slugFr": "ceinture-du-desir-corrompu",
@@ -118509,7 +122307,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704ys2loi6eogtdg2",
+  "id": "cmvrvlq18055i2lkr68q70ge0",
   "gameId": "132214024",
   "slug": "twisted-wish-bottoms",
   "slugFr": "bas-du-desir-corrompu",
@@ -118878,7 +122676,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yu2loicjtb0fff",
+  "id": "cmvrvlq18055k2lkrvoo6ewom",
   "gameId": "132414024",
   "slug": "twisted-wish-combat-boots",
   "slugFr": "bottes-de-combat-du-desir-corrompu",
@@ -119247,7 +123045,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704yr2loi0jph1ojj",
+  "id": "cmvrvlq18055h2lkra82mhnwz",
   "gameId": "132114024",
   "slug": "twisted-wish-top",
   "slugFr": "haut-du-desir-corrompu",
@@ -119616,7 +123414,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050n2loif9a5b6wk",
+  "id": "cmvrvlq19057h2lkrtz1end3n",
   "gameId": "132129001",
   "slug": "tyrant-dragon-s-black-heart-top",
   "slugFr": "haut-du-c-ur-noir-de-dragon-tyran",
@@ -120049,7 +123847,7 @@
   }
  },
  {
-  "id": "cmv0oh61705052loiqcbhpswx",
+  "id": "cmvrvlq19056v2lkr8qbzg1t9",
   "gameId": "132335004",
   "slug": "untamed-roar-belt",
   "slugFr": "ceinture-du-rugissement-sauvage",
@@ -120408,7 +124206,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61705042loiykn9rxi9",
+  "id": "cmvrvlq19056u2lkr1b29j29b",
   "gameId": "132235004",
   "slug": "untamed-roar-bottoms",
   "slugFr": "bas-du-rugissement-sauvage",
@@ -120767,7 +124565,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61805062loijmrrktc8",
+  "id": "cmvrvlq19056w2lkru8embz6q",
   "gameId": "132435004",
   "slug": "untamed-roar-combat-boots",
   "slugFr": "bottes-de-combat-du-rugissement-sauvage",
@@ -121126,7 +124924,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61705032loitytxei4k",
+  "id": "cmvrvlq19056t2lkrdth8aovy",
   "gameId": "132135004",
   "slug": "untamed-roar-top",
   "slugFr": "haut-du-rugissement-sauvage",
@@ -121485,7 +125283,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh618050r2loiremig13f",
+  "id": "cmvrvlq19057l2lkrxq0jv4ab",
   "gameId": "132429005",
   "slug": "venom-spindle-combat-boots",
   "slugFr": "bottes-de-combat-du-venin-tisse",
@@ -121918,7 +125716,7 @@
   }
  },
  {
-  "id": "cmv0oh61705012loiwmwxzfv2",
+  "id": "cmvrvlq19056r2lkrr2sz0xme",
   "gameId": "132355001",
   "slug": "watcher-s-armor-belt",
   "slugFr": "ceinture-de-l-armure-du-vigile",
@@ -122277,7 +126075,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61705002loiltptfqp2",
+  "id": "cmvrvlq19056q2lkr0q15amn2",
   "gameId": "132255001",
   "slug": "watcher-s-armor-bottoms",
   "slugFr": "bas-de-l-armure-du-vigile",
@@ -122636,7 +126434,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61705022loik5y1ycm5",
+  "id": "cmvrvlq19056s2lkrtcwlwybx",
   "gameId": "132455001",
   "slug": "watcher-s-armor-combat-boots",
   "slugFr": "bottes-de-combat-de-l-armure-du-vigile",
@@ -122995,7 +126793,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmv0oh61704zz2loi8wq1kobv",
+  "id": "cmvrvlq19056p2lkrqcd3o34o",
   "gameId": "132155001",
   "slug": "watcher-s-armor-top",
   "slugFr": "haut-de-l-armure-du-vigile",

@@ -309,9 +309,11 @@ class PotentialTextTests(unittest.TestCase):
         """LE test de fond : les paliers portent un CUMUL, pas un delta.
 
         Reconstruire ce cumul depuis les seules phrases doit reproduire au
-        centième près les `stats` déjà publiées des 23 personnages qui en ont.
-        S'il passe, appliquer la même lecture aux 2 qui n'en ont pas n'est plus
-        une supposition."""
+        centième près les `stats` déjà publiées des 28 personnages qui en ont.
+        S'il passe, appliquer la même lecture à Khala, lue dans les tables du
+        jeu et sans `stats` publiées, n'est plus une supposition.
+        Depuis la 2.3 (octobre 2026), la source publie aussi celles de Ban,
+        Derieri, Gowther, Lancelot et Estia : 690 paliers comparés, puis 840."""
         personnages = json.loads(
             (REPO_ROOT / "7ds-stats" / "personnages.json").read_text(
                 encoding="utf-8"
@@ -337,7 +339,7 @@ class PotentialTextTests(unittest.TestCase):
                         {code: publie.get(code, 0) for code in base},
                         f"{character['slug']} palier {tier}",
                     )
-        self.assertEqual(compares, 690, "les 690 paliers publiés sont comparés")
+        self.assertEqual(compares, 840, "les 840 paliers publiés sont comparés")
 
 
 class GearCatalogTests(unittest.TestCase):

@@ -1,6 +1,6 @@
 [
  {
-  "id": "cmv0ogveh006o2loilu4a5ldl",
+  "id": "cmvrvlg5l006p2lkry02g05bx",
   "gameId": "accessory_t5_corruption",
   "slug": "accessory-t5-corruption",
   "nameFr": "Au bord du néant",
@@ -28,7 +28,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmv0ogveh006q2loi5zksy5x8",
+  "id": "cmvrvlg5l006r2lkrq9qj1cpr",
   "gameId": "accessory_t5_crystal",
   "slug": "accessory-t5-crystal",
   "nameFr": "Fragment mortel",
@@ -56,7 +56,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmv0ogveh006u2loi0v4ht1zb",
+  "id": "cmvrvlg5l006v2lkrst1ybbee",
   "gameId": "accessory_t5_curse",
   "slug": "accessory-t5-curse",
   "nameFr": "Talent caché",
@@ -84,7 +84,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmv0ogveh006v2loiwuh4zh1k",
+  "id": "cmvrvlg5l006w2lkrtvzexnld",
   "gameId": "accessory_t5_heart_acc",
   "slug": "accessory-t5-heart-acc",
   "nameFr": "Serment éternel",
@@ -107,7 +107,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmv0ogveh006w2loixu13kybf",
+  "id": "cmvrvlg5l006x2lkrgqj7rz4k",
   "gameId": "accessory_t5_hymn",
   "slug": "accessory-t5-hymn",
   "nameFr": "Énergie revigorante",
@@ -135,7 +135,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmv0ogveh006s2loin08375z2",
+  "id": "cmvrvlg5l006t2lkrdo6m1b5u",
   "gameId": "accessory_t5_thought",
   "slug": "accessory-t5-thought",
   "nameFr": "Ombre lavande",
@@ -158,7 +158,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmv0ogveh006y2loipku2brea",
+  "id": "cmvrvlg5l00702lkrmggguawf",
   "gameId": "accessory_t5_tropical",
   "slug": "accessory-t5-tropical",
   "nameFr": "Cocktail de Dalmally",
@@ -181,7 +181,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmv0ogveg006k2loi5qwbhypu",
+  "id": "cmvrvlg5l006l2lkrj99oetgy",
   "gameId": "armor_t4_ferzen",
   "slug": "armor-t4-ferzen",
   "nameFr": "Ruines de la mine abandonnée",
@@ -216,7 +216,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmv0ogveh006r2loi7ts9uskb",
+  "id": "cmvrvlg5l006s2lkrd24c8qzu",
   "gameId": "armor_t4_immortal",
   "slug": "armor-t4-immortal",
   "nameFr": "Brillance lavande",
@@ -239,7 +239,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmv0ogveh006p2loin9bxu4c4",
+  "id": "cmvrvlg5l006q2lkrlr4on5f5",
   "gameId": "armor_t4_ocean",
   "slug": "armor-t4-ocean",
   "nameFr": "Fragment tranchant",
@@ -267,7 +267,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmv0ogveg006m2loinwz39vsy",
+  "id": "cmvrvlg5l006n2lkrspt3jv0t",
   "gameId": "armor_t5_dead",
   "slug": "armor-t5-dead",
   "nameFr": "Cris des âmes",
@@ -302,7 +302,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmv0ogveh006t2loiaaqu1l27",
+  "id": "cmvrvlg5l006u2lkrs6awn6gu",
   "gameId": "armor_t5_fortrees",
   "slug": "armor-t5-fortrees",
   "nameFr": "Rite gravé",
@@ -325,7 +325,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmv0ogveg006l2loinvbx77f7",
+  "id": "cmvrvlg5l006m2lkr05borodi",
   "gameId": "armor_t5_spider",
   "slug": "armor-t5-spider",
   "nameFr": "Rancœur du nid d'araignée",
@@ -360,7 +360,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmv0ogveh006n2loi5tws1moz",
+  "id": "cmvrvlg5l006o2lkrln9xyg15",
   "gameId": "armor_t5_undying",
   "slug": "armor-t5-undying",
   "nameFr": "Observateur",
@@ -388,7 +388,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmv0ogveh006z2loiwk3g92ij",
+  "id": "cmvrvlg5l00712lkr9xotmg4j",
   "gameId": "armor_t5_wildroar",
   "slug": "armor-t5-wildroar",
   "nameFr": "Rite des liens",
@@ -416,7 +416,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmv0ogveg006g2loiw33iwm96",
+  "id": "cmvrvlg5l006h2lkroic61189",
   "gameId": "equip_t4_scale_1",
   "slug": "equip-t4-scale-1",
   "nameFr": "Cœur ardent",
@@ -444,7 +444,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmv0ogveg006h2loiamh96a11",
+  "id": "cmvrvlg5l006i2lkrurva88nh",
   "gameId": "equip_t4_scale_2",
   "slug": "equip-t4-scale-2",
   "nameFr": "Pétales éparpillés",
@@ -467,7 +467,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmv0ogveg006i2loisiugp7hu",
+  "id": "cmvrvlg5l006j2lkrcg4hjnqy",
   "gameId": "equip_t4_scale_3",
   "slug": "equip-t4-scale-3",
   "nameFr": "Flash aveuglant",
@@ -495,7 +495,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmv0ogveg006j2loi6xom5745",
+  "id": "cmvrvlg5l006k2lkr48ma0d59",
   "gameId": "equip_t4_scale_4",
   "slug": "equip-t4-scale-4",
   "nameFr": "Horizon vacillant",
@@ -530,7 +530,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmv0ogveh00712loi9a3kuqdm",
+  "id": "cmvrvlg5l00732lkrx0mxgzxr",
   "gameId": "equip_t5_darksand",
   "slug": "equip-t5-darksand",
   "nameFr": "Reine des profondeurs",
@@ -565,7 +565,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmv0ogveh006x2loiqn59im3b",
+  "id": "cmvrvlg5l006y2lkr6i0oy333",
   "gameId": "equip_t5_greed",
   "slug": "equip-t5-greed",
   "nameFr": "Souverain cupide",
@@ -600,7 +600,70 @@
   "partsCount": 7
  },
  {
-  "id": "cmv0ogveh00732loiqopy5p02",
+  "id": "cmvrvlg5l006z2lkrl2mc4wks",
+  "gameId": "equip_t5_greed_2",
+  "slug": "equip-t5-greed-2",
+  "nameFr": "Avidité incarnée",
+  "nameEn": "Greed Incarnate",
+  "bonusTwoFr": "Chances crit. [#D67314]+10%[-]",
+  "bonusTwoEn": "Crit Chance [#D67314]+10%[-]",
+  "bonusFourFr": "Dégâts crit. [#D67314]+25%[-]\nL'utilisation de la compétence de relève augmente les [#0F5CD8]chances crit.[-] de [#1A7331]10%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]10%[-] pendant [#1A7331]20s[-].",
+  "bonusFourEn": "Crit Damage [#D67314]+25%[-]\nUsing the Tag Skill increases [#0F5CD8]Crit Chance[-] by [#1A7331]10%[-] and [#0F5CD8]Defense Shatter[-] by [#1A7331]10%[-] for [#1A7331]20 sec[-].",
+  "bonusSevenFr": "Percement de défense [#D67314]+10%[-]\nL'utilisation de la compétence de relève augmente les [#0F5CD8]chances crit.[-] de [#1A7331]15%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]15%[-] pendant [#1A7331]20s[-].",
+  "bonusSevenEn": "Defense Shatter [#D67314]+10%[-]\nUsing the Tag Skill increases [#0F5CD8]Crit Chance[-] by [#1A7331]15%[-] and [#0F5CD8]Defense Shatter[-] by [#1A7331]15%[-] for [#1A7331]20 sec[-].",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "C_Critical_Rate",
+    "value": 1000
+   }
+  ],
+  "bonusFourCount": 5,
+  "bonusFourStats": [
+   {
+    "stat": "C_Critical_Dam_Rate",
+    "value": 2500
+   }
+  ],
+  "bonusSevenCount": 7,
+  "bonusSevenStats": [
+   {
+    "stat": "D_Protect_Cur_Rate",
+    "value": 1000
+   }
+  ],
+  "partsCount": 7
+ },
+ {
+  "id": "cmvrvlg5m00762lkrbvrwhxlq",
+  "gameId": "equip_t5_halloween",
+  "slug": "equip-t5-halloween",
+  "nameFr": "Farce ou friandise",
+  "nameEn": "Trick or Treat",
+  "bonusTwoFr": "Efficacité de recharge de la magie [#D67314]+10%[-]\n[#1A7331]70%[-] chances de [#0F5CD8]restaurer[-] [#1A7331]3%[-] des [#0F5CD8]PV max[-] en utilisant une [#0F5CD8]compétence de relève[-].",
+  "bonusTwoEn": "Magic Charging Efficiency [#D67314]+10%[-]\n[#1A7331]70%[-] chance to [#0F5CD8]restore[-] [#1A7331]3%[-] of [#0F5CD8]Max HP[-] when using a [#0F5CD8]Tag Skill[-].",
+  "bonusFourFr": "Efficacité de durée des bonus [#D67314]+10%[-]",
+  "bonusFourEn": "Buff Duration Efficiency [#D67314]+10%[-]",
+  "bonusTwoCount": 2,
+  "bonusTwoStats": [
+   {
+    "stat": "MF_ChargeEffic_Rate",
+    "value": 1000
+   }
+  ],
+  "bonusFourCount": 3,
+  "bonusFourStats": [
+   {
+    "stat": "Buff_Time_Rate",
+    "value": 1000
+   }
+  ],
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 3
+ },
+ {
+  "id": "cmvrvlg5m00752lkr1z4esiky",
   "gameId": "equip_t5_pirate",
   "slug": "equip-t5-pirate",
   "nameFr": "À la recherche du trésor",
@@ -623,7 +686,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmv0ogveh00722loiqgetvwky",
+  "id": "cmvrvlg5m00742lkr97byq8i1",
   "gameId": "equip_t5_predator",
   "slug": "equip-t5-predator",
   "nameFr": "Une lueur dans les cendres",
@@ -651,7 +714,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmv0ogveh00702loih49twpgd",
+  "id": "cmvrvlg5l00722lkrt03k1ma4",
   "gameId": "equip_t5_splinter",
   "slug": "equip-t5-splinter",
   "nameFr": "Aube du cauchemar",

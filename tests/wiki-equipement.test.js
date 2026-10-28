@@ -240,21 +240,22 @@ const STATS_TEST = {
   const bijoux = api.bijouxDuWiki();
   const gravees = api.graveesDuWiki();
 
-  assert.equal(armes.length, 170, "170 armes attendues");
-  assert.equal(armures.length, 79, "79 armures attendues");
-  assert.equal(bijoux.length, 40, "40 bijoux attendus");
-  assert.equal(gravees.length, 101,
+  assert.equal(armes.length, 171, "171 armes attendues");
+  assert.equal(armures.length, 83, "83 armures attendues");
+  assert.equal(bijoux.length, 46, "46 bijoux attendus");
+  assert.equal(gravees.length, 104,
   /* 83 depuis l'ajout des gravees SR au catalogue ; il n'y avait que les
      SSR, faute d'icones locales. Puis 93 avec la version 2.0, le 26 aout
      2026 : les trois pieces de Ban et les sept costumes de la fournee.
      Puis 96 avec les trois tenues de Khala, lues dans les tables du jeu.
      Puis 99 avec les trois tenues de Lancelot, en octobre 2026, et 101
-     avec les deux « Sortie décontractée », prefixees de leur heros. */
-  "101 armures gravées attendues");
+     avec les deux « Sortie décontractée », prefixees de leur heros.
+     Puis 104 avec les trois tenues d'Estia, en octobre 2026 (2.3). */
+  "104 armures gravées attendues");
 
   assert.equal(
-    armes.filter(arme => arme.aPassif).length, 109,
-    "109 armes portent un passif ; les 61 autres n'en ont pas, "
+    armes.filter(arme => arme.aPassif).length, 110,
+    "110 armes portent un passif ; les 61 autres n'en ont pas, "
       + "et leur fiche ne doit pas inventer de section"
   );
 
@@ -266,15 +267,15 @@ const STATS_TEST = {
     "toute pièce d'équipement doit retrouver ses statistiques"
   );
 
-  /* ⚠️ Une pièce n'appartient PAS forcément à un ensemble : 39 sur 119 sont
+  /* ⚠️ Une pièce n'appartient PAS forcément à un ensemble : 39 sur 129 sont
      autonomes. Vingt-huit d’entre elles sont le palier bas (qualité 86-100) et ne
      portent rien de plus que leurs statistiques ; les onze autres (101-130)
      portent un passif à trois niveaux À LA PLACE de l'ensemble — aucune pièce
      d'ensemble n'a de passif. La fiche doit donc afficher l'un OU l'autre,
      et savoir n'afficher ni l'un ni l'autre. */
   assert.equal(
-    armures.concat(bijoux).filter(piece => piece.setId).length, 80,
-    "80 pièces appartiennent à un ensemble"
+    armures.concat(bijoux).filter(piece => piece.setId).length, 90,
+    "90 pièces appartiennent à un ensemble"
   );
   assert.equal(
     armures.concat(bijoux).filter(piece => !piece.setId).length, 39,
@@ -294,7 +295,7 @@ const STATS_TEST = {
   const cites = [...new Set(
     armures.concat(bijoux).map(piece => piece.setId).filter(Boolean)
   )];
-  assert.equal(cites.length, 17, "17 ensembles attendus");
+  assert.equal(cites.length, 19, "19 ensembles attendus");
   cites.forEach(setId => {
     const ensemble = api.ensembleDe(setId);
     assert.ok(ensemble, setId + " : ensemble introuvable");

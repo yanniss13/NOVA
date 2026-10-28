@@ -4,11 +4,11 @@
   "docs/chronometrage-animations.md. Ne pas editer a la main.",
   "Les mesures se saisissent dans data/animations-mesurees.json."
  ],
- "total": 17,
+ "total": 25,
  "mesurees": 0,
  "debloquent": 0,
- "affinent": 17,
- "releves": 0,
+ "affinent": 22,
+ "releves": 3,
  "prochaines": [
   {
    "gameId": "diane_gauntlets_skill_rmb_1",
@@ -29,30 +29,30 @@
    "role": "affine"
   },
   {
-   "gameId": "guila_shield_skill_q",
-   "heros": "guila",
-   "arme": "Épée & bouclier",
-   "nom": "Explosion resplendissante",
+   "gameId": "estia_book_skill_r",
+   "heros": "estia",
+   "arme": "Grimoire",
+   "nom": "Final polaire",
    "categorie": "Attaque ultime",
    "touche": "R",
    "role": "affine"
   },
   {
-   "gameId": "tristan_sword2h_skill_q_ready",
-   "heros": "tristan",
-   "arme": "Espadon",
-   "nom": "Entaille d'amputation",
+   "gameId": "estia_rapier_skill_r",
+   "heros": "estia",
+   "arme": "Rapière",
+   "nom": "Crescendo glacial",
    "categorie": "Attaque ultime",
    "touche": "R",
    "role": "affine"
   },
   {
-   "gameId": "ban_sword2h_skill_q",
-   "heros": "ban",
-   "arme": "Espadon",
-   "nom": "Broyage brutal",
-   "categorie": "Attaque spéciale",
-   "touche": "Q",
+   "gameId": "estia_wand_skill_r",
+   "heros": "estia",
+   "arme": "Baguette",
+   "nom": "Déluge céleste",
+   "categorie": "Attaque ultime",
+   "touche": "R",
    "role": "affine"
   }
  ]
