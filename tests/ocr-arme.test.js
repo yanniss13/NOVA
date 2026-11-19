@@ -50,7 +50,8 @@ assert.equal(weaponConfigStatus(BAGUETTE, {
 /* Capture anglaise fournie par un membre : nom, stats natives et perles sont
    tous affiches en anglais, mais doivent produire la configuration canonique. */
 const baguetteAnglaise = plain(deduireArme({
-  nom:"Gluttonous Soul Wand",
+  /* « Gluttonous Soul Wand » jusqu'a la 2.4, ou le jeu la renomme. */
+  nom:"Soul Glutton Wand",
   niveau:50,
   passif:7,
   herosSlug:"gowther",
@@ -102,6 +103,21 @@ const rapiere = plain(deduireArme({
 }));
 assert.equal(rapiere.statut, "unique");
 assert.equal(rapiere.candidats[0].fichier, RAPIERE);
+
+/* Depuis la 2.4, le jeu affiche « de l'engloutisseuse d'ames » alors que
+   l'image locale garde « de l'ame vorace » : les deux noms menent a la meme
+   arme. */
+const rapiereRenommee = plain(deduireArme({
+  nom:"Rapière de l'engloutisseuse d'âmes",
+  niveau:50,
+  passif:1,
+  stats:[
+    { libelle:"Attaque de l'équipement", valeur:"3 291", section:null },
+    { libelle:"Efficacité de Déluge de Vent", valeur:"43.17%", section:null }
+  ]
+}));
+assert.equal(rapiereRenommee.statut, "unique");
+assert.equal(rapiereRenommee.candidats[0].fichier, RAPIERE);
 assert.equal(rapiere.candidats[0].gradeGameId, "131085010");
 assert.equal(rapiere.candidats[0].elementSuppose, true);
 assert.equal(rapiere.candidats[0].enchantments[0].element, "wind");

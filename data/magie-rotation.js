@@ -1444,6 +1444,66 @@ window.SEVEN_DS_MAGIE_ROTATION = {
   "recharge": 350,
   "cout": 0
  },
+ "melascula_lance_jumpatk": {
+  "recharge": 39,
+  "cout": 0
+ },
+ "melascula_lance_skill_e": {
+  "recharge": 140,
+  "cout": 0
+ },
+ "melascula_lance_skill_q": {
+  "recharge": 24,
+  "cout": 0
+ },
+ "melascula_lance_skill_r": {
+  "recharge": 0,
+  "cout": 2
+ },
+ "melascula_lance_skill_tag": {
+  "recharge": 225,
+  "cout": 0
+ },
+ "melascula_rapier_jumpatk": {
+  "recharge": 56,
+  "cout": 0
+ },
+ "melascula_rapier_skill_e_atk1": {
+  "recharge": 60,
+  "cout": 0
+ },
+ "melascula_rapier_skill_q": {
+  "recharge": 85,
+  "cout": 0
+ },
+ "melascula_rapier_skill_r": {
+  "recharge": 0,
+  "cout": 3
+ },
+ "melascula_rapier_skill_tag": {
+  "recharge": 350,
+  "cout": 0
+ },
+ "melascula_shield_jumpatk": {
+  "recharge": 102,
+  "cout": 0
+ },
+ "melascula_shield_skill_e": {
+  "recharge": 449,
+  "cout": 0
+ },
+ "melascula_shield_skill_q": {
+  "recharge": 201,
+  "cout": 0
+ },
+ "melascula_shield_skill_r": {
+  "recharge": 0,
+  "cout": 3
+ },
+ "melascula_shield_skill_tag": {
+  "recharge": 650,
+  "cout": 0
+ },
  "meliodas_axe_jumpatk": {
   "recharge": 46,
   "cout": 0

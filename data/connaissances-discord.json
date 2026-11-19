@@ -577,6 +577,30 @@
     }
    ]
   },
+  "melascula": {
+   "nom": "Melascula",
+   "rarete": "SSR",
+   "armes": [
+    {
+     "type": "Rapier",
+     "arme": "Rapière",
+     "element": "Ténèbres",
+     "role": "Soutien"
+    },
+    {
+     "type": "Lance",
+     "arme": "Lance",
+     "element": "Feu",
+     "role": "Attaquant"
+    },
+    {
+     "type": "Shield",
+     "arme": "Épée & bouclier",
+     "element": "Ténèbres",
+     "role": "Gardien"
+    }
+   ]
+  },
   "meliodas": {
    "nom": "Meliodas",
    "rarete": "SSR",
@@ -4635,6 +4659,170 @@
     "relanceDes": null
    }
   ],
+  "melascula": [
+   {
+    "type": "Lance",
+    "categorie": "NORMAL",
+    "nom": "Lumière du feu du karma",
+    "description": "Inflige des dégâts égaux à 159% de l'attaque. Attaquer 10 fois un ennemi qui n'est pas affecté par Linceul des ténèbres réinitialise le temps de recharge de la compétence normale.\n1er coup : 23%\n2e coup : 25%\n3e coup : 42%\n4e coup : 69%",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Lance",
+    "categorie": "NORMAL_SKILL",
+    "nom": "Main démoniaque",
+    "description": "Inflige des dégâts égaux à 249% de l'attaque, puis inflige Linceul des ténèbres pendant 15s. (Max : 10 fois)\n\n* Linceul des ténèbres : réduit le taux de parade de 1% et augmente les dégâts de Feu subis de 5% face aux attaques de Merascylla.",
+    "recharge": 20,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Lance",
+    "categorie": "ACTIVE_THIRD",
+    "nom": "Ouverture des portes de l'enfer",
+    "description": "Inflige des dégâts égaux à 68% de l'attaque, jusqu'à 340%. Chaque coup porté sur un ennemi sous l'effet d'un Déluge de Feu augmente l'attaque de Feu de 500 pendant 12s. (Max : 10 fois)",
+    "recharge": 15,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Lance",
+    "categorie": "TAG_SKILL",
+    "nom": "Emprise infernale",
+    "description": "Inflige des dégâts égaux à 135% de l'attaque.",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Lance",
+    "categorie": "ULTIMATE",
+    "nom": "Anneau du requiem",
+    "description": "Octroie Mue pendant 10s, réinitialise le temps de recharge de l'attaque spéciale et le réduit de 95%, et inflige des dégâts égaux à 45% de l'attaque, jusqu'à 540%, pendant 9s.\n\n※ Mue : inflige des dégâts supplémentaires égaux à 20% des dégâts infligés.",
+    "recharge": 10,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Lance",
+    "categorie": "PASSIVE",
+    "nom": "Marque de l'esprit vengeur",
+    "description": "Chaque fois que le héros touche un ennemi affecté par Linceul des ténèbres, applique 1 cumul(s) supplémentaire(s) de Linceul des ténèbres pendant 15s. (Max : 10 fois)\nLorsqu'un ennemi affecté par Linceul des ténèbres est attaqué, augmente les dégâts crit. de 5% et augmente l'attaque de Feu de 4% pour chaque tranche de 1 cumul(s).\n\n* Linceul des ténèbres : réduit le taux de parade de 1% et augmente les dégâts de Feu subis de 5% face aux attaques de Merascylla.",
+    "recharge": 0,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "NORMAL",
+    "nom": "Appel de la mort",
+    "description": "Inflige des dégâts égaux à 72% de l'attaque.\nAttaquer 5 fois l'ennemi avec cette attaque octroie l'effet Dévoreuse d'âmes pendant 20s.\n1er coup : 11%\n2e coup : 11%\n3e coup : 18%\n4e coup : 32%\n\n※ Dévoreuse d'âmes : réduit la résistance crit. de l'ennemi de 4% à chaque coup porté pendant 40s (max : 5 fois) et restaure la jauge de relève à hauteur de 0.4% de l'attaque. (Max : 100) (Temps de recharge : 0.5s)",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "NORMAL_SKILL",
+    "nom": "Grâce impie",
+    "description": "Inflige des dégâts égaux à 123% de l'attaque.\nAttaquer 5 fois l'ennemi avec cette attaque octroie l'effet Esprit sinistre pendant 20s.\n1er coup : 31%\n2e coup : 36%\n3e coup : 56%\n\n※ Esprit sinistre : réduit la défense crit. de l'ennemi de 8% à chaque coup porté pendant 40s (max : 5 fois) et restaure la jauge de magie à hauteur de 0.2% de l'attaque. (Max : 50) (Temps de recharge : 0.5s)",
+    "recharge": 21,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "ACTIVE_THIRD",
+    "nom": "Débordement d'âmes",
+    "description": "Inflige des dégâts égaux à 74% de l'attaque. Si les effets Dévoreuse d'âmes et Esprit sinistre sont tous deux actifs, inflige Arrachement d'âme aux ennemis pendant 40s.\n\n※ Arrachement d'âme : réduit la résistance au percement de 10% et la défense de 15%.",
+    "recharge": 19,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "TAG_SKILL",
+    "nom": "Main des ténèbres",
+    "description": "Inflige des dégâts égaux à 63% de l'attaque.",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "ULTIMATE",
+    "nom": "Floraison noire",
+    "description": "Inflige des dégâts égaux à 321% de l'attaque.\nSi l'effet Dévoreuse d'âmes est actif, cette attaque augmente les dégâts crit. de 100%. Si l'effet Esprit sinistre est actif, elle augmente les dégâts subis par les ennemis de 50% pendant 40s.",
+    "recharge": 10,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Rapier",
+    "categorie": "PASSIVE",
+    "nom": "Soif d'âmes",
+    "description": "Si les effets Dévoreuse d'âmes et Esprit sinistre sont tous deux actifs, réduit la consommation en magie de 30% et augmente les dégâts d'attaque ultime de 120%.\nLorsqu'un héros allié active un Déluge, augmente les dégâts crit. de tous les héros alliés de 40% pendant 30s.",
+    "recharge": 0,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Shield",
+    "categorie": "NORMAL",
+    "nom": "Aiguillon de la vipère",
+    "description": "Inflige des dégâts égaux à 68% de la défense et réduit la résistance aux Ténèbres de 5% pendant 40s. (Max : 5 fois)\n1er coup : 10%\n2e coup : 12%\n3e coup : 16%\n4e coup : 30%",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Shield",
+    "categorie": "NORMAL_SKILL",
+    "nom": "Traque de la vipère",
+    "description": "Invoque un serpent qui traque les ennemis et inflige des dégâts égaux à 6% de la défense toutes les 0.3s pendant 10s.\nLe serpent provoque les ennemis proches et leur inflige Venin pendant 30s pour chaque coup porté. (Max : 10 fois)\n\n* Venin : augmente les dégâts des Ténèbres subis de 3% et réduit la défense crit. de 4%.",
+    "recharge": 22,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Shield",
+    "categorie": "ACTIVE_THIRD",
+    "nom": "Siphon d'âme",
+    "description": "Immunise contre les réactions pendant l'utilisation de la compétence.\nOctroie des barrières à tous les héros alliés égales à 120% de la défense pendant 15s, inflige des dégâts égaux à 70% de la défense et restaure les PV de tous les alliés à hauteur de 230% de la défense.",
+    "recharge": 25,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Shield",
+    "categorie": "TAG_SKILL",
+    "nom": "Pluie de venin",
+    "description": "Inflige des dégâts égaux à 59% de la défense.",
+    "recharge": null,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Shield",
+    "categorie": "ULTIMATE",
+    "nom": "Poison mortel",
+    "description": "Inflige des dégâts égaux à 10% de la défense, jusqu'à 290%. Octroie une barrière aux alliés proches égale à 200% de la défense pendant 20s chaque fois que 5 coup(s) sont portés avec l'attaque.\nChaque coup de l'attaque porté sur un ennemi qui a atteint le nombre maximal de cumuls de Venin augmente l'efficacité des barrières de tous les héros alliés de 10% pendant 5s. (Max : 20 fois)",
+    "recharge": 30,
+    "dureeAnimation": null,
+    "relanceDes": null
+   },
+   {
+    "type": "Shield",
+    "categorie": "PASSIVE",
+    "nom": "Étreinte de la vipère",
+    "description": "Lorsqu'un héros allié bénéficie d'une barrière, augmente l'attaque des Ténèbres à hauteur de 8% de la défense du héros (max : 4500) et restaure la jauge de magie à hauteur de 0.2% de la défense (max : 100) toutes les 1s.",
+    "recharge": 0,
+    "dureeAnimation": null,
+    "relanceDes": null
+   }
+  ],
   "meliodas": [
    {
     "type": "Axe",
@@ -6378,6 +6566,44 @@
     "Change la compétence normale en compétence qui peut être utilisée 2 fois et augmente grandement sa portée.\nLa dernière frappe de la compétence normale inflige des dégâts égaux à 18% de l'attaque aux ennemis à portée toutes les 0.4s pendant 4s."
    ]
   },
+  "melascula": {
+   "Shield": [
+    "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%.",
+    "Chaque coup porté sur un ennemi avec une attaque normale restaure la jauge de magie de 20.",
+    "Augmente l'attaque de 10%, la défense de 8% et les PV max de 3%.",
+    "Renforce la puissance de l'attaque ultime de 30%.",
+    "Augmente la vitesse de déplacement de 50% lorsqu'un héros allié bénéficie d'une barrière et augmente la perforation des héros d'attribut Ténèbres à hauteur de 0.2% de la défense. (Max : 80)\nRestaure les PV à hauteur de 40% de la défense toutes les 1s lorsqu'un héros allié bénéficie d'une barrière.",
+    "Lorsque l'attaque spéciale fait mouche, réduit la défense des Ténèbres de l'ennemi à hauteur de 25% de la défense pendant 40s, et toute récupération de PV restaure la jauge de magie à hauteur de 1% de la défense. (Max : 500)",
+    "Lorsqu'un héros allié attaque un ennemi affecté par Venin, augmente ses dégâts des Ténèbres de 30%.\nAprès avoir réussi l'attaque ultime sur un ennemi affecté par Venin, chaque coup porté augmente l'attaque des Ténèbres de tous les héros alliés de 1% pendant 40s. (Max : 25 fois)",
+    "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
+    "Renforce la puissance de l'attaque ultime de 150%.",
+    "Lorsque tous les héros alliés d'attribut Ténèbres bénéficient d'une barrière, augmente le percement de défense de 10% et les dégâts crit. de 60%."
+   ],
+   "Lance": [
+    "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%.",
+    "Renforce la puissance de l'attaque spéciale de 10%.",
+    "Augmente l'attaque de 10%, la défense de 8% et les PV max de 3%.",
+    "Renforce la puissance de l'attaque spéciale de 15%.",
+    "Augmente les chances crit. de 15% et l'efficacité de durée des bonus de 40%. Toucher 10 fois le même ennemi alors qu'il est sous l'effet d'un Déluge de Feu inflige des dégâts supplémentaires égaux à 125% de l'attaque.\nLes dégâts supplémentaires comptent comme des dégâts d'attaque spéciale.",
+    "Renforce la puissance de l'attaque ultime de 90%.",
+    "Lorsqu'un ennemi affecté par Linceul des ténèbres est sous l'effet d'un Déluge de Feu, augmente les dégâts qui lui sont causés par le héros de 5% et ses dégâts de faiblesse au Feu de 1% pour chaque tranche de 1 cumul(s) de Linceul des ténèbres.\nImmunise contre les réactions tant que l'effet Mue est actif.",
+    "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
+    "Renforce la puissance de l'attaque spéciale de 25% et augmente le percement de défense de l'attaque spéciale de 10%.",
+    "Augmente le percement de défense de 5% en attaquant un ennemi affecté par Linceul des ténèbres.\nAugmente la durée de la réduction du temps de recharge de l'attaque spéciale issue de l'attaque ultime de 1s, et chaque utilisation de l'attaque spéciale augmente les dégâts de Feu du héros de 20% pendant 7s. (Max : 5 fois)"
+   ],
+   "Rapier": [
+    "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%.",
+    "Augmente la perforation de 80 et la persévérance de 50.",
+    "Augmente l'attaque de 10%, la défense de 8% et les PV max de 3%.",
+    "Renforce la puissance de l'attaque ultime de 30%.",
+    "Augmente les chances crit. de 33% tant que l'effet Esprit sinistre est actif.\nChaque coup critique augmente les dégâts crit. de tous les héros alliés de 5% pendant 40s. (Max : 8 fois)",
+    "Renforce la puissance de l'attaque ultime de 70%.\nL'utilisation de la compétence de relève augmente toutes les attaques élémentaires de tous les héros alliés de 35% pendant 40s.",
+    "Immunise contre les réactions pendant la canalisation des compétences normales. Faire mouche avec tous les coups restaure la jauge de magie à hauteur de 3% de l'attaque. (Max : 1000)\nAugmente la réduction de la consommation en magie issue du passif de 20% supplémentaires.",
+    "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
+    "Renforce la puissance de l'attaque ultime de 150%.",
+    "Lorsque les effets Dévoreuse d'âmes et Esprit sinistre sont tous deux actifs, augmente le percement de défense de l'attaque ultime de 20%.\nL'utilisation de l'attaque ultime réinitialise le temps de recharge de l'attaque spéciale, inflige des dégâts supplémentaires égaux à 450% de l'attaque avec la prochaine attaque spéciale et réduit la résistance au percement de l'ennemi de 10% pendant 30s.\nLes dégâts supplémentaires comptent comme des dégâts d'attaque ultime."
+   ]
+  },
   "meliodas": {
    "Sword1h": [
     "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%.",
@@ -6620,6 +6846,13 @@
    "ensemble": "accessory_t5_hymn"
   },
   {
+   "nom": "Anneau de l'ombre explosive",
+   "fichier": "7ds-bijoux/Anneau/Anneau de l'ombre explosive.webp",
+   "categorie": "bijou",
+   "type": "Anneau",
+   "ensemble": "equip_t5_rage"
+  },
+  {
    "nom": "Anneau de la mélodie d'Arachnée",
    "fichier": "7ds-bijoux/Anneau/Anneau de la mélodie d'Arachnée.webp",
    "categorie": "bijou",
@@ -6653,6 +6886,13 @@
    "categorie": "bijou",
    "type": "Anneau",
    "ensemble": "accessory_t5_heart_acc"
+  },
+  {
+   "nom": "Anneau des ailes explosives",
+   "fichier": "7ds-bijoux/Anneau/Anneau des ailes explosives.webp",
+   "categorie": "bijou",
+   "type": "Anneau",
+   "ensemble": "equip_t5_rage_2"
   },
   {
    "nom": "Anneau du cristal de vie",
@@ -6926,6 +7166,13 @@
    "type": "Bas"
   },
   {
+   "nom": "Bas de l'ombre explosive",
+   "fichier": "7ds-armures-ssr/Bas/Bas de l'ombre explosive.webp",
+   "categorie": "armure",
+   "type": "Bas",
+   "ensemble": "equip_t5_rage"
+  },
+  {
    "nom": "Bas de la mélodie d'Arachnée",
    "fichier": "7ds-armures-ssr/Bas/Bas de la mélodie d'Arachnée.webp",
    "categorie": "armure",
@@ -6955,6 +7202,13 @@
    "categorie": "armure",
    "type": "Bas",
    "ensemble": "equip_t5_pirate"
+  },
+  {
+   "nom": "Bas des ailes explosives",
+   "fichier": "7ds-armures-ssr/Bas/Bas des ailes explosives.webp",
+   "categorie": "armure",
+   "type": "Bas",
+   "ensemble": "equip_t5_rage_2"
   },
   {
    "nom": "Bas du cauchemar ressuscité",
@@ -7203,6 +7457,13 @@
    "type": "Bottes"
   },
   {
+   "nom": "Bottes de combat de l'ombre explosive",
+   "fichier": "7ds-armures-ssr/Bottes/Bottes de combat de l'ombre explosive.webp",
+   "categorie": "armure",
+   "type": "Bottes",
+   "ensemble": "equip_t5_rage"
+  },
+  {
    "nom": "Bottes de combat de la flamme infernale corrompue",
    "fichier": "7ds-armures-ssr/Bottes/Bottes de combat de la flamme infernale corrompue.webp",
    "categorie": "armure",
@@ -7232,6 +7493,13 @@
    "categorie": "armure",
    "type": "Bottes",
    "ensemble": "equip_t5_pirate"
+  },
+  {
+   "nom": "Bottes de combat des ailes explosives",
+   "fichier": "7ds-armures-ssr/Bottes/Bottes de combat des ailes explosives.webp",
+   "categorie": "armure",
+   "type": "Bottes",
+   "ensemble": "equip_t5_rage_2"
   },
   {
    "nom": "Bottes de combat du cauchemar ressuscité",
@@ -7337,6 +7605,13 @@
    "ensemble": "accessory_t5_hymn"
   },
   {
+   "nom": "Boucles d'oreilles de l'ombre explosive",
+   "fichier": "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'ombre explosive.webp",
+   "categorie": "bijou",
+   "type": "Boucle d'oreille",
+   "ensemble": "equip_t5_rage"
+  },
+  {
    "nom": "Boucles d'oreilles de la mélodie d'Arachnée",
    "fichier": "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de la mélodie d'Arachnée.webp",
    "categorie": "bijou",
@@ -7370,6 +7645,13 @@
    "categorie": "bijou",
    "type": "Boucle d'oreille",
    "ensemble": "accessory_t5_heart_acc"
+  },
+  {
+   "nom": "Boucles d'oreilles des ailes explosives",
+   "fichier": "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles des ailes explosives.webp",
+   "categorie": "bijou",
+   "type": "Boucle d'oreille",
+   "ensemble": "equip_t5_rage_2"
   },
   {
    "nom": "Boucles d'oreilles du chaos ténébreux",
@@ -7467,6 +7749,13 @@
    "type": "Ceinture"
   },
   {
+   "nom": "Ceinture de l'ombre explosive",
+   "fichier": "7ds-armures-ssr/Ceinture/Ceinture de l'ombre explosive.webp",
+   "categorie": "armure",
+   "type": "Ceinture",
+   "ensemble": "equip_t5_rage"
+  },
+  {
    "nom": "Ceinture de la mélodie d'Arachnée",
    "fichier": "7ds-armures-ssr/Ceinture/Ceinture de la mélodie d'Arachnée.webp",
    "categorie": "armure",
@@ -7486,6 +7775,13 @@
    "categorie": "armure",
    "type": "Ceinture",
    "ensemble": "equip_t5_pirate"
+  },
+  {
+   "nom": "Ceinture des ailes explosives",
+   "fichier": "7ds-armures-ssr/Ceinture/Ceinture des ailes explosives.webp",
+   "categorie": "armure",
+   "type": "Ceinture",
+   "ensemble": "equip_t5_rage_2"
   },
   {
    "nom": "Ceinture du cauchemar ressuscité",
@@ -7744,6 +8040,13 @@
    "ensemble": "accessory_t5_hymn"
   },
   {
+   "nom": "Collier de l'ombre explosive",
+   "fichier": "7ds-bijoux/Collier/Collier de l'ombre explosive.webp",
+   "categorie": "bijou",
+   "type": "Collier",
+   "ensemble": "equip_t5_rage"
+  },
+  {
    "nom": "Collier de la mélodie d'Arachnée",
    "fichier": "7ds-bijoux/Collier/Collier de la mélodie d'Arachnée.webp",
    "categorie": "bijou",
@@ -7777,6 +8080,13 @@
    "categorie": "bijou",
    "type": "Collier",
    "ensemble": "accessory_t5_heart_acc"
+  },
+  {
+   "nom": "Collier des ailes explosives",
+   "fichier": "7ds-bijoux/Collier/Collier des ailes explosives.webp",
+   "categorie": "bijou",
+   "type": "Collier",
+   "ensemble": "equip_t5_rage_2"
   },
   {
    "nom": "Collier du cristal de vie",
@@ -7880,6 +8190,17 @@
    }
   },
   {
+   "nom": "Défiance et transgression",
+   "fichier": "7ds-armures-ssr/Armure liee/Défiance et transgression.webp",
+   "categorie": "gravee",
+   "type": "Armure gravée",
+   "heros": "melascula",
+   "passif": {
+    "niveau": 3,
+    "texte": "Augmente les dégâts crit. de tous les héros alliés de 40% pendant 40 s en utilisant l'attaque ultime.\nChaque fois qu'un héros allié touche un ennemi affecté par Arrachement d'âme, réduit la résistance à tous les éléments de cet ennemi de 2% pendant 40 s. (Max : 20%)"
+   }
+  },
+  {
    "nom": "Dignité de la sainte",
    "fichier": "7ds-armures-ssr/Armure liee/Dignité de la sainte.webp",
    "categorie": "gravee",
@@ -7921,6 +8242,17 @@
    "passif": {
     "niveau": 3,
     "texte": "Attaquer un ennemi dont la résistance au Feu est diminuée réduit le temps de recharge de la compétence normale de 70% et augmente l'efficacité de Déluge de Feu de 30% pendant 15 s. (Temps de recharge : 20 s)"
+   }
+  },
+  {
+   "nom": "Don du Commandement",
+   "fichier": "7ds-armures-ssr/Armure liee/Don du Commandement.webp",
+   "categorie": "gravee",
+   "type": "Armure gravée",
+   "heros": "melascula",
+   "passif": {
+    "niveau": 3,
+    "texte": "Augmente l'efficacité de durée des bonus de 40%.\nChaque coup critique augmente les dégâts de Feu de 5% pendant 10 s. (Max : 50%)\nLorsque l'effet atteint le max, augmente les dégâts crit. infligés aux ennemis affectés par Linceul des ténèbres de 35% pendant 10 s."
    }
   },
   {
@@ -8951,6 +9283,13 @@
    }
   },
   {
+   "nom": "Haut de l'ombre explosive",
+   "fichier": "7ds-armures-ssr/Haut/Haut de l'ombre explosive.webp",
+   "categorie": "armure",
+   "type": "Haut",
+   "ensemble": "equip_t5_rage"
+  },
+  {
    "nom": "Haut de la mélodie d'Arachnée",
    "fichier": "7ds-armures-ssr/Haut/Haut de la mélodie d'Arachnée.webp",
    "categorie": "armure",
@@ -8970,6 +9309,13 @@
    "categorie": "armure",
    "type": "Haut",
    "ensemble": "equip_t5_pirate"
+  },
+  {
+   "nom": "Haut des ailes explosives",
+   "fichier": "7ds-armures-ssr/Haut/Haut des ailes explosives.webp",
+   "categorie": "armure",
+   "type": "Haut",
+   "ensemble": "equip_t5_rage_2"
   },
   {
    "nom": "Haut du cauchemar ressuscité",
@@ -9065,7 +9411,7 @@
    "heros": "dreyfus",
    "passif": {
     "niveau": 3,
-    "texte": "Réussir l'attaque spéciale sur un ennemi qui souffre de dégâts sur la durée augmente la durée des dégâts sur la durée de 10 s et réduit le temps de recharge de l'attaque spéciale de 100%. (Temps de recharge : 15 s)"
+    "texte": "Réussir l'attaque spéciale sur un ennemi qui souffre de dégâts sur la durée augmente la durée des dégâts sur la durée de 10 s. (Temps de recharge : 15 s)\nRéussir l'attaque spéciale sur un ennemi qui souffre de dégâts sur la durée réduit le temps de recharge de l'attaque spéciale de 100%. (Temps de recharge : 30 s)"
    }
   },
   {
@@ -9717,6 +10063,16 @@
    }
   },
   {
+   "nom": "Rapière du souffle venimeux",
+   "fichier": "7ds-armes/Rapiere/Rapière du souffle venimeux.webp",
+   "categorie": "arme",
+   "type": "Rapière",
+   "passif": {
+    "niveau": 7,
+    "texte": "Attaquer un ennemi avec une attaque des Ténèbres réduit la défense de l'ennemi de 35% et augmente les dégâts de faiblesse de tous les éléments de 10% pendant 40s. (Temps de recharge : 40s)\nAugmente les dégâts d'attaque ultime de 30% pendant 40s lorsque cet effet est déclenché. (Temps de recharge : 40s)"
+   }
+  },
+  {
    "nom": "Rapière flamboyante",
    "fichier": "7ds-armes/Rapiere/Rapière flamboyante.webp",
    "categorie": "arme",
@@ -9888,6 +10244,17 @@
    "passif": {
     "niveau": 3,
     "texte": "Augmente la durée d'Éveil dimensionnel de 10 s. Attaquer un ennemi pendant la durée de l'effet inflige Expansion dimensionnelle à la cible pendant 20 s.\nChaque coup porté sur un ennemi affecté par Expansion dimensionnelle augmente les dégâts d'attaque normale que l'utilisateur lui inflige de 7%. (Max : 35%)"
+   }
+  },
+  {
+   "nom": "Tenue de banquet du royaume des démons",
+   "fichier": "7ds-armures-ssr/Armure liee/Tenue de banquet du royaume des démons.webp",
+   "categorie": "gravee",
+   "type": "Armure gravée",
+   "heros": "melascula",
+   "passif": {
+    "niveau": 3,
+    "texte": "Augmente la durée de la barrière octroyée par le héros de 10 s.\nLorsque le héros bénéficie d'une barrière, augmente l'attaque des Ténèbres de 50% et les dégâts des Ténèbres de 20% pour tous les héros alliés d'attribut Ténèbres."
    }
   },
   {
@@ -10321,6 +10688,40 @@
     {
      "pieces": 7,
      "texte": "Efficacité de durée des malus +13%\nL'utilisation de l'attaque spéciale augmente l'efficacité de durée des malus de 20% pendant 20s.\nPasser à un autre héros alors que l'effet est actif retire l'effet et augmente l'attaque élémentaire de tous les héros alliés qui correspond à l'attribut du héros de 20% pendant 40s."
+    }
+   ]
+  },
+  "equip_t5_rage": {
+   "nom": "Vague de purification",
+   "paliers": [
+    {
+     "pieces": 3,
+     "texte": "Efficacité de recharge de la magie +12%"
+    },
+    {
+     "pieces": 5,
+     "texte": "Efficacité de guérison +15%\nAttaquez l'ennemi dans le dos pour bénéficier de Purification et restaurer la jauge de magie de 200 pendant 20s. (Temps de recharge : 20s)\nAugmente l'efficacité de guérison de 10% et l'efficacité de recharge de la magie de 12% tant que l'effet Purification est actif.\nPasser à un autre héros alors que Purification est actif retire cet effet et augmente l'attaque de tous les héros alliés de 8% pendant 40s."
+    },
+    {
+     "pieces": 7,
+     "texte": "PV +30%\nAttaquez l'ennemi dans le dos pour bénéficier de Purification et restaurer la jauge de magie de 250 pendant 20s. (Temps de recharge : 20s)\nAugmente l'efficacité de guérison de 15% et l'efficacité de recharge de la magie de 16% tant que l'effet Purification est actif.\nPasser à un autre héros alors que Purification est actif retire cet effet et augmente l'attaque de tous les héros alliés de 12% pendant 40s."
+    }
+   ]
+  },
+  "equip_t5_rage_2": {
+   "nom": "Eau sacrée de purification",
+   "paliers": [
+    {
+     "pieces": 3,
+     "texte": "Efficacité de recharge de la magie +15%"
+    },
+    {
+     "pieces": 5,
+     "texte": "Efficacité de guérison +18%\nAttaquez l'ennemi pour bénéficier de Purification et restaurer la jauge de magie de 400 pendant 10s. (Temps de recharge : 10s)\nAugmente l'efficacité de guérison de 14% et l'efficacité de recharge de la magie de 15% tant que l'effet Purification est actif.\nPasser à un autre héros alors que Purification est actif retire cet effet et augmente l'attaque de tous les héros alliés de 10% pendant 40s."
+    },
+    {
+     "pieces": 7,
+     "texte": "PV +37.5%\nAttaquez l'ennemi pour bénéficier de Purification et restaurer la jauge de magie de 500 pendant 10s. (Temps de recharge : 10s)\nAugmente l'efficacité de guérison de 20% et l'efficacité de recharge de la magie de 22% tant que l'effet Purification est actif.\nPasser à un autre héros alors que Purification est actif retire cet effet et augmente l'attaque de tous les héros alliés de 15% pendant 40s."
     }
    ]
   },

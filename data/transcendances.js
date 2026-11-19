@@ -238,6 +238,15 @@ window.SEVEN_DS_TRANSCENDANCES = {
       tenue:"7ds-armures-ssr/Armure liee/Rituel sacré.webp", promotion:3, arme:"Sword1h",
       regle:{ cible:"normal-skill", valeur:5000, phrase:"Augmente les dégâts de compétence normale de " } }
   ],
+  "melascula":[
+    { id:"eplb_melascula_b", nom:"Transcendance de soutien : Amélioration", texte:"Augmente tous les dégâts élémentaires de tous les héros alliés de 25% pendant 10 s lorsqu'un héros allié utilise une compétence de relève.",
+      tenue:"7ds-armures-ssr/Armure liee/Défiance et transgression.webp", promotion:3, arme:"Rapier" },
+    { id:"eplb_melascula_c", nom:"Transcendance de puissance : Frappe lourde", texte:"Augmente les dégâts d'attaque spéciale de 50%.",
+      tenue:"7ds-armures-ssr/Armure liee/Don du Commandement.webp", promotion:3, arme:"Lance",
+      regle:{ cible:"special", valeur:5000, phrase:"Augmente les dégâts d'attaque spéciale de " } },
+    { id:"eplb_melascula_d", nom:"Transcendance protectrice : Résistance", texte:"Lorsqu'un héros allié subit une attaque ennemie, 20% de chances d'augmenter la résistance élémentaire de tous les héros alliés correspondant à l'attaque subie de 15% pendant 20 s.",
+      tenue:"7ds-armures-ssr/Armure liee/Tenue de banquet du royaume des démons.webp", promotion:3, arme:"Shield" }
+  ],
   "meliodas":[
     { id:"eplb_meliodas_b", nom:"Transcendance de puissance : Technique", texte:"Augmente les dégâts de compétence normale de 50%.",
       tenue:"7ds-armures-ssr/Armure liee/Une nouvelle aventure.webp", promotion:3, arme:"Sword1h",

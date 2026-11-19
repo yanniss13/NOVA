@@ -4,11 +4,11 @@
   "docs/chronometrage-animations.md. Ne pas editer a la main.",
   "Les mesures se saisissent dans data/animations-mesurees.json."
  ],
- "total": 25,
+ "total": 34,
  "mesurees": 0,
  "debloquent": 0,
- "affinent": 22,
- "releves": 3,
+ "affinent": 28,
+ "releves": 6,
  "prochaines": [
   {
    "gameId": "diane_gauntlets_skill_rmb_1",
@@ -29,12 +29,12 @@
    "role": "affine"
   },
   {
-   "gameId": "estia_book_skill_r",
+   "gameId": "estia_book_skill_q",
    "heros": "estia",
    "arme": "Grimoire",
-   "nom": "Final polaire",
-   "categorie": "Attaque ultime",
-   "touche": "R",
+   "nom": "Vague du pingouin",
+   "categorie": "Attaque spéciale",
+   "touche": "Q",
    "role": "affine"
   },
   {
@@ -47,10 +47,10 @@
    "role": "affine"
   },
   {
-   "gameId": "estia_wand_skill_r",
-   "heros": "estia",
-   "arme": "Baguette",
-   "nom": "Déluge céleste",
+   "gameId": "guila_shield_skill_q",
+   "heros": "guila",
+   "arme": "Épée & bouclier",
+   "nom": "Explosion resplendissante",
    "categorie": "Attaque ultime",
    "touche": "R",
    "role": "affine"

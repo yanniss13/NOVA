@@ -17,7 +17,7 @@ et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
 - [x] `scripts/generate-data.ps1` — scanne les dossiers et génère `data.js`.
-- [x] `data.js` — données d'assets générées (29 persos, 12 types d'armes, 5 armures).
+- [x] `data.js` — données d'assets générées (30 persos, 12 types d'armes, 5 armures).
 - [x] `index.html` — appli complète (builder + page d'affichage), autonome.
 - [x] Bijoux **SSR uniquement** (grade5) : 37 images intégrées
       (12 anneaux, 13 colliers, 12 boucles d'oreilles) — correspond aux badges
@@ -31,13 +31,13 @@ et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
       `scripts/telecharger-images.py` complète armes et bijoux : il ne
       télécharge que ce qui manque et ne remplace jamais un fichier existant.
 - [x] Potentiels : palier P0→P10 par héros, façon page team-builder du site.
-      Données FR (29 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
+      Données FR (30 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
       régénérable via `scripts/generate-potentiels.py`. Le palier est **commun au héros** ;
       les 3 clés d'armes par héros déterminent les armes compatibles et l'arme
       équipée choisit les descriptions de bonus affichées.
 - [x] Compatibilité des armes : le picker ne propose que les 3 types autorisés
       du héros. Toute arme incompatible est automatiquement retirée.
-- [x] Compatibilité des armures liées : 104 images locales associées aux 29 héros
+- [x] Compatibilité des armures liées : 107 images locales associées aux 30 héros
       (3 ou 4 par héros). Le picker filtre selon le personnage et retire les
       anciennes valeurs incompatibles.
 - [x] Badges **élément + armes** par personnage. `personnages-meta.js`
@@ -74,6 +74,22 @@ et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
       dans `scripts/effets-dps-regles.py` (section « Estia »). Comme pour
       Lancelot, ses passifs de tenue gravée ne sont pas encore transcrits dans
       `data/passifs-graves.js` : ils s'affichent, sans entrer dans le calcul.
+- [x] **Melascula, 30ᵉ héros, lue sur 7dsorigin.app** (19 novembre 2026,
+      version 2.4) par le même chemin qu'Estia : portrait, rapière, lance et
+      bouclier, ses trois tenues gravées et son arme, la « Rapière du souffle
+      venimeux », avec les ensembles de l'ombre explosive et des ailes
+      explosives. Trois changements de la source arrivent avec elle :
+      - les dix armes « de l'âme vorace » s'appellent désormais « de
+        l'engloutisseuse d'âmes ». Le propriétaire a choisi de **garder les
+        noms de fichier locaux** : `ARMES_RENOMMEES_PAR_LA_SOURCE` de
+        `scripts/client_content.py` fait le pont (`nom_local_arme()`),
+        `stats-build.js` garde le nom officiel dans `nameFr` et l'OCR
+        reconnaît les deux noms ;
+      - le rôle `BUSTER` (« Briseur ») apparaît dans `ROLES_HEROS` ;
+      - ses deux compétences au bouclier frappent sur la DEF sans
+        `damagePercent` publié. `generate-competences.py` chiffre « 59 % de la
+        défense » comme un coup direct et laisse non chiffrée la montée
+        « 10 % jusqu'à 290 % », qu'aucun lancement ne totalise.
 - [x] **Partage réseau (Supabase) — Étape 1 implémentée**. Comptes + équipes +
       rosters et Analyse partagés. Auth email/mot de passe, ownership par RLS,
       caches hors ligne séparés et migration one-shot des anciennes équipes locales.

@@ -2,8 +2,12 @@ import argparse
 import collections
 import json
 import re
+import sys
 import unicodedata
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import client_content  # noqa: E402
 
 
 FOLDER_TO_ENUM = {
@@ -1037,7 +1041,8 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
     supplement = read_json(supplement_path) if supplement_path.exists() else {}
     official_by_key = {}
     for weapon in official_weapons:
-        key = (weapon["weaponType"], normalize_name(weapon["nameFr"]))
+        key = (weapon["weaponType"],
+               normalize_name(client_content.nom_local_arme(weapon["nameFr"])))
         official_by_key.setdefault(key, []).append(weapon)
 
     # Les armes en ont besoin dès leur compactage, avant les personnages.
@@ -1079,6 +1084,11 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
         }
         if source.get("nameEn"):
             compact_weapon["nameEn"] = source["nameEn"]
+        # Le nom affiche en jeu, seulement quand il differe de l'image locale
+        # (ARMES_RENOMMEES_PAR_LA_SOURCE) : l'import de captures doit le
+        # reconnaitre, le nom de fichier ne le portant plus.
+        if client_content.nom_local_arme(source["nameFr"]) != source["nameFr"]:
+            compact_weapon["nameFr"] = source["nameFr"]
         for grade in sorted(source.get("grades") or [], key=lambda grade: grade["gameId"]):
             compact_weapon["gradesByGameId"][grade["gameId"]] = compact_grade(
                 grade, source["slug"], known

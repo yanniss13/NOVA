@@ -1,6 +1,6 @@
 // Généré manuellement depuis la page publique du team builder 7dsorigin.app.
 // Héros absents de cette page : tables du jeu, via 7ds-stats/contenu-jeu.json.
-// Date de génération : 2026-10-28T15:02:17+01:00
+// Date de génération : 2026-11-19T16:30:55+01:00
 // Instantané local : aucun appel réseau n'est effectué par index.html.
 window.SEVEN_DS_ARMURES_LIEES = {
   "ban": [
@@ -136,6 +136,11 @@ window.SEVEN_DS_ARMURES_LIEES = {
     "7ds-armures-ssr/Armure liee/Exploration de l'inconnu.webp",
     "7ds-armures-ssr/Armure liee/Prestige de l'archiprêtresse.webp",
     "7ds-armures-ssr/Armure liee/Rituel sacré.webp"
+  ],
+  "melascula": [
+    "7ds-armures-ssr/Armure liee/Don du Commandement.webp",
+    "7ds-armures-ssr/Armure liee/Défiance et transgression.webp",
+    "7ds-armures-ssr/Armure liee/Tenue de banquet du royaume des démons.webp"
   ],
   "meliodas": [
     "7ds-armures-ssr/Armure liee/Défense simple.webp",

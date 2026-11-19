@@ -457,6 +457,25 @@
     }
    }
   },
+  "melascula": {
+   "nom": "Melascula",
+   "fichier": "7ds-personnages/melascula.webp",
+   "element": "DARK",
+   "armes": {
+    "Rapier": {
+     "element": "DARK",
+     "role": "Supporter"
+    },
+    "Lance": {
+     "element": "FIRE",
+     "role": "Attacker"
+    },
+    "Shield": {
+     "element": "DARK",
+     "role": "Warden"
+    }
+   }
+  },
   "meliodas": {
    "nom": "Meliodas",
    "fichier": "7ds-personnages/meliodas.webp",
@@ -2042,6 +2061,12 @@
     "niveauMax": 50
    }
   },
+  "7ds-armes/Rapiere/Rapière du souffle venimeux.webp": {
+   "131085013": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
+   }
+  },
   "7ds-armes/Rapiere/Rapière flamboyante.webp": {
    "131084011": {
     "outrepassementMax": 6,
@@ -2496,12 +2521,14 @@
     "7ds-bijoux/Anneau/Anneau de l'araignée de l'ombre.webp": 7,
     "7ds-bijoux/Anneau/Anneau de l'avidité incarnée.webp": 8,
     "7ds-bijoux/Anneau/Anneau de l'hymne régénérateur.webp": 7,
+    "7ds-bijoux/Anneau/Anneau de l'ombre explosive.webp": 7,
     "7ds-bijoux/Anneau/Anneau de l'éclat spectral.webp": 7,
     "7ds-bijoux/Anneau/Anneau de la mélodie d'Arachnée.webp": 7,
     "7ds-bijoux/Anneau/Anneau de la pensée pervertie.webp": 7,
     "7ds-bijoux/Anneau/Anneau de prédateur 「abyssal」.webp": 7,
     "7ds-bijoux/Anneau/Anneau de pulsion maudite.webp": 7,
     "7ds-bijoux/Anneau/Anneau des 100 jours (jamais porté).webp": 7,
+    "7ds-bijoux/Anneau/Anneau des ailes explosives.webp": 8,
     "7ds-bijoux/Anneau/Anneau du cristal de vie.webp": 7,
     "7ds-bijoux/Anneau/Anneau du murmure de l'oasis.webp": 9,
     "7ds-bijoux/Anneau/Anneau du serment de la flamme cramoisie.webp": 10,
@@ -2511,12 +2538,14 @@
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'araignée de l'ombre.webp": 11,
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'avidité incarnée.webp": 12,
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'hymne régénérateur.webp": 11,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'ombre explosive.webp": 11,
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'éclat spectral.webp": 11,
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de la mélodie d'Arachnée.webp": 11,
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de la pensée pervertie.webp": 11,
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de prédateur 「abyssal」.webp": 11,
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de pulsion maudite.webp": 11,
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles des 100 jours (jamais portées).webp": 11,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles des ailes explosives.webp": 12,
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles du chaos ténébreux.webp": 13,
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles du cristal de vie.webp": 11,
     "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles du murmure de l'oasis.webp": 14,
@@ -2528,12 +2557,14 @@
     "7ds-bijoux/Collier/Collier de l'araignée de l'ombre.webp": 17,
     "7ds-bijoux/Collier/Collier de l'avidité incarnée.webp": 18,
     "7ds-bijoux/Collier/Collier de l'hymne régénérateur.webp": 17,
+    "7ds-bijoux/Collier/Collier de l'ombre explosive.webp": 17,
     "7ds-bijoux/Collier/Collier de l'éclat spectral.webp": 17,
     "7ds-bijoux/Collier/Collier de la mélodie d'Arachnée.webp": 17,
     "7ds-bijoux/Collier/Collier de la pensée pervertie.webp": 17,
     "7ds-bijoux/Collier/Collier de prédateur 「abyssal」.webp": 17,
     "7ds-bijoux/Collier/Collier de pulsion maudite.webp": 17,
     "7ds-bijoux/Collier/Collier des 100 jours (jamais porté).webp": 17,
+    "7ds-bijoux/Collier/Collier des ailes explosives.webp": 18,
     "7ds-bijoux/Collier/Collier du cristal de vie.webp": 17,
     "7ds-bijoux/Collier/Collier du murmure de l'oasis.webp": 19,
     "7ds-bijoux/Collier/Collier du souverain cupide.webp": 17,
@@ -2565,10 +2596,12 @@
     "7ds-armures-ssr/Armure liee/Dignité dorée.webp": 21,
     "7ds-armures-ssr/Armure liee/Dignité du capitaine.webp": 21,
     "7ds-armures-ssr/Armure liee/Dignité royale.webp": 21,
+    "7ds-armures-ssr/Armure liee/Don du Commandement.webp": 21,
     "7ds-armures-ssr/Armure liee/Début de l'aventure.webp": 21,
     "7ds-armures-ssr/Armure liee/Défense minimale.webp": 21,
     "7ds-armures-ssr/Armure liee/Défense simple.webp": 21,
     "7ds-armures-ssr/Armure liee/Défense solide.webp": 21,
+    "7ds-armures-ssr/Armure liee/Défiance et transgression.webp": 21,
     "7ds-armures-ssr/Armure liee/Employé saisonnier.webp": 20,
     "7ds-armures-ssr/Armure liee/Exploration de l'inconnu.webp": 21,
     "7ds-armures-ssr/Armure liee/Fille de la forêt et de la terre.webp": 21,
@@ -2625,6 +2658,7 @@
     "7ds-armures-ssr/Armure liee/Tenue d'aventurier.webp": 21,
     "7ds-armures-ssr/Armure liee/Tenue d'exercice confortable.webp": 21,
     "7ds-armures-ssr/Armure liee/Tenue d'exercice d'exploratrice.webp": 21,
+    "7ds-armures-ssr/Armure liee/Tenue de banquet du royaume des démons.webp": 21,
     "7ds-armures-ssr/Armure liee/Tenue de combat cloutée.webp": 21,
     "7ds-armures-ssr/Armure liee/Tenue de cérémonie.webp": 20,
     "7ds-armures-ssr/Armure liee/Tenue de fête légère.webp": 21,
@@ -3204,6 +3238,7 @@
     "131085004": 3,
     "131085005": 3,
     "131085010": 3,
+    "131085013": 3,
     "131091001": 0,
     "131091003": 0,
     "131091005": 0,

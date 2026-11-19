@@ -73,7 +73,7 @@ window.SEVEN_DS_META = {
  "gil-thunder": {
   "element": "THUNDER",
   "rarity": "SR",
-  "role": "ATTACKER",
+  "role": "BUSTER",
   "weapons": [
    {
     "role": "Buster",
@@ -205,7 +205,7 @@ window.SEVEN_DS_META = {
  "tristan": {
   "element": "FIRE",
   "rarity": "SR",
-  "role": "ATTACKER",
+  "role": "BUSTER",
   "weapons": [
    {
     "role": "Buster",
@@ -249,7 +249,7 @@ window.SEVEN_DS_META = {
  "klotho": {
   "element": "WIND",
   "rarity": "SSR",
-  "role": "ATTACKER",
+  "role": "BUSTER",
   "weapons": [
    {
     "role": "Buster",
@@ -447,7 +447,7 @@ window.SEVEN_DS_META = {
  "gowther": {
   "element": "THUNDER",
   "rarity": "SSR",
-  "role": "ATTACKER",
+  "role": "BUSTER",
   "weapons": [
    {
     "role": "Buster",
@@ -491,7 +491,7 @@ window.SEVEN_DS_META = {
  "jericho": {
   "element": "ICE",
   "rarity": "SSR",
-  "role": "ATTACKER",
+  "role": "BUSTER",
   "weapons": [
    {
     "role": "Buster",
@@ -594,6 +594,28 @@ window.SEVEN_DS_META = {
    {
     "role": "Attacker",
     "weapon": "SwordDual",
+    "element": "Dark"
+   }
+  ]
+ },
+ "melascula": {
+  "element": "DARK",
+  "rarity": "SSR",
+  "role": "SUPPORT",
+  "weapons": [
+   {
+    "role": "Supporter",
+    "weapon": "Rapier",
+    "element": "Dark"
+   },
+   {
+    "role": "Attacker",
+    "weapon": "Lance",
+    "element": "Fire"
+   },
+   {
+    "role": "Warden",
+    "weapon": "Shield",
     "element": "Dark"
    }
   ]

@@ -43,6 +43,13 @@ BASE_STAT_FIELDS = (
 # « khala », et changer d'identifiant les rendrait orphelines. Les generateurs
 # reseau ecartent donc l'entree publique, sinon le heros paraitrait deux fois.
 PUBLIC_ALIASES = {"calla": "khala"}
+# Fin de nom officiel -> fin de nom local, pour des armes que 7dsorigin.app a
+# renommees sans changer leur identifiant de jeu. L'image locale garde l'ancien
+# nom, par decision du proprietaire : les builds deja enregistres (equipes,
+# rosters, presets, collection, archives de boss) pointent vers son chemin, et
+# le renommer les rendrait orphelins. Novembre 2026, version 2.4 : les dix
+# armes « de l'ame vorace » deviennent « de l'engloutisseuse d'ames ».
+ARMES_RENOMMEES_PAR_LA_SOURCE = {"de l'engloutisseuse d'âmes": "de l'âme vorace"}
 MISSING_FROM_EXPORT = "missing-from-export"
 PLACEHOLDER = re.compile(r"\{\d+\}")
 NO_BREAK_SPACE = chr(0xA0)
@@ -73,6 +80,14 @@ def client_slugs(snapshot=None):
     """Slugs clients, dans l'ordre canonique de fusion."""
     payload = snapshot_or_default(snapshot)
     return tuple(sorted(payload["heroes"], key=str.casefold))
+
+
+def nom_local_arme(nom_officiel):
+    """Le nom de fichier local d'une arme, selon ARMES_RENOMMEES_PAR_LA_SOURCE."""
+    for officiel, local in ARMES_RENOMMEES_PAR_LA_SOURCE.items():
+        if nom_officiel.endswith(officiel):
+            return nom_officiel[:-len(officiel)] + local
+    return nom_officiel
 
 
 def without_public_aliases(payload, key="slug"):

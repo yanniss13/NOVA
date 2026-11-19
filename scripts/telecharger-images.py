@@ -33,6 +33,8 @@ _spec = importlib.util.spec_from_file_location(
 )
 _gen = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_gen)
+sys.path.insert(0, os.path.join(RACINE, "scripts"))
+import client_content  # noqa: E402
 
 BASE = "https://7dsorigin.app"
 PAGE_ARMES = BASE + "/fr/armes"
@@ -73,7 +75,8 @@ def attendus():
         icone = arme.get("iconUrl")
         if not (dossier and icone and arme.get("displayName")):
             continue
-        yield (os.path.join("7ds-armes", dossier), arme["displayName"], BASE + icone)
+        yield (os.path.join("7ds-armes", dossier),
+               client_content.nom_local_arme(arme["displayName"]), BASE + icone)
 
     bijoux = _gen.collect(_gen.flight_payload(_gen.fetch(PAGE_BIJOUX)), "items")
     for bijou in bijoux:

@@ -5,8 +5,7 @@
  "A_Block": {
   "fr": "Persévérance",
   "en": "Perseverance",
-  "taux": false,
-  "court": "Persévérance"
+  "taux": false
  },
  "Activethird_Damadd_Rate": {
   "fr": "Augmentation des dégâts d'attaque spéciale",
@@ -68,8 +67,7 @@
  "C_Critical_Dam_Rate": {
   "fr": "Dégâts crit.",
   "en": "Crit Damage",
-  "taux": true,
-  "court": "Dégâts crit."
+  "taux": true
  },
  "C_Critical_DamRes_Rate": {
   "fr": "Défense crit.",
@@ -79,14 +77,12 @@
  "C_Critical_Rate": {
   "fr": "Chances crit.",
   "en": "Crit Chance",
-  "taux": true,
-  "court": "Taux critique"
+  "taux": true
  },
  "C_Critical_ResRate": {
   "fr": "Résistance crit.",
   "en": "Crit Resistance",
-  "taux": true,
-  "court": "Résist. critique"
+  "taux": true
  },
  "D_Protect_Cur_Rate": {
   "fr": "Percement de défense",

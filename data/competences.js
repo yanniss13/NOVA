@@ -3326,7 +3326,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 18.0,
+   "recharge": 18.1,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -3345,7 +3345,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 76.0,
-   "recharge": 12.0,
+   "recharge": 10.0,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -3364,7 +3364,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 212.0,
-   "recharge": 10.0,
+   "recharge": 12.0,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -3520,7 +3520,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 16.0,
+   "recharge": 10.0,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -3539,7 +3539,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 236.0,
-   "recharge": 10.0,
+   "recharge": 16.0,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -7079,6 +7079,290 @@ window.SEVEN_DS_COMPETENCES = {
    "recharge": null,
    "repartition": [],
    "weaponType": "SwordDual"
+  }
+ ],
+ "melascula": [
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 184.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_lance_jumpatk",
+   "nature": "direct",
+   "nom": "Light of Karmic Fire",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 184.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Lance"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 249.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_lance_skill_e",
+   "nature": "direct",
+   "nom": "Demonic Reach",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 249.0,
+   "recharge": 20.0,
+   "repartition": [],
+   "weaponType": "Lance"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 68.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_lance_skill_q",
+   "nature": "direct",
+   "nom": "Hellgate Breach",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 68.0,
+   "recharge": 15.0,
+   "repartition": [],
+   "weaponType": "Lance"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [],
+   "coups": null,
+   "gameId": "melascula_lance_skill_r",
+   "nature": "non-chiffree",
+   "nom": "Ring of Repose",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 10.0,
+   "repartition": [],
+   "weaponType": "Lance"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 135.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_lance_skill_tag",
+   "nature": "direct",
+   "nom": "Infernal Grip",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 135.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Lance"
+  },
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 97.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_rapier_jumpatk",
+   "nature": "direct",
+   "nom": "Death's Beckoning",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 97.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 123.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_rapier_skill_e_atk1",
+   "nature": "direct",
+   "nom": "Unholy Grace",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 123.0,
+   "recharge": 21.0,
+   "repartition": [],
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 74.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_rapier_skill_q",
+   "nature": "direct",
+   "nom": "Soul Surge",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 74.0,
+   "recharge": 19.0,
+   "repartition": [],
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 321.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_rapier_skill_r",
+   "nature": "direct",
+   "nom": "Black Bloom",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 321.0,
+   "recharge": 10.0,
+   "repartition": [],
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 63.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_rapier_skill_tag",
+   "nature": "direct",
+   "nom": "Hand of Darkness",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 63.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 68.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_shield_jumpatk",
+   "nature": "direct",
+   "nom": "Viper Needle",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 68.0,
+   "provenance": "somme-des-coups",
+   "recharge": null,
+   "repartition": [
+    10.0,
+    12.0,
+    16.0,
+    30.0
+   ],
+   "weaponType": "Shield"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 198.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_shield_skill_e",
+   "nature": "duree",
+   "nom": "Viper Chaser",
+   "periodique": {
+    "base": "def",
+    "duree": 10.0,
+    "intervalle": 0.3,
+    "pourcentageParTick": 6.0,
+    "ticks": 33
+   },
+   "portee": "Melee",
+   "pourcentage": 198.0,
+   "recharge": 22.0,
+   "repartition": [],
+   "weaponType": "Shield"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [],
+   "coups": null,
+   "gameId": "melascula_shield_skill_q",
+   "nature": "non-chiffree",
+   "nom": "Soul Siphon",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 25.0,
+   "repartition": [],
+   "weaponType": "Shield"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [],
+   "coups": null,
+   "gameId": "melascula_shield_skill_r",
+   "nature": "non-chiffree",
+   "nom": "Deadly Poison",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 30.0,
+   "repartition": [],
+   "weaponType": "Shield"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "def",
+     "pourcentage": 59.0
+    }
+   ],
+   "coups": null,
+   "gameId": "melascula_shield_skill_tag",
+   "nature": "direct",
+   "nom": "Venom Rain",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 59.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Shield"
   }
  ],
  "meliodas": [

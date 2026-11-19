@@ -385,19 +385,19 @@
   "engravingPassives": null,
   "bindingMaterials": [
    {
-    "itemId": "130100093",
+    "itemId": "101100530",
     "quantity": 1
    },
    {
-    "itemId": "130100094",
+    "itemId": "101100531",
     "quantity": 1
    },
    {
-    "itemId": "130100095",
+    "itemId": "101100532",
     "quantity": 1
    },
    {
-    "itemId": "130100096",
+    "itemId": "101100533",
     "quantity": 1
    },
    {
@@ -1631,19 +1631,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124001",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132224001",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132324001",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132424001",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -3049,19 +3049,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -4471,19 +4471,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -5893,19 +5893,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132114024",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132214024",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132314024",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132414024",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -7143,19 +7143,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124001",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132224001",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132324001",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132424001",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -8561,19 +8561,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -9983,19 +9983,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -11405,19 +11405,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132114024",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132214024",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132314024",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132414024",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -12655,19 +12655,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124001",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132224001",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132324001",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132424001",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -14118,19 +14118,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -14354,8 +14354,8 @@
      "id": "EpLb_GilThunder_C",
      "icon": "equippassive_limitbreak_warden_a",
      "tier": 3,
-     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy.",
-     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-].",
+     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy. (Does not stack)",
+     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-]. (Non cumulable)",
      "nameEn": "Protective Transcendence: Resistance",
      "nameFr": "Transcendance protectrice : Résistance"
     }
@@ -15585,19 +15585,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -17007,19 +17007,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124030",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224030",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324030",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424030",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -18257,19 +18257,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124001",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132224001",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132324001",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132424001",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -19675,19 +19675,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -21142,19 +21142,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -21333,8 +21333,8 @@
      "id": "EpLb_Howzer_D",
      "icon": "equippassive_limitbreak_warden_b",
      "tier": 3,
-     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Crit Resistance[-] and [#0F5CD8]Crit Defense[-] by [#1A7331]30%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy.",
-     "descFr": "Lorsqu'un héros allié subit une défense crit. ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance crit.[-] et la [#0F5CD8]défense crit.[-] de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]20s[-].",
+     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Crit Resistance[-] and [#0F5CD8]Crit Defense[-] by [#1A7331]30%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy. (Does not stack)",
+     "descFr": "Lorsqu'un héros allié subit une défense crit. ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance crit.[-] et la [#0F5CD8]défense crit.[-] de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]20s[-]. (Non cumulable)",
      "nameEn": "Protective Transcendence: Adamant",
      "nameFr": "Transcendance protectrice : Airain"
     }
@@ -22564,19 +22564,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132135005",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132235005",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132335005",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132435005",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -23814,19 +23814,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124001",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132224001",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132324001",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132424001",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -24046,8 +24046,8 @@
      "id": "EpLb_Dreydrin_B",
      "icon": "equippassive_limitbreak_warden_a",
      "tier": 3,
-     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy.",
-     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-].",
+     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy. (Does not stack)",
+     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-]. (Non cumulable)",
      "nameEn": "Protective Transcendence: Resistance",
      "nameFr": "Transcendance protectrice : Résistance"
     }
@@ -25277,19 +25277,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -26699,19 +26699,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -28166,19 +28166,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132114024",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132214024",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132314024",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132414024",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -29416,19 +29416,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124001",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132224001",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132324001",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132424001",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -30834,19 +30834,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -32256,19 +32256,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -33678,19 +33678,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132135005",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132235005",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132335005",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132435005",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -34928,19 +34928,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134003",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132234003",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132334003",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132434003",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -36346,19 +36346,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -37768,19 +37768,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -38004,8 +38004,8 @@
      "id": "EpLb_Elaine_D",
      "icon": "equippassive_limitbreak_warden_a",
      "tier": 3,
-     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy.",
-     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-].",
+     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy. (Does not stack)",
+     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-]. (Non cumulable)",
      "nameEn": "Protective Transcendence: Resistance",
      "nameFr": "Transcendance protectrice : Résistance"
     }
@@ -39235,19 +39235,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124030",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224030",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324030",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424030",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -40485,19 +40485,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124001",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132224001",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132324001",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132424001",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -41883,18 +41883,18 @@
     "levels": [
      {
       "level": 1,
-      "descEn": "Landing the Special Attack on an enemy taking [#0F5CD8]DoT[-] increases the [#0F5CD8]DoT[-] duration by [#1A7331]6 sec[-] and decreases the Special Attack [#0F5CD8]cooldown[-] by [#1A7331]50%[-]. (Cooldown: [#1A7331]15 sec[-])",
-      "descFr": "Réussir l'attaque spéciale sur un ennemi qui souffre de [#0F5CD8]dégâts sur la durée[-] augmente la durée des [#0F5CD8]dégâts sur la durée[-] de [#1A7331]6 s[-] et réduit le [#0F5CD8]temps de recharge[-] de l'attaque spéciale de [#1A7331]50%[-]. (Temps de recharge : [#1A7331]15 s[-])"
+      "descEn": "Landing the Special Attack on an enemy taking [#0F5CD8]DoT[-] increases the [#0F5CD8]DoT[-] duration by [#1A7331]6 sec[-]. (Cooldown: [#1A7331]15 sec[-])\nLanding the Special Attack on an enemy taking [#0F5CD8]DoT[-] decreases the Special Attack [#0F5CD8]cooldown[-] by [#1A7331]50%[-]. (Cooldown: [#1A7331]30 sec[-])",
+      "descFr": "Réussir l'attaque spéciale sur un ennemi qui souffre de [#0F5CD8]dégâts sur la durée[-] augmente la durée des [#0F5CD8]dégâts sur la durée[-] de [#1A7331]6 s[-]. (Temps de recharge : [#1A7331]15 s[-])\nRéussir l'attaque spéciale sur un ennemi qui souffre de [#0F5CD8]dégâts sur la durée[-] réduit le [#0F5CD8]temps de recharge[-] de l'attaque spéciale de [#1A7331]50%[-]. (Temps de recharge : [#1A7331]30 s[-])"
      },
      {
       "level": 2,
-      "descEn": "Landing the Special Attack on an enemy taking [#0F5CD8]DoT[-] increases the [#0F5CD8]DoT[-] duration by [#1A7331]8 sec[-] and decreases the Special Attack [#0F5CD8]cooldown[-] by [#1A7331]75%[-]. (Cooldown: [#1A7331]15 sec[-])",
-      "descFr": "Réussir l'attaque spéciale sur un ennemi qui souffre de [#0F5CD8]dégâts sur la durée[-] augmente la durée des [#0F5CD8]dégâts sur la durée[-] de [#1A7331]8 s[-] et réduit le [#0F5CD8]temps de recharge[-] de l'attaque spéciale de [#1A7331]75%[-]. (Temps de recharge : [#1A7331]15 s[-])"
+      "descEn": "Landing the Special Attack on an enemy taking [#0F5CD8]DoT[-] increases the [#0F5CD8]DoT[-] duration by [#1A7331]8 sec[-]. (Cooldown: [#1A7331]15 sec[-])\nLanding the Special Attack on an enemy taking [#0F5CD8]DoT[-] decreases the Special Attack [#0F5CD8]cooldown[-] by [#1A7331]75%[-]. (Cooldown: [#1A7331]30 sec[-])",
+      "descFr": "Réussir l'attaque spéciale sur un ennemi qui souffre de [#0F5CD8]dégâts sur la durée[-] augmente la durée des [#0F5CD8]dégâts sur la durée[-] de [#1A7331]8 s[-]. (Temps de recharge : [#1A7331]15 s[-])\nRéussir l'attaque spéciale sur un ennemi qui souffre de [#0F5CD8]dégâts sur la durée[-] réduit le [#0F5CD8]temps de recharge[-] de l'attaque spéciale de [#1A7331]75%[-]. (Temps de recharge : [#1A7331]30 s[-])"
      },
      {
       "level": 3,
-      "descEn": "Landing the Special Attack on an enemy taking [#0F5CD8]DoT[-] increases the [#0F5CD8]DoT[-] duration by [#1A7331]10 sec[-] and decreases the Special Attack [#0F5CD8]cooldown[-] by [#1A7331]100%[-]. (Cooldown: [#1A7331]15 sec[-])",
-      "descFr": "Réussir l'attaque spéciale sur un ennemi qui souffre de [#0F5CD8]dégâts sur la durée[-] augmente la durée des [#0F5CD8]dégâts sur la durée[-] de [#1A7331]10 s[-] et réduit le [#0F5CD8]temps de recharge[-] de l'attaque spéciale de [#1A7331]100%[-]. (Temps de recharge : [#1A7331]15 s[-])"
+      "descEn": "Landing the Special Attack on an enemy taking [#0F5CD8]DoT[-] increases the [#0F5CD8]DoT[-] duration by [#1A7331]10 sec[-]. (Cooldown: [#1A7331]15 sec[-])\nLanding the Special Attack on an enemy taking [#0F5CD8]DoT[-] decreases the Special Attack [#0F5CD8]cooldown[-] by [#1A7331]100%[-]. (Cooldown: [#1A7331]30 sec[-])",
+      "descFr": "Réussir l'attaque spéciale sur un ennemi qui souffre de [#0F5CD8]dégâts sur la durée[-] augmente la durée des [#0F5CD8]dégâts sur la durée[-] de [#1A7331]10 s[-]. (Temps de recharge : [#1A7331]15 s[-])\nRéussir l'attaque spéciale sur un ennemi qui souffre de [#0F5CD8]dégâts sur la durée[-] réduit le [#0F5CD8]temps de recharge[-] de l'attaque spéciale de [#1A7331]100%[-]. (Temps de recharge : [#1A7331]30 s[-])"
      }
     ],
     "nameEn": "Gouge",
@@ -41903,19 +41903,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -43370,19 +43370,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -44792,19 +44792,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134026",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234026",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334026",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434026",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -46042,19 +46042,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124001",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132224001",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132324001",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132424001",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -47505,19 +47505,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -48927,19 +48927,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -50349,19 +50349,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134026",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234026",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334026",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434026",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -51599,19 +51599,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124001",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132224001",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132324001",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132424001",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -53017,19 +53017,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -54484,19 +54484,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -55906,19 +55906,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132114024",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132214024",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132314024",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132414024",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -57156,19 +57156,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134003",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132234003",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132334003",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132434003",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -58574,19 +58574,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -58765,8 +58765,8 @@
      "id": "EpLb_Guila_C",
      "icon": "equippassive_limitbreak_warden_b",
      "tier": 3,
-     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Crit Resistance[-] and [#0F5CD8]Crit Defense[-] by [#1A7331]30%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy.",
-     "descFr": "Lorsqu'un héros allié subit une défense crit. ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance crit.[-] et la [#0F5CD8]défense crit.[-] de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]20s[-].",
+     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Crit Resistance[-] and [#0F5CD8]Crit Defense[-] by [#1A7331]30%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy. (Does not stack)",
+     "descFr": "Lorsqu'un héros allié subit une défense crit. ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance crit.[-] et la [#0F5CD8]défense crit.[-] de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]20s[-]. (Non cumulable)",
      "nameEn": "Protective Transcendence: Adamant",
      "nameFr": "Transcendance protectrice : Airain"
     }
@@ -59996,19 +59996,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -61418,19 +61418,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132114024",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132214024",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132314024",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132414024",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -62668,19 +62668,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124001",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132224001",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132324001",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132424001",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -62855,8 +62855,8 @@
      "id": "EpLb_Griamore_B",
      "icon": "equippassive_limitbreak_warden_a",
      "tier": 3,
-     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy.",
-     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-].",
+     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy. (Does not stack)",
+     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-]. (Non cumulable)",
      "nameEn": "Protective Transcendence: Resistance",
      "nameFr": "Transcendance protectrice : Résistance"
     }
@@ -64086,19 +64086,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -65508,19 +65508,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -66930,19 +66930,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132135005",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132235005",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132335005",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132435005",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -68180,19 +68180,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134003",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132234003",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132334003",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132434003",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -69598,19 +69598,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -69789,8 +69789,8 @@
      "id": "EpLb_Jericho_C",
      "icon": "equippassive_limitbreak_warden_a",
      "tier": 3,
-     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy.",
-     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-].",
+     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy. (Does not stack)",
+     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-]. (Non cumulable)",
      "nameEn": "Protective Transcendence: Resistance",
      "nameFr": "Transcendance protectrice : Résistance"
     }
@@ -71020,19 +71020,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -72442,19 +72442,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134026",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234026",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334026",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434026",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -73692,19 +73692,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134003",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132234003",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132334003",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132434003",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -75110,19 +75110,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -75301,8 +75301,8 @@
      "id": "EpLb_King_C",
      "icon": "equippassive_limitbreak_warden_b",
      "tier": 3,
-     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Crit Resistance[-] and [#0F5CD8]Crit Defense[-] by [#1A7331]30%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy.",
-     "descFr": "Lorsqu'un héros allié subit une défense crit. ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance crit.[-] et la [#0F5CD8]défense crit.[-] de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]20s[-].",
+     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Crit Resistance[-] and [#0F5CD8]Crit Defense[-] by [#1A7331]30%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy. (Does not stack)",
+     "descFr": "Lorsqu'un héros allié subit une défense crit. ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance crit.[-] et la [#0F5CD8]défense crit.[-] de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]20s[-]. (Non cumulable)",
      "nameEn": "Protective Transcendence: Adamant",
      "nameFr": "Transcendance protectrice : Airain"
     }
@@ -76532,19 +76532,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -77954,19 +77954,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132135005",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132235005",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132335005",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132435005",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -79204,19 +79204,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134003",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132234003",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132334003",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132434003",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -80667,19 +80667,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -82089,19 +82089,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -83511,19 +83511,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124030",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224030",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324030",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424030",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -84888,19 +84888,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132114024",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132214024",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132314024",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132414024",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -86310,19 +86310,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134026",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234026",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334026",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434026",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -87777,19 +87777,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132135005",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132235005",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132335005",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132435005",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -89027,19 +89027,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134003",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132234003",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132334003",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132434003",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -90490,19 +90490,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -91957,19 +91957,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -93379,19 +93379,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124030",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224030",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324030",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424030",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -94629,19 +94629,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134003",
+    "itemId": "101100540",
     "quantity": 1
    },
    {
-    "itemId": "132234003",
+    "itemId": "101100541",
     "quantity": 1
    },
    {
-    "itemId": "132334003",
+    "itemId": "101100542",
     "quantity": 1
    },
    {
-    "itemId": "132434003",
+    "itemId": "101100543",
     "quantity": 1
    },
    {
@@ -96047,19 +96047,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -97469,19 +97469,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -98891,19 +98891,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134026",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234026",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334026",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434026",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -100313,19 +100313,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -101780,19 +101780,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -103202,19 +103202,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132114024",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132214024",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132314024",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132414024",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -104624,19 +104624,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -106046,19 +106046,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134026",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234026",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334026",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434026",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -107468,19 +107468,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132114024",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132214024",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132314024",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132414024",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -108890,19 +108890,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -110312,19 +110312,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -111734,19 +111734,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132114024",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132214024",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132314024",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132414024",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -113156,19 +113156,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132114024",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132214024",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132314024",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132414024",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -114578,19 +114578,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -114769,8 +114769,8 @@
      "id": "EpLb_Escanor_D",
      "icon": "equippassive_limitbreak_warden_a",
      "tier": 3,
-     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy.",
-     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-].",
+     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy. (Does not stack)",
+     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-]. (Non cumulable)",
      "nameEn": "Protective Transcendence: Resistance",
      "nameFr": "Transcendance protectrice : Résistance"
     }
@@ -116000,19 +116000,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134026",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234026",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334026",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434026",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -121553,19 +121553,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134026",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234026",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334026",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434026",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -123020,19 +123020,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132114024",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132214024",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132314024",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132414024",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -124442,19 +124442,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124030",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224030",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324030",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424030",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -125864,19 +125864,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134026",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234026",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334026",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434026",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -127286,19 +127286,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124030",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224030",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324030",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424030",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -128708,19 +128708,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132135005",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132235005",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132335005",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132435005",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -130130,19 +130130,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124030",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224030",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324030",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424030",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -131552,19 +131552,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132135005",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132235005",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132335005",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132435005",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -132974,19 +132974,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134026",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234026",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334026",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434026",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -134396,19 +134396,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134029",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234029",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334029",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434029",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -135818,19 +135818,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134029",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234029",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334029",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434029",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -137240,19 +137240,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134029",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234029",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334029",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434029",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -138662,19 +138662,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124030",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224030",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324030",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424030",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -140084,19 +140084,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134026",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234026",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334026",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434026",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -141506,19 +141506,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132135005",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132235005",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132335005",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132435005",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -142928,19 +142928,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134029",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234029",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334029",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434029",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -143119,8 +143119,8 @@
      "id": "EpLb_Estia_C",
      "icon": "equippassive_limitbreak_warden_a",
      "tier": 3,
-     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy.",
-     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-].",
+     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy. (Does not stack)",
+     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-]. (Non cumulable)",
      "nameEn": "Protective Transcendence: Resistance",
      "nameFr": "Transcendance protectrice : Résistance"
     }
@@ -144350,19 +144350,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132134022",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132234022",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132334022",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132434022",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -145772,19 +145772,19 @@
   ],
   "bindingMaterials": [
    {
-    "itemId": "132124028",
+    "itemId": "101100550",
     "quantity": 1
    },
    {
-    "itemId": "132224028",
+    "itemId": "101100551",
     "quantity": 1
    },
    {
-    "itemId": "132324028",
+    "itemId": "101100552",
     "quantity": 1
    },
    {
-    "itemId": "132424028",
+    "itemId": "101100553",
     "quantity": 1
    },
    {
@@ -145797,5 +145797,4271 @@
    }
   ],
   "iconUrl": "/images/costumes/Costume_PC_Estia_0005.webp"
+ },
+ {
+  "gameId": "133445001",
+  "slot": "BindArmor",
+  "released": true,
+  "mainStat": "B_MaxHP_Equip",
+  "subStat": "UltimateSkill_DamAdd_Rate",
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": false,
+     "items": null,
+     "maxReinforce": 5
+    },
+    {
+     "gold": 1000000,
+     "rate": 8000,
+     "tier": 1,
+     "isMax": false,
+     "items": [
+      {
+       "count": 3,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 10
+    },
+    {
+     "gold": 1500000,
+     "rate": 5000,
+     "tier": 2,
+     "isMax": false,
+     "items": [
+      {
+       "count": 7,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 14
+    },
+    {
+     "gold": 2500000,
+     "rate": 3000,
+     "tier": 3,
+     "isMax": true,
+     "items": [
+      {
+       "count": 15,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 15
+    }
+   ],
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "MF_ChargeEffic_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Magic Charging Efficiency",
+     "nameFr": "Efficacité de recharge de la magie",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "MF_ChargeEffic_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "MF_ChargeEffic_Rate",
+      "progression": [
+       15
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "MF_ChargeEffic_Rate",
+      "progression": [
+       1509
+      ]
+     }
+    }
+   ],
+   "limitBreak": {
+    "options": [
+     {
+      "tier": 1,
+      "value": 1048,
+      "abilityType": "I_AtkAdd_Rate"
+     },
+     {
+      "tier": 2,
+      "value": 3906,
+      "abilityType": "Dark_Rate"
+     }
+    ],
+    "passive": {
+     "id": "EpLb_Melascula_B",
+     "icon": "equippassive_limitbreak_supporter_a",
+     "tier": 3,
+     "descEn": "Increases all allied heroes' [#0F5CD8]All Elemental damage[-] by [#1A7331]25%[-] for [#1A7331]10 sec[-] when an allied hero uses a Tag Skill.",
+     "descFr": "Augmente [#0F5CD8]tous les dégâts élémentaires[-] de tous les héros alliés de [#1A7331]25%[-] pendant [#1A7331]10s[-] lorsqu'un héros allié utilise une compétence de relève.",
+     "nameEn": "Support Transcendence: Enhancement",
+     "nameFr": "Transcendance de soutien : Amélioration"
+    }
+   },
+   "disassemble": [
+    {
+     "max": 8,
+     "min": 8,
+     "rate": 10000,
+     "itemId": "101060205"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "UltimateSkill_DamAdd_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Ultimate Move Damage Increase",
+    "nameFr": "Augmentation des dégâts d'attaque ultime"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 3,
+    "stats": [
+     {
+      "key": "Normalskillchangetag_Damadd_Rate",
+      "max": 4252,
+      "min": 1701,
+      "tiers": [
+       {
+        "max": 4252,
+        "min": 4124,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3997,
+        "min": 3741,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 3614,
+        "min": 3104,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2976,
+        "min": 2466,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 2339,
+        "min": 1701,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Tag Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence de relève"
+     },
+     {
+      "key": "Normalattack_Damadd_Rate",
+      "max": 3451,
+      "min": 1380,
+      "tiers": [
+       {
+        "max": 3451,
+        "min": 3347,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3244,
+        "min": 3036,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2933,
+        "min": 2519,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2415,
+        "min": 2001,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1898,
+        "min": 1380,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque normale"
+     },
+     {
+      "key": "Debuff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Debuff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des malus"
+     },
+     {
+      "key": "Buff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Buff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des bonus"
+     },
+     {
+      "key": "TickDam_Rate",
+      "max": 3219,
+      "min": 1288,
+      "tiers": [
+       {
+        "max": 3219,
+        "min": 3123,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3027,
+        "min": 2833,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2738,
+        "min": 2350,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2254,
+        "min": 1868,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1772,
+        "min": 1288,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "DoT Efficiency",
+      "nameFr": "Efficacité des dégâts sur la durée"
+     },
+     {
+      "key": "Activethird_Damadd_Rate",
+      "max": 3142,
+      "min": 1257,
+      "tiers": [
+       {
+        "max": 3142,
+        "min": 3048,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2955,
+        "min": 2765,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2672,
+        "min": 2294,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2201,
+        "min": 1823,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1729,
+        "min": 1257,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Special Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque spéciale"
+     },
+     {
+      "key": "Normalskill_Damadd_Rate",
+      "max": 2418,
+      "min": 968,
+      "tiers": [
+       {
+        "max": 2418,
+        "min": 2346,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2274,
+        "min": 2128,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2056,
+        "min": 1766,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1693,
+        "min": 1403,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1330,
+        "min": 968,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence normale"
+     },
+     {
+      "key": "C_Critical_Dam_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Damage",
+      "nameFr": "Dégâts crit."
+     },
+     {
+      "key": "C_Critical_DamRes_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Defense",
+      "nameFr": "Défense crit."
+     },
+     {
+      "key": "P_Shield_Rate",
+      "max": 1927,
+      "min": 771,
+      "tiers": [
+       {
+        "max": 1927,
+        "min": 1869,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1811,
+        "min": 1695,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1638,
+        "min": 1406,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1350,
+        "min": 1118,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1061,
+        "min": 771,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Barrier Efficiency",
+      "nameFr": "Efficacité des barrières"
+     },
+     {
+      "key": "Ultimateskill_Damadd_Rate",
+      "max": 1895,
+      "min": 758,
+      "tiers": [
+       {
+        "max": 1895,
+        "min": 1839,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1782,
+        "min": 1668,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1612,
+        "min": 1384,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1328,
+        "min": 1100,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1044,
+        "min": 758,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Ultimate Move Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque ultime"
+     },
+     {
+      "key": "MF_ChargeEffic_Rate",
+      "max": 1665,
+      "min": 666,
+      "tiers": [
+       {
+        "max": 1665,
+        "min": 1615,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1565,
+        "min": 1465,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1415,
+        "min": 1215,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1166,
+        "min": 966,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 916,
+        "min": 666,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Magic Charging Efficiency",
+      "nameFr": "Efficacité de recharge de la magie"
+     },
+     {
+      "key": "H_HealPower_Rate",
+      "max": 1541,
+      "min": 617,
+      "tiers": [
+       {
+        "max": 1541,
+        "min": 1495,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1449,
+        "min": 1357,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1311,
+        "min": 1125,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1080,
+        "min": 894,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 849,
+        "min": 617,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Healing Efficiency",
+      "nameFr": "Efficacité de guérison"
+     },
+     {
+      "key": "Burst_Gauge_Rate",
+      "max": 1249,
+      "min": 500,
+      "tiers": [
+       {
+        "max": 1249,
+        "min": 1211,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1175,
+        "min": 1099,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1062,
+        "min": 912,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 874,
+        "min": 724,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 688,
+        "min": 500,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "All Elemental Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de tous les éléments"
+     },
+     {
+      "key": "C_Critical_Rate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Chance",
+      "nameFr": "Chances crit."
+     },
+     {
+      "key": "C_Critical_ResRate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Resistance",
+      "nameFr": "Résistance crit."
+     },
+     {
+      "key": "I_AtkAdd_Rate",
+      "max": 787,
+      "min": 315,
+      "tiers": [
+       {
+        "max": 787,
+        "min": 763,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 740,
+        "min": 692,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 670,
+        "min": 574,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 552,
+        "min": 456,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 433,
+        "min": 315,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Attack Increase",
+      "nameFr": "Augmentation de l'attaque"
+     },
+     {
+      "key": "I_DefAdd_Rate",
+      "max": 632,
+      "min": 253,
+      "tiers": [
+       {
+        "max": 632,
+        "min": 614,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 595,
+        "min": 557,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 538,
+        "min": 462,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 443,
+        "min": 367,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 349,
+        "min": 253,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Defense Increase",
+      "nameFr": "Augmentation de la défense"
+     },
+     {
+      "key": "I_MaxHpAdd_Rate",
+      "max": 464,
+      "min": 186,
+      "tiers": [
+       {
+        "max": 464,
+        "min": 450,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 436,
+        "min": 408,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 394,
+        "min": 338,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 325,
+        "min": 269,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 256,
+        "min": 186,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "HP Increase",
+      "nameFr": "Augmentation des PV"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 156,
+     "gold": 572,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 728,
+     "gold": 2964,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 2288,
+     "gold": 9724,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 4992,
+     "gold": 21112,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 7280,
+     "gold": 30680,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 364,
+     "gold": 780,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1820,
+     "gold": 4056,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 5876,
+     "gold": 13312,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 12740,
+     "gold": 28912,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 18564,
+     "gold": 42016,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 728,
+     "gold": 1144,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 3692,
+     "gold": 6292,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 11960,
+     "gold": 20540,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 26000,
+     "gold": 44512,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 37804,
+     "gold": 64636,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 1352,
+     "gold": 1976,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 7124,
+     "gold": 10660,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 23140,
+     "gold": 34892,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 50232,
+     "gold": 75660,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 73008,
+     "gold": 109876,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 2548,
+     "gold": 3588,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 13624,
+     "gold": 19448,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 44408,
+     "gold": 63596,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 96408,
+     "gold": 138008,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 140088,
+     "gold": 200408,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 210132,
+     "gold": 285582,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 315198,
+     "gold": 406955,
+     "tier": 4,
+     "items": null,
+     "level": 6
+    },
+    {
+     "exp": 457038,
+     "gold": 560581,
+     "tier": 4,
+     "items": null,
+     "level": 7
+    },
+    {
+     "exp": 639854,
+     "gold": 745573,
+     "tier": 4,
+     "items": null,
+     "level": 8
+    },
+    {
+     "exp": 831811,
+     "gold": 920783,
+     "tier": 4,
+     "items": null,
+     "level": 9
+    },
+    {
+     "exp": 1247717,
+     "gold": 1312116,
+     "tier": 4,
+     "items": null,
+     "level": 10
+    },
+    {
+     "exp": 1871576,
+     "gold": 1869766,
+     "tier": 4,
+     "items": null,
+     "level": 11
+    },
+    {
+     "exp": 2713786,
+     "gold": 2575603,
+     "tier": 4,
+     "items": null,
+     "level": 12
+    },
+    {
+     "exp": 3799301,
+     "gold": 3425552,
+     "tier": 4,
+     "items": null,
+     "level": 13
+    },
+    {
+     "exp": 7598602,
+     "gold": 8563880,
+     "tier": 4,
+     "items": null,
+     "level": 14
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 15
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "UltimateSkill_DamAdd_Rate",
+    "progression": [
+     16
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "UltimateSkill_DamAdd_Rate",
+    "progression": [
+     1718
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     137
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     14739
+    ]
+   }
+  },
+  "qualityMin": 111,
+  "qualityMax": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": [
+   110,
+   130
+  ],
+  "personnage": "melascula",
+  "personnageNomFr": "Merascylla",
+  "costumeSlug": "melascula-costume-134103102",
+  "nameFr": "Défiance et transgression",
+  "nameEn": "Defiance and Transgression",
+  "rarity": "SSR",
+  "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé",
+  "engravingPassives": [
+   {
+    "id": "EpEq_Melascula_B",
+    "icon": "equippassive_equip_melascula_b_ssr",
+    "levels": [
+     {
+      "level": 1,
+      "descEn": "Increases all allied heroes' [#0F5CD8]Crit Damage[-] by [#1A7331]32%[-] for [#1A7331]40s[-] when using the Ultimate Move.\nEach time an allied hero hits an enemy with [#0F5CD8]Soul Rip[-], the enemy's [#0F5CD8]All Elemental Resistance[-] decreases by [#1A7331]1.6%[-] for [#1A7331]40s[-]. (Max: [#1A7331]16%[-])",
+      "descFr": "Augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés de [#1A7331]32%[-] pendant [#1A7331]40 s[-] en utilisant l'attaque ultime.\nChaque fois qu'un héros allié touche un ennemi affecté par [#0F5CD8]Arrachement d'âme[-], réduit la [#0F5CD8]résistance à tous les éléments[-] de cet ennemi de [#1A7331]1.6%[-] pendant [#1A7331]40 s[-]. (Max : [#1A7331]16%[-])"
+     },
+     {
+      "level": 2,
+      "descEn": "Increases all allied heroes' [#0F5CD8]Crit Damage[-] by [#1A7331]36%[-] for [#1A7331]40s[-] when using the Ultimate Move.\nEach time an allied hero hits an enemy with [#0F5CD8]Soul Rip[-], the enemy's [#0F5CD8]All Elemental Resistance[-] decreases by [#1A7331]1.8%[-] for [#1A7331]40s[-]. (Max: [#1A7331]18%[-])",
+      "descFr": "Augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés de [#1A7331]36%[-] pendant [#1A7331]40 s[-] en utilisant l'attaque ultime.\nChaque fois qu'un héros allié touche un ennemi affecté par [#0F5CD8]Arrachement d'âme[-], réduit la [#0F5CD8]résistance à tous les éléments[-] de cet ennemi de [#1A7331]1.8%[-] pendant [#1A7331]40 s[-]. (Max : [#1A7331]18%[-])"
+     },
+     {
+      "level": 3,
+      "descEn": "Increases all allied heroes' [#0F5CD8]Crit Damage[-] by [#1A7331]40%[-] for [#1A7331]40s[-] when using the Ultimate Move.\nEach time an allied hero hits an enemy with [#0F5CD8]Soul Rip[-], the enemy's [#0F5CD8]All Elemental Resistance[-] decreases by [#1A7331]2%[-] for [#1A7331]40s[-]. (Max: [#1A7331]20%[-])",
+      "descFr": "Augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés de [#1A7331]40%[-] pendant [#1A7331]40 s[-] en utilisant l'attaque ultime.\nChaque fois qu'un héros allié touche un ennemi affecté par [#0F5CD8]Arrachement d'âme[-], réduit la [#0F5CD8]résistance à tous les éléments[-] de cet ennemi de [#1A7331]2%[-] pendant [#1A7331]40 s[-]. (Max : [#1A7331]20%[-])"
+     }
+    ],
+    "nameEn": "Feast of Souls",
+    "nameFr": "Festin d'âmes"
+   }
+  ],
+  "bindingMaterials": [
+   {
+    "itemId": "101100550",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100551",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100552",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100553",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "/images/costumes/Costume_PC_Melascula_0002.webp"
+ },
+ {
+  "gameId": "133445002",
+  "slot": "BindArmor",
+  "released": true,
+  "mainStat": "B_MaxHP_Equip",
+  "subStat": "Fire_Add",
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": false,
+     "items": null,
+     "maxReinforce": 5
+    },
+    {
+     "gold": 1000000,
+     "rate": 8000,
+     "tier": 1,
+     "isMax": false,
+     "items": [
+      {
+       "count": 3,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 10
+    },
+    {
+     "gold": 1500000,
+     "rate": 5000,
+     "tier": 2,
+     "isMax": false,
+     "items": [
+      {
+       "count": 7,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 14
+    },
+    {
+     "gold": 2500000,
+     "rate": 3000,
+     "tier": 3,
+     "isMax": true,
+     "items": [
+      {
+       "count": 15,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 15
+    }
+   ],
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "C_Critical_Dam_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Crit Damage",
+     "nameFr": "Dégâts crit.",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "C_Critical_Dam_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "C_Critical_Dam_Rate",
+      "progression": [
+       17
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "C_Critical_Dam_Rate",
+      "progression": [
+       1802
+      ]
+     }
+    }
+   ],
+   "limitBreak": {
+    "options": [
+     {
+      "tier": 1,
+      "value": 1590,
+      "abilityType": "C_Critical_Dam_Rate"
+     },
+     {
+      "tier": 2,
+      "value": 3906,
+      "abilityType": "Fire_Rate"
+     }
+    ],
+    "passive": {
+     "id": "EpLb_Melascula_C",
+     "icon": "equippassive_limitbreak_attacker_a",
+     "tier": 3,
+     "descEn": "Increases [#0F5CD8]Special Attack damage[-] by [#1A7331]50%[-].",
+     "descFr": "Augmente les [#0F5CD8]dégâts d'attaque spéciale[-] de [#1A7331]50%[-].",
+     "nameEn": "Power Transcendence: Heavy Strike",
+     "nameFr": "Transcendance de puissance : Frappe lourde"
+    }
+   },
+   "disassemble": [
+    {
+     "max": 8,
+     "min": 8,
+     "rate": 10000,
+     "itemId": "101060205"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "Fire_Add",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Fire Attack",
+    "nameFr": "Attaque de Feu"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 3,
+    "stats": [
+     {
+      "key": "Normalskillchangetag_Damadd_Rate",
+      "max": 4252,
+      "min": 1701,
+      "tiers": [
+       {
+        "max": 4252,
+        "min": 4124,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3997,
+        "min": 3741,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 3614,
+        "min": 3104,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2976,
+        "min": 2466,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 2339,
+        "min": 1701,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Tag Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence de relève"
+     },
+     {
+      "key": "Normalattack_Damadd_Rate",
+      "max": 3451,
+      "min": 1380,
+      "tiers": [
+       {
+        "max": 3451,
+        "min": 3347,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3244,
+        "min": 3036,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2933,
+        "min": 2519,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2415,
+        "min": 2001,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1898,
+        "min": 1380,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque normale"
+     },
+     {
+      "key": "Debuff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Debuff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des malus"
+     },
+     {
+      "key": "Buff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Buff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des bonus"
+     },
+     {
+      "key": "TickDam_Rate",
+      "max": 3219,
+      "min": 1288,
+      "tiers": [
+       {
+        "max": 3219,
+        "min": 3123,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3027,
+        "min": 2833,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2738,
+        "min": 2350,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2254,
+        "min": 1868,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1772,
+        "min": 1288,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "DoT Efficiency",
+      "nameFr": "Efficacité des dégâts sur la durée"
+     },
+     {
+      "key": "Activethird_Damadd_Rate",
+      "max": 3142,
+      "min": 1257,
+      "tiers": [
+       {
+        "max": 3142,
+        "min": 3048,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2955,
+        "min": 2765,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2672,
+        "min": 2294,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2201,
+        "min": 1823,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1729,
+        "min": 1257,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Special Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque spéciale"
+     },
+     {
+      "key": "Normalskill_Damadd_Rate",
+      "max": 2418,
+      "min": 968,
+      "tiers": [
+       {
+        "max": 2418,
+        "min": 2346,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2274,
+        "min": 2128,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2056,
+        "min": 1766,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1693,
+        "min": 1403,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1330,
+        "min": 968,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence normale"
+     },
+     {
+      "key": "C_Critical_Dam_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Damage",
+      "nameFr": "Dégâts crit."
+     },
+     {
+      "key": "C_Critical_DamRes_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Defense",
+      "nameFr": "Défense crit."
+     },
+     {
+      "key": "P_Shield_Rate",
+      "max": 1927,
+      "min": 771,
+      "tiers": [
+       {
+        "max": 1927,
+        "min": 1869,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1811,
+        "min": 1695,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1638,
+        "min": 1406,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1350,
+        "min": 1118,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1061,
+        "min": 771,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Barrier Efficiency",
+      "nameFr": "Efficacité des barrières"
+     },
+     {
+      "key": "Ultimateskill_Damadd_Rate",
+      "max": 1895,
+      "min": 758,
+      "tiers": [
+       {
+        "max": 1895,
+        "min": 1839,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1782,
+        "min": 1668,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1612,
+        "min": 1384,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1328,
+        "min": 1100,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1044,
+        "min": 758,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Ultimate Move Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque ultime"
+     },
+     {
+      "key": "MF_ChargeEffic_Rate",
+      "max": 1665,
+      "min": 666,
+      "tiers": [
+       {
+        "max": 1665,
+        "min": 1615,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1565,
+        "min": 1465,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1415,
+        "min": 1215,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1166,
+        "min": 966,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 916,
+        "min": 666,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Magic Charging Efficiency",
+      "nameFr": "Efficacité de recharge de la magie"
+     },
+     {
+      "key": "H_HealPower_Rate",
+      "max": 1541,
+      "min": 617,
+      "tiers": [
+       {
+        "max": 1541,
+        "min": 1495,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1449,
+        "min": 1357,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1311,
+        "min": 1125,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1080,
+        "min": 894,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 849,
+        "min": 617,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Healing Efficiency",
+      "nameFr": "Efficacité de guérison"
+     },
+     {
+      "key": "Burst_Gauge_Rate",
+      "max": 1249,
+      "min": 500,
+      "tiers": [
+       {
+        "max": 1249,
+        "min": 1211,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1175,
+        "min": 1099,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1062,
+        "min": 912,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 874,
+        "min": 724,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 688,
+        "min": 500,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "All Elemental Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de tous les éléments"
+     },
+     {
+      "key": "C_Critical_Rate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Chance",
+      "nameFr": "Chances crit."
+     },
+     {
+      "key": "C_Critical_ResRate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Resistance",
+      "nameFr": "Résistance crit."
+     },
+     {
+      "key": "I_AtkAdd_Rate",
+      "max": 787,
+      "min": 315,
+      "tiers": [
+       {
+        "max": 787,
+        "min": 763,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 740,
+        "min": 692,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 670,
+        "min": 574,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 552,
+        "min": 456,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 433,
+        "min": 315,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Attack Increase",
+      "nameFr": "Augmentation de l'attaque"
+     },
+     {
+      "key": "I_DefAdd_Rate",
+      "max": 632,
+      "min": 253,
+      "tiers": [
+       {
+        "max": 632,
+        "min": 614,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 595,
+        "min": 557,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 538,
+        "min": 462,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 443,
+        "min": 367,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 349,
+        "min": 253,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Defense Increase",
+      "nameFr": "Augmentation de la défense"
+     },
+     {
+      "key": "I_MaxHpAdd_Rate",
+      "max": 464,
+      "min": 186,
+      "tiers": [
+       {
+        "max": 464,
+        "min": 450,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 436,
+        "min": 408,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 394,
+        "min": 338,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 325,
+        "min": 269,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 256,
+        "min": 186,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "HP Increase",
+      "nameFr": "Augmentation des PV"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 156,
+     "gold": 572,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 728,
+     "gold": 2964,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 2288,
+     "gold": 9724,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 4992,
+     "gold": 21112,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 7280,
+     "gold": 30680,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 364,
+     "gold": 780,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1820,
+     "gold": 4056,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 5876,
+     "gold": 13312,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 12740,
+     "gold": 28912,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 18564,
+     "gold": 42016,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 728,
+     "gold": 1144,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 3692,
+     "gold": 6292,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 11960,
+     "gold": 20540,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 26000,
+     "gold": 44512,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 37804,
+     "gold": 64636,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 1352,
+     "gold": 1976,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 7124,
+     "gold": 10660,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 23140,
+     "gold": 34892,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 50232,
+     "gold": 75660,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 73008,
+     "gold": 109876,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 2548,
+     "gold": 3588,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 13624,
+     "gold": 19448,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 44408,
+     "gold": 63596,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 96408,
+     "gold": 138008,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 140088,
+     "gold": 200408,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 210132,
+     "gold": 285582,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 315198,
+     "gold": 406955,
+     "tier": 4,
+     "items": null,
+     "level": 6
+    },
+    {
+     "exp": 457038,
+     "gold": 560581,
+     "tier": 4,
+     "items": null,
+     "level": 7
+    },
+    {
+     "exp": 639854,
+     "gold": 745573,
+     "tier": 4,
+     "items": null,
+     "level": 8
+    },
+    {
+     "exp": 831811,
+     "gold": 920783,
+     "tier": 4,
+     "items": null,
+     "level": 9
+    },
+    {
+     "exp": 1247717,
+     "gold": 1312116,
+     "tier": 4,
+     "items": null,
+     "level": 10
+    },
+    {
+     "exp": 1871576,
+     "gold": 1869766,
+     "tier": 4,
+     "items": null,
+     "level": 11
+    },
+    {
+     "exp": 2713786,
+     "gold": 2575603,
+     "tier": 4,
+     "items": null,
+     "level": 12
+    },
+    {
+     "exp": 3799301,
+     "gold": 3425552,
+     "tier": 4,
+     "items": null,
+     "level": 13
+    },
+    {
+     "exp": 7598602,
+     "gold": 8563880,
+     "tier": 4,
+     "items": null,
+     "level": 14
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 15
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "Fire_Add",
+    "progression": [
+     8
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "Fire_Add",
+    "progression": [
+     796
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     137
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     14739
+    ]
+   }
+  },
+  "qualityMin": 111,
+  "qualityMax": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": [
+   110,
+   130
+  ],
+  "personnage": "melascula",
+  "personnageNomFr": "Merascylla",
+  "costumeSlug": "melascula-costume-134103103",
+  "nameFr": "Don du Commandement",
+  "nameEn": "Commandment's Gift",
+  "rarity": "SSR",
+  "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé",
+  "engravingPassives": [
+   {
+    "id": "EpEq_Melascula_C",
+    "icon": "equippassive_equip_melascula_c_ssr",
+    "levels": [
+     {
+      "level": 1,
+      "descEn": "Increases [#0F5CD8]Buff Duration Efficiency[-] by [#1A7331]30%[-].\nEach Critical Hit increases [#0F5CD8]Fire Damage[-] by [#1A7331]3%[-] for [#1A7331]10 sec[-]. (Max: [#1A7331]30%[-])\nIncreases [#0F5CD8]Crit Damage[-] dealt to enemies with [#0F5CD8]Dark Veil[-] by [#1A7331]25%[-] for [#1A7331]10 sec[-] when this effect reaches its max.",
+      "descFr": "Augmente [#0F5CD8]l'efficacité de durée des bonus[-] de [#1A7331]30%[-].\nChaque coup critique augmente les [#0F5CD8]dégâts de Feu[-] de [#1A7331]3%[-] pendant [#1A7331]10 s[-]. (Max : [#1A7331]30%[-])\nLorsque l'effet atteint le max, augmente les [#0F5CD8]dégâts crit.[-] infligés aux ennemis affectés par [#0F5CD8]Linceul des ténèbres[-] de [#1A7331]25%[-] pendant [#1A7331]10 s[-]."
+     },
+     {
+      "level": 2,
+      "descEn": "Increases [#0F5CD8]Buff Duration Efficiency[-] by [#1A7331]35%[-].\nEach Critical Hit increases [#0F5CD8]Fire Damage[-] by [#1A7331]4%[-] for [#1A7331]10 sec[-]. (Max: [#1A7331]40%[-])\nIncreases [#0F5CD8]Crit Damage[-] dealt to enemies with [#0F5CD8]Dark Veil[-] by [#1A7331]30%[-] for [#1A7331]10 sec[-] when this effect reaches its max.",
+      "descFr": "Augmente [#0F5CD8]l'efficacité de durée des bonus[-] de [#1A7331]35%[-].\nChaque coup critique augmente les [#0F5CD8]dégâts de Feu[-] de [#1A7331]4%[-] pendant [#1A7331]10 s[-]. (Max : [#1A7331]40%[-])\nLorsque l'effet atteint le max, augmente les [#0F5CD8]dégâts crit.[-] infligés aux ennemis affectés par [#0F5CD8]Linceul des ténèbres[-] de [#1A7331]30%[-] pendant [#1A7331]10 s[-]."
+     },
+     {
+      "level": 3,
+      "descEn": "Increases [#0F5CD8]Buff Duration Efficiency[-] by [#1A7331]40%[-].\nEach Critical Hit increases [#0F5CD8]Fire Damage[-] by [#1A7331]5%[-] for [#1A7331]10 sec[-]. (Max: [#1A7331]50%[-])\nIncreases [#0F5CD8]Crit Damage[-] dealt to enemies with [#0F5CD8]Dark Veil[-] by [#1A7331]35%[-] for [#1A7331]10 sec[-] when this effect reaches its max.",
+      "descFr": "Augmente [#0F5CD8]l'efficacité de durée des bonus[-] de [#1A7331]40%[-].\nChaque coup critique augmente les [#0F5CD8]dégâts de Feu[-] de [#1A7331]5%[-] pendant [#1A7331]10 s[-]. (Max : [#1A7331]50%[-])\nLorsque l'effet atteint le max, augmente les [#0F5CD8]dégâts crit.[-] infligés aux ennemis affectés par [#0F5CD8]Linceul des ténèbres[-] de [#1A7331]35%[-] pendant [#1A7331]10 s[-]."
+     }
+    ],
+    "nameEn": "Veil of Hellfire",
+    "nameFr": "Linceul des flammes infernales"
+   }
+  ],
+  "bindingMaterials": [
+   {
+    "itemId": "101100550",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100551",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100552",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100553",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "/images/costumes/Costume_PC_Melascula_0003.webp"
+ },
+ {
+  "gameId": "133445003",
+  "slot": "BindArmor",
+  "released": true,
+  "mainStat": "B_MaxHP_Equip",
+  "subStat": "P_Shield_Rate",
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": false,
+     "items": null,
+     "maxReinforce": 5
+    },
+    {
+     "gold": 1000000,
+     "rate": 8000,
+     "tier": 1,
+     "isMax": false,
+     "items": [
+      {
+       "count": 3,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 10
+    },
+    {
+     "gold": 1500000,
+     "rate": 5000,
+     "tier": 2,
+     "isMax": false,
+     "items": [
+      {
+       "count": 7,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 14
+    },
+    {
+     "gold": 2500000,
+     "rate": 3000,
+     "tier": 3,
+     "isMax": true,
+     "items": [
+      {
+       "count": 15,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 15
+    }
+   ],
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "I_DefAdd_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Defense Increase",
+     "nameFr": "Augmentation de la défense",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "I_DefAdd_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "I_DefAdd_Rate",
+      "progression": [
+       6
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "I_DefAdd_Rate",
+      "progression": [
+       573
+      ]
+     }
+    }
+   ],
+   "limitBreak": {
+    "options": [
+     {
+      "tier": 1,
+      "value": 1797,
+      "abilityType": "P_Shield_Rate"
+     },
+     {
+      "tier": 2,
+      "value": 1032,
+      "abilityType": "MF_ChargeEffic_Rate"
+     }
+    ],
+    "passive": {
+     "id": "EpLb_Melascula_D",
+     "icon": "equippassive_limitbreak_warden_a",
+     "tier": 3,
+     "descEn": "[#1A7331]20%[-] chance to increase all allied heroes' [#0F5CD8]Elemental Resistance[-] of the attack by [#1A7331]15%[-] for [#1A7331]20 sec[-] when an allied hero is hit by an enemy. (Does not stack)",
+     "descFr": "Lorsqu'un héros allié subit une attaque ennemie, [#1A7331]20%[-] de chances d'augmenter la [#0F5CD8]résistance élémentaire[-] de tous les héros alliés correspondant à l'attaque subie de [#1A7331]15%[-] pendant [#1A7331]20s[-]. (Non cumulable)",
+     "nameEn": "Protective Transcendence: Resistance",
+     "nameFr": "Transcendance protectrice : Résistance"
+    }
+   },
+   "disassemble": [
+    {
+     "max": 8,
+     "min": 8,
+     "rate": 10000,
+     "itemId": "101060205"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "P_Shield_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Barrier Efficiency",
+    "nameFr": "Efficacité des barrières"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 3,
+    "stats": [
+     {
+      "key": "Normalskillchangetag_Damadd_Rate",
+      "max": 4252,
+      "min": 1701,
+      "tiers": [
+       {
+        "max": 4252,
+        "min": 4124,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3997,
+        "min": 3741,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 3614,
+        "min": 3104,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2976,
+        "min": 2466,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 2339,
+        "min": 1701,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Tag Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence de relève"
+     },
+     {
+      "key": "Normalattack_Damadd_Rate",
+      "max": 3451,
+      "min": 1380,
+      "tiers": [
+       {
+        "max": 3451,
+        "min": 3347,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3244,
+        "min": 3036,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2933,
+        "min": 2519,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2415,
+        "min": 2001,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1898,
+        "min": 1380,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque normale"
+     },
+     {
+      "key": "Debuff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Debuff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des malus"
+     },
+     {
+      "key": "Buff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Buff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des bonus"
+     },
+     {
+      "key": "TickDam_Rate",
+      "max": 3219,
+      "min": 1288,
+      "tiers": [
+       {
+        "max": 3219,
+        "min": 3123,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3027,
+        "min": 2833,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2738,
+        "min": 2350,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2254,
+        "min": 1868,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1772,
+        "min": 1288,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "DoT Efficiency",
+      "nameFr": "Efficacité des dégâts sur la durée"
+     },
+     {
+      "key": "Activethird_Damadd_Rate",
+      "max": 3142,
+      "min": 1257,
+      "tiers": [
+       {
+        "max": 3142,
+        "min": 3048,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2955,
+        "min": 2765,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2672,
+        "min": 2294,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2201,
+        "min": 1823,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1729,
+        "min": 1257,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Special Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque spéciale"
+     },
+     {
+      "key": "Normalskill_Damadd_Rate",
+      "max": 2418,
+      "min": 968,
+      "tiers": [
+       {
+        "max": 2418,
+        "min": 2346,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2274,
+        "min": 2128,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2056,
+        "min": 1766,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1693,
+        "min": 1403,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1330,
+        "min": 968,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence normale"
+     },
+     {
+      "key": "C_Critical_Dam_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Damage",
+      "nameFr": "Dégâts crit."
+     },
+     {
+      "key": "C_Critical_DamRes_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Defense",
+      "nameFr": "Défense crit."
+     },
+     {
+      "key": "P_Shield_Rate",
+      "max": 1927,
+      "min": 771,
+      "tiers": [
+       {
+        "max": 1927,
+        "min": 1869,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1811,
+        "min": 1695,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1638,
+        "min": 1406,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1350,
+        "min": 1118,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1061,
+        "min": 771,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Barrier Efficiency",
+      "nameFr": "Efficacité des barrières"
+     },
+     {
+      "key": "Ultimateskill_Damadd_Rate",
+      "max": 1895,
+      "min": 758,
+      "tiers": [
+       {
+        "max": 1895,
+        "min": 1839,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1782,
+        "min": 1668,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1612,
+        "min": 1384,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1328,
+        "min": 1100,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1044,
+        "min": 758,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Ultimate Move Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque ultime"
+     },
+     {
+      "key": "MF_ChargeEffic_Rate",
+      "max": 1665,
+      "min": 666,
+      "tiers": [
+       {
+        "max": 1665,
+        "min": 1615,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1565,
+        "min": 1465,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1415,
+        "min": 1215,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1166,
+        "min": 966,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 916,
+        "min": 666,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Magic Charging Efficiency",
+      "nameFr": "Efficacité de recharge de la magie"
+     },
+     {
+      "key": "H_HealPower_Rate",
+      "max": 1541,
+      "min": 617,
+      "tiers": [
+       {
+        "max": 1541,
+        "min": 1495,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1449,
+        "min": 1357,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1311,
+        "min": 1125,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1080,
+        "min": 894,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 849,
+        "min": 617,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Healing Efficiency",
+      "nameFr": "Efficacité de guérison"
+     },
+     {
+      "key": "Burst_Gauge_Rate",
+      "max": 1249,
+      "min": 500,
+      "tiers": [
+       {
+        "max": 1249,
+        "min": 1211,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1175,
+        "min": 1099,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1062,
+        "min": 912,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 874,
+        "min": 724,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 688,
+        "min": 500,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "All Elemental Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de tous les éléments"
+     },
+     {
+      "key": "C_Critical_Rate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Chance",
+      "nameFr": "Chances crit."
+     },
+     {
+      "key": "C_Critical_ResRate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Resistance",
+      "nameFr": "Résistance crit."
+     },
+     {
+      "key": "I_AtkAdd_Rate",
+      "max": 787,
+      "min": 315,
+      "tiers": [
+       {
+        "max": 787,
+        "min": 763,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 740,
+        "min": 692,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 670,
+        "min": 574,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 552,
+        "min": 456,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 433,
+        "min": 315,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Attack Increase",
+      "nameFr": "Augmentation de l'attaque"
+     },
+     {
+      "key": "I_DefAdd_Rate",
+      "max": 632,
+      "min": 253,
+      "tiers": [
+       {
+        "max": 632,
+        "min": 614,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 595,
+        "min": 557,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 538,
+        "min": 462,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 443,
+        "min": 367,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 349,
+        "min": 253,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Defense Increase",
+      "nameFr": "Augmentation de la défense"
+     },
+     {
+      "key": "I_MaxHpAdd_Rate",
+      "max": 464,
+      "min": 186,
+      "tiers": [
+       {
+        "max": 464,
+        "min": 450,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 436,
+        "min": 408,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 394,
+        "min": 338,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 325,
+        "min": 269,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 256,
+        "min": 186,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "HP Increase",
+      "nameFr": "Augmentation des PV"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 156,
+     "gold": 572,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 728,
+     "gold": 2964,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 2288,
+     "gold": 9724,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 4992,
+     "gold": 21112,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 7280,
+     "gold": 30680,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 364,
+     "gold": 780,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1820,
+     "gold": 4056,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 5876,
+     "gold": 13312,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 12740,
+     "gold": 28912,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 18564,
+     "gold": 42016,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 728,
+     "gold": 1144,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 3692,
+     "gold": 6292,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 11960,
+     "gold": 20540,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 26000,
+     "gold": 44512,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 37804,
+     "gold": 64636,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 1352,
+     "gold": 1976,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 7124,
+     "gold": 10660,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 23140,
+     "gold": 34892,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 50232,
+     "gold": 75660,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 73008,
+     "gold": 109876,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 2548,
+     "gold": 3588,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 13624,
+     "gold": 19448,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 44408,
+     "gold": 63596,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 96408,
+     "gold": 138008,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 140088,
+     "gold": 200408,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 210132,
+     "gold": 285582,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 315198,
+     "gold": 406955,
+     "tier": 4,
+     "items": null,
+     "level": 6
+    },
+    {
+     "exp": 457038,
+     "gold": 560581,
+     "tier": 4,
+     "items": null,
+     "level": 7
+    },
+    {
+     "exp": 639854,
+     "gold": 745573,
+     "tier": 4,
+     "items": null,
+     "level": 8
+    },
+    {
+     "exp": 831811,
+     "gold": 920783,
+     "tier": 4,
+     "items": null,
+     "level": 9
+    },
+    {
+     "exp": 1247717,
+     "gold": 1312116,
+     "tier": 4,
+     "items": null,
+     "level": 10
+    },
+    {
+     "exp": 1871576,
+     "gold": 1869766,
+     "tier": 4,
+     "items": null,
+     "level": 11
+    },
+    {
+     "exp": 2713786,
+     "gold": 2575603,
+     "tier": 4,
+     "items": null,
+     "level": 12
+    },
+    {
+     "exp": 3799301,
+     "gold": 3425552,
+     "tier": 4,
+     "items": null,
+     "level": 13
+    },
+    {
+     "exp": 7598602,
+     "gold": 8563880,
+     "tier": 4,
+     "items": null,
+     "level": 14
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 15
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "P_Shield_Rate",
+    "progression": [
+     17
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "P_Shield_Rate",
+    "progression": [
+     1746
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     137
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     14739
+    ]
+   }
+  },
+  "qualityMin": 111,
+  "qualityMax": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": [
+   110,
+   130
+  ],
+  "personnage": "melascula",
+  "personnageNomFr": "Merascylla",
+  "costumeSlug": "melascula-costume-134103105",
+  "nameFr": "Tenue de banquet du royaume des démons",
+  "nameEn": "Demon Realm Banquet Attire",
+  "rarity": "SSR",
+  "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé",
+  "engravingPassives": [
+   {
+    "id": "EpEq_Melascula_D",
+    "icon": "equippassive_equip_melascula_d_ssr",
+    "levels": [
+     {
+      "level": 1,
+      "descEn": "Duration of the [#0F5CD8]barrier[-] granted by the hero increases by [#1A7331]10 sec[-].\nIf the hero has a [#0F5CD8]barrier[-], increases [#0F5CD8]Darkness Attack[-] by [#1A7331]30%[-] and [#0F5CD8]Darkness Damage[-] by [#1A7331]15%[-] for all allied Darkness heroes.",
+      "descFr": "Augmente la durée de la [#0F5CD8]barrière[-] octroyée par le héros de [#1A7331]10 s[-].\nLorsque le héros bénéficie d'une [#0F5CD8]barrière[-], augmente [#0F5CD8]l'attaque des Ténèbres[-] de [#1A7331]30%[-] et les [#0F5CD8]dégâts des Ténèbres[-] de [#1A7331]15%[-] pour tous les héros alliés d'attribut Ténèbres."
+     },
+     {
+      "level": 2,
+      "descEn": "Duration of the [#0F5CD8]barrier[-] granted by the hero increases by [#1A7331]10 sec[-].\nIf the hero has a [#0F5CD8]barrier[-], increases [#0F5CD8]Darkness Attack[-] by [#1A7331]40%[-] and [#0F5CD8]Darkness Damage[-] by [#1A7331]17.5%[-] for all allied Darkness heroes.",
+      "descFr": "Augmente la durée de la [#0F5CD8]barrière[-] octroyée par le héros de [#1A7331]10 s[-].\nLorsque le héros bénéficie d'une [#0F5CD8]barrière[-], augmente [#0F5CD8]l'attaque des Ténèbres[-] de [#1A7331]40%[-] et les [#0F5CD8]dégâts des Ténèbres[-] de [#1A7331]17.5%[-] pour tous les héros alliés d'attribut Ténèbres."
+     },
+     {
+      "level": 3,
+      "descEn": "Duration of the [#0F5CD8]barrier[-] granted by the hero increases by [#1A7331]10 sec[-].\nIf the hero has a [#0F5CD8]barrier[-], increases [#0F5CD8]Darkness Attack[-] by [#1A7331]50%[-] and [#0F5CD8]Darkness Damage[-] by [#1A7331]20%[-] for all allied Darkness heroes.",
+      "descFr": "Augmente la durée de la [#0F5CD8]barrière[-] octroyée par le héros de [#1A7331]10 s[-].\nLorsque le héros bénéficie d'une [#0F5CD8]barrière[-], augmente [#0F5CD8]l'attaque des Ténèbres[-] de [#1A7331]50%[-] et les [#0F5CD8]dégâts des Ténèbres[-] de [#1A7331]20%[-] pour tous les héros alliés d'attribut Ténèbres."
+     }
+    ],
+    "nameEn": "Viper's Blessing",
+    "nameFr": "Bénédiction de la vipère"
+   }
+  ],
+  "bindingMaterials": [
+   {
+    "itemId": "101100550",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100551",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100552",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100553",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "/images/costumes/Costume_PC_Melascula_0005.webp"
  }
 ]

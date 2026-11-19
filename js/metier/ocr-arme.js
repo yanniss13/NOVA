@@ -78,7 +78,7 @@ import { calculateWeaponStats } from "./stats-calcul.js";
     const fichiers = armesRapprochables(source.herosSlug);
     const rapprochement = rapprocher(nom, fichiers.flatMap(fichier => {
       const weapon = BUILD_STATS.weaponsByFile[fichier] || {};
-      return [nameOfFile(fichier), weapon.nameEn]
+      return [nameOfFile(fichier), weapon.nameFr, weapon.nameEn]
         .map(normaliserLibelle)
         .filter(Boolean)
         .map(cle => ({ code:fichier, cle }));

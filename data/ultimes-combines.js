@@ -9,7 +9,7 @@
 // heros seraient indiscernables d une extraction jamais relancee.
 window.SEVEN_DS_ULTIMES_COMBINES_PROVENANCE = {
  "source": "Table/Skill/CombineSkillTable",
- "exporteLe": "2026-10-28",
+ "exporteLe": "2026-11-19",
  "lignesLues": 762,
  "lignesRetenues": 762,
  "lanceurs": 26,

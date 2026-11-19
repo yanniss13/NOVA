@@ -31,8 +31,11 @@ import { libelleDeRarete } from "./wiki-blocs.js";
      celui des slots d'arme de WSLOT_ROLES, qui dit `Supporter`. Les deux ne
      se recouvrent pas : batir ce filtre sur WSLOT_ROLES perdait les soutiens.
      Un code inedit s'affiche tel quel plutot que de disparaitre du filtre. */
+  /* BUSTER depuis la 2.4 (novembre 2026) : la source reclasse cinq heros de
+     ATTACKER en BUSTER sur leur fiche, le code des slots devenant aussi celui
+     du personnage. */
   const ROLES_HEROS = {
-    ATTACKER:"Attaquant", DEFENDER:"Défenseur", SUPPORT:"Soutien"
+    ATTACKER:"Attaquant", DEFENDER:"Défenseur", SUPPORT:"Soutien", BUSTER:"Briseur"
   };
   /* LE VOCABULAIRE DES SLOTS, celui du jeu : cinq roles, Gardien et Briseur
      compris. La fiche d'un heros n'en porte qu'un, fige, et il ne correspond a

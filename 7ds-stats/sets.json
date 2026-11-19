@@ -1,6 +1,6 @@
 [
  {
-  "id": "cmvrvlg5l006p2lkry02g05bx",
+  "id": "cmwndqlqd03c22lqelpqgu44k",
   "gameId": "accessory_t5_corruption",
   "slug": "accessory-t5-corruption",
   "nameFr": "Au bord du néant",
@@ -28,7 +28,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmvrvlg5l006r2lkrq9qj1cpr",
+  "id": "cmwndqlqd03c42lqei8q606q9",
   "gameId": "accessory_t5_crystal",
   "slug": "accessory-t5-crystal",
   "nameFr": "Fragment mortel",
@@ -56,7 +56,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmvrvlg5l006v2lkrst1ybbee",
+  "id": "cmwndqlqd03c82lqe4ip5ur6h",
   "gameId": "accessory_t5_curse",
   "slug": "accessory-t5-curse",
   "nameFr": "Talent caché",
@@ -84,7 +84,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmvrvlg5l006w2lkrtvzexnld",
+  "id": "cmwndqlqd03c92lqe5w3tmjot",
   "gameId": "accessory_t5_heart_acc",
   "slug": "accessory-t5-heart-acc",
   "nameFr": "Serment éternel",
@@ -107,7 +107,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmvrvlg5l006x2lkrgqj7rz4k",
+  "id": "cmwndqlqd03ca2lqezg2e4xjo",
   "gameId": "accessory_t5_hymn",
   "slug": "accessory-t5-hymn",
   "nameFr": "Énergie revigorante",
@@ -135,7 +135,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmvrvlg5l006t2lkrdo6m1b5u",
+  "id": "cmwndqlqd03c62lqeik4inw98",
   "gameId": "accessory_t5_thought",
   "slug": "accessory-t5-thought",
   "nameFr": "Ombre lavande",
@@ -158,7 +158,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmvrvlg5l00702lkrmggguawf",
+  "id": "cmwndqlqd03cf2lqeyvu08xqz",
   "gameId": "accessory_t5_tropical",
   "slug": "accessory-t5-tropical",
   "nameFr": "Cocktail de Dalmally",
@@ -181,7 +181,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmvrvlg5l006l2lkrj99oetgy",
+  "id": "cmwndqlqd03by2lqezxnw43rf",
   "gameId": "armor_t4_ferzen",
   "slug": "armor-t4-ferzen",
   "nameFr": "Ruines de la mine abandonnée",
@@ -216,7 +216,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmvrvlg5l006s2lkrd24c8qzu",
+  "id": "cmwndqlqd03c52lqendcuvp2v",
   "gameId": "armor_t4_immortal",
   "slug": "armor-t4-immortal",
   "nameFr": "Brillance lavande",
@@ -239,7 +239,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmvrvlg5l006q2lkrlr4on5f5",
+  "id": "cmwndqlqd03c32lqe8a2uyjdo",
   "gameId": "armor_t4_ocean",
   "slug": "armor-t4-ocean",
   "nameFr": "Fragment tranchant",
@@ -267,7 +267,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmvrvlg5l006n2lkrspt3jv0t",
+  "id": "cmwndqlqd03c02lqejjrvcb3k",
   "gameId": "armor_t5_dead",
   "slug": "armor-t5-dead",
   "nameFr": "Cris des âmes",
@@ -302,7 +302,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmvrvlg5l006u2lkrs6awn6gu",
+  "id": "cmwndqlqd03c72lqe5pjf9c8b",
   "gameId": "armor_t5_fortrees",
   "slug": "armor-t5-fortrees",
   "nameFr": "Rite gravé",
@@ -325,7 +325,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmvrvlg5l006m2lkr05borodi",
+  "id": "cmwndqlqd03bz2lqe73ys4nr7",
   "gameId": "armor_t5_spider",
   "slug": "armor-t5-spider",
   "nameFr": "Rancœur du nid d'araignée",
@@ -360,7 +360,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmvrvlg5l006o2lkrln9xyg15",
+  "id": "cmwndqlqd03c12lqedqr2s8j4",
   "gameId": "armor_t5_undying",
   "slug": "armor-t5-undying",
   "nameFr": "Observateur",
@@ -388,7 +388,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmvrvlg5l00712lkr9xotmg4j",
+  "id": "cmwndqlqd03cg2lqefu6xzume",
   "gameId": "armor_t5_wildroar",
   "slug": "armor-t5-wildroar",
   "nameFr": "Rite des liens",
@@ -416,7 +416,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmvrvlg5l006h2lkroic61189",
+  "id": "cmwndqlqd03bu2lqerrnjnz8e",
   "gameId": "equip_t4_scale_1",
   "slug": "equip-t4-scale-1",
   "nameFr": "Cœur ardent",
@@ -444,7 +444,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmvrvlg5l006i2lkrurva88nh",
+  "id": "cmwndqlqd03bv2lqeus2rbd5q",
   "gameId": "equip_t4_scale_2",
   "slug": "equip-t4-scale-2",
   "nameFr": "Pétales éparpillés",
@@ -467,7 +467,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmvrvlg5l006j2lkrcg4hjnqy",
+  "id": "cmwndqlqd03bw2lqeey91aubc",
   "gameId": "equip_t4_scale_3",
   "slug": "equip-t4-scale-3",
   "nameFr": "Flash aveuglant",
@@ -495,7 +495,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmvrvlg5l006k2lkr48ma0d59",
+  "id": "cmwndqlqd03bx2lqefl5w8ev0",
   "gameId": "equip_t4_scale_4",
   "slug": "equip-t4-scale-4",
   "nameFr": "Horizon vacillant",
@@ -530,7 +530,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmvrvlg5l00732lkrx0mxgzxr",
+  "id": "cmwndqlqd03ci2lqenqa6y4v6",
   "gameId": "equip_t5_darksand",
   "slug": "equip-t5-darksand",
   "nameFr": "Reine des profondeurs",
@@ -565,7 +565,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmvrvlg5l006y2lkr6i0oy333",
+  "id": "cmwndqlqd03cb2lqeiqoajc70",
   "gameId": "equip_t5_greed",
   "slug": "equip-t5-greed",
   "nameFr": "Souverain cupide",
@@ -600,7 +600,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmvrvlg5l006z2lkrl2mc4wks",
+  "id": "cmwndqlqd03cc2lqeovijqdrj",
   "gameId": "equip_t5_greed_2",
   "slug": "equip-t5-greed-2",
   "nameFr": "Avidité incarnée",
@@ -635,7 +635,7 @@
   "partsCount": 7
  },
  {
-  "id": "cmvrvlg5m00762lkrbvrwhxlq",
+  "id": "cmwndqlqd03cl2lqe9qid4m5z",
   "gameId": "equip_t5_halloween",
   "slug": "equip-t5-halloween",
   "nameFr": "Farce ou friandise",
@@ -663,7 +663,7 @@
   "partsCount": 3
  },
  {
-  "id": "cmvrvlg5m00752lkr1z4esiky",
+  "id": "cmwndqlqd03ck2lqedcjjurkd",
   "gameId": "equip_t5_pirate",
   "slug": "equip-t5-pirate",
   "nameFr": "À la recherche du trésor",
@@ -686,7 +686,7 @@
   "partsCount": 4
  },
  {
-  "id": "cmvrvlg5m00742lkr97byq8i1",
+  "id": "cmwndqlqd03cj2lqe832a0im4",
   "gameId": "equip_t5_predator",
   "slug": "equip-t5-predator",
   "nameFr": "Une lueur dans les cendres",
@@ -714,7 +714,77 @@
   "partsCount": 7
  },
  {
-  "id": "cmvrvlg5l00722lkrt03k1ma4",
+  "id": "cmwndqlqd03cd2lqe1ufsbzmi",
+  "gameId": "equip_t5_rage",
+  "slug": "equip-t5-rage",
+  "nameFr": "Vague de purification",
+  "nameEn": "Wave of Purification",
+  "bonusTwoFr": "Efficacité de recharge de la magie [#D67314]+12%[-]",
+  "bonusTwoEn": "Magic Charging Efficiency [#D67314]+12%[-]",
+  "bonusFourFr": "Efficacité de guérison [#D67314]+15%[-]\nAttaquez l'ennemi dans le dos pour bénéficier de [#0F5CD8]Purification[-] et restaurer la [#0F5CD8]jauge de magie[-] de [#1A7331]200[-] pendant [#1A7331]20s[-]. (Temps de recharge : [#1A7331]20s[-])\nAugmente l'[#0F5CD8]efficacité de guérison[-] de [#1A7331]10%[-] et l'[#0F5CD8]efficacité de recharge de la magie[-] de [#1A7331]12%[-] tant que l'effet [#0F5CD8]Purification[-] est actif.\nPasser à un autre héros alors que [#0F5CD8]Purification[-] est actif retire cet effet et augmente l'[#0F5CD8]attaque[-] de tous les héros alliés de [#1A7331]8%[-] pendant [#1A7331]40s[-].",
+  "bonusFourEn": "Healing Efficiency [#D67314]+15%[-]\nAttack the enemy with a Back Attack to gain [#0F5CD8]Purify[-] and recover [#0F5CD8]Magic Gauge[-] by a fixed value of [#1A7331]200[-] for [#1A7331]20 sec[-]. (Cooldown: [#1A7331]20 sec[-])\n[#0F5CD8]Healing Efficiency[-] increases by [#1A7331]10%[-] and [#0F5CD8]Magic Charging Efficiency[-] increases by [#1A7331]12%[-] while [#0F5CD8]Purify[-] is active.\nSwitching to another hero while [#0F5CD8]Purify[-] is active removes this effect and increases all allied heroes' [#0F5CD8]Attack[-] by [#1A7331]8%[-] for [#1A7331]40 sec[-].",
+  "bonusSevenFr": "PV [#D67314]+30%[-]\nAttaquez l'ennemi dans le dos pour bénéficier de [#0F5CD8]Purification[-] et restaurer la [#0F5CD8]jauge de magie[-] de [#1A7331]250[-] pendant [#1A7331]20s[-]. (Temps de recharge : [#1A7331]20s[-])\nAugmente l'[#0F5CD8]efficacité de guérison[-] de [#1A7331]15%[-] et l'[#0F5CD8]efficacité de recharge de la magie[-] de [#1A7331]16%[-] tant que l'effet [#0F5CD8]Purification[-] est actif.\nPasser à un autre héros alors que [#0F5CD8]Purification[-] est actif retire cet effet et augmente l'[#0F5CD8]attaque[-] de tous les héros alliés de [#1A7331]12%[-] pendant [#1A7331]40s[-].",
+  "bonusSevenEn": "HP [#D67314]+30%[-]\nAttack the enemy with a Back Attack to gain [#0F5CD8]Purify[-] and recover [#0F5CD8]Magic Gauge[-] by a fixed value of [#1A7331]250[-] for [#1A7331]20 sec[-]. (Cooldown: [#1A7331]20 sec[-])\n[#0F5CD8]Healing Efficiency[-] increases by [#1A7331]15%[-] and [#0F5CD8]Magic Charging Efficiency[-] increases by [#1A7331]16%[-] while [#0F5CD8]Purify[-] is active.\nSwitching to another hero while [#0F5CD8]Purify[-] is active removes this effect and increases all allied heroes' [#0F5CD8]Attack[-] by [#1A7331]12%[-] for [#1A7331]40 sec[-].",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "MF_ChargeEffic_Rate",
+    "value": 1200
+   }
+  ],
+  "bonusFourCount": 5,
+  "bonusFourStats": [
+   {
+    "stat": "H_HealPower_Rate",
+    "value": 1500
+   }
+  ],
+  "bonusSevenCount": 7,
+  "bonusSevenStats": [
+   {
+    "stat": "I_MaxHPAdd_Rate",
+    "value": 3000
+   }
+  ],
+  "partsCount": 7
+ },
+ {
+  "id": "cmwndqlqd03ce2lqeu8f6ilf3",
+  "gameId": "equip_t5_rage_2",
+  "slug": "equip-t5-rage-2",
+  "nameFr": "Eau sacrée de purification",
+  "nameEn": "Holy Water of Purification",
+  "bonusTwoFr": "Efficacité de recharge de la magie [#D67314]+15%[-]",
+  "bonusTwoEn": "Magic Charging Efficiency [#D67314]+15%[-]",
+  "bonusFourFr": "Efficacité de guérison [#D67314]+18%[-]\nAttaquez l'ennemi pour bénéficier de [#0F5CD8]Purification[-] et restaurer la [#0F5CD8]jauge de magie[-] de [#1A7331]400[-] pendant [#1A7331]10s[-]. (Temps de recharge : [#1A7331]10s[-])\nAugmente l'[#0F5CD8]efficacité de guérison[-] de [#1A7331]14%[-] et l'[#0F5CD8]efficacité de recharge de la magie[-] de [#1A7331]15%[-] tant que l'effet [#0F5CD8]Purification[-] est actif.\nPasser à un autre héros alors que [#0F5CD8]Purification[-] est actif retire cet effet et augmente l'[#0F5CD8]attaque[-] de tous les héros alliés de [#1A7331]10%[-] pendant [#1A7331]40s[-].",
+  "bonusFourEn": "Healing Efficiency [#D67314]+18%[-]\nAttack the enemy to gain [#0F5CD8]Purify[-] and recover [#0F5CD8]Magic Gauge[-] by a fixed value of [#1A7331]400[-] for [#1A7331]10 sec[-]. (Cooldown: [#1A7331]10 sec[-])\n[#0F5CD8]Healing Efficiency[-] increases by [#1A7331]14%[-] and [#0F5CD8]Magic Charging Efficiency[-] increases by [#1A7331]15%[-] while [#0F5CD8]Purify[-] is active.\nSwitching to another hero while [#0F5CD8]Purify[-] is active removes this effect and increases all allied heroes' [#0F5CD8]Attack[-] by [#1A7331]10%[-] for [#1A7331]40 sec[-].",
+  "bonusSevenFr": "PV [#D67314]+37.5%[-]\nAttaquez l'ennemi pour bénéficier de [#0F5CD8]Purification[-] et restaurer la [#0F5CD8]jauge de magie[-] de [#1A7331]500[-] pendant [#1A7331]10s[-]. (Temps de recharge : [#1A7331]10s[-])\nAugmente l'[#0F5CD8]efficacité de guérison[-] de [#1A7331]20%[-] et l'[#0F5CD8]efficacité de recharge de la magie[-] de [#1A7331]22%[-] tant que l'effet [#0F5CD8]Purification[-] est actif.\nPasser à un autre héros alors que [#0F5CD8]Purification[-] est actif retire cet effet et augmente l'[#0F5CD8]attaque[-] de tous les héros alliés de [#1A7331]15%[-] pendant [#1A7331]40s[-].",
+  "bonusSevenEn": "HP [#D67314]+37.5%[-]\nAttack the enemy to gain [#0F5CD8]Purify[-] and recover [#0F5CD8]Magic Gauge[-] by a fixed value of [#1A7331]500[-] for [#1A7331]10 sec[-]. (Cooldown: [#1A7331]10 sec[-])\n[#0F5CD8]Healing Efficiency[-] increases by [#1A7331]20%[-] and [#0F5CD8]Magic Charging Efficiency[-] increases by [#1A7331]22%[-] while [#0F5CD8]Purify[-] is active.\nSwitching to another hero while [#0F5CD8]Purify[-] is active removes this effect and increases all allied heroes' [#0F5CD8]Attack[-] by [#1A7331]15%[-] for [#1A7331]40 sec[-].",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "MF_ChargeEffic_Rate",
+    "value": 1500
+   }
+  ],
+  "bonusFourCount": 5,
+  "bonusFourStats": [
+   {
+    "stat": "H_HealPower_Rate",
+    "value": 1800
+   }
+  ],
+  "bonusSevenCount": 7,
+  "bonusSevenStats": [
+   {
+    "stat": "I_MaxHPAdd_Rate",
+    "value": 3750
+   }
+  ],
+  "partsCount": 7
+ },
+ {
+  "id": "cmwndqlqd03ch2lqe2use2tva",
   "gameId": "equip_t5_splinter",
   "slug": "equip-t5-splinter",
   "nameFr": "Aube du cauchemar",

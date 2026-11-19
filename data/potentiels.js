@@ -1030,6 +1030,44 @@ window.SEVEN_DS_POTENTIELS = {
    "Réduit le temps de recharge de [#1A7331]1s[-] chaque fois que l'attaque ultime fait mouche alors que l'effet [#0F5CD8]Pouvoir démoniaque[-] est actif.\nLa dernière frappe de l'attaque ultime inflige des dégâts supplémentaires égaux à [#1A7331]300%[-] de l'attaque."
   ]
  },
+ "melascula": {
+  "Lance": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]10%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]15%[-].",
+   "Augmente les chances crit. de [#1A7331]15%[-] et l'efficacité de durée des bonus de [#1A7331]40%[-]. Toucher [#1A7331]10 fois[-] le même ennemi alors qu'il est sous l'effet d'un [#0F5CD8]Déluge de Feu[-] inflige des dégâts supplémentaires égaux à [#1A7331]125%[-] de l'attaque.\nLes dégâts supplémentaires comptent comme des dégâts d'attaque spéciale.",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]90%[-].",
+   "Lorsqu'un ennemi affecté par [#0F5CD8]Linceul des ténèbres[-] est sous l'effet d'un [#0F5CD8]Déluge de Feu[-], augmente les dégâts qui lui sont causés par le héros de [#1A7331]5%[-] et ses dégâts de faiblesse au Feu de [#1A7331]1%[-] pour chaque tranche de [#1A7331]1 cumul(s)[-] de [#0F5CD8]Linceul des ténèbres[-].\nImmunise contre les réactions tant que l'effet [#0F5CD8]Mue[-] est actif.",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]25%[-] et augmente le percement de défense de l'attaque spéciale de [#1A7331]10%[-].",
+   "Augmente le percement de défense de [#1A7331]5%[-] en attaquant un ennemi affecté par [#0F5CD8]Linceul des ténèbres[-].\nAugmente la durée de la réduction du temps de recharge de l'attaque spéciale issue de l'attaque ultime de [#1A7331]1s[-], et chaque utilisation de l'attaque spéciale augmente les dégâts de Feu du héros de [#1A7331]20%[-] pendant [#1A7331]7s[-]. (Max : [#1A7331]5 fois[-])"
+  ],
+  "Rapiere": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Augmente la perforation de [#1A7331]80[-] et la persévérance de [#1A7331]50[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]30%[-].",
+   "Augmente les chances crit. de [#1A7331]33%[-] tant que l'effet [#0F5CD8]Esprit sinistre[-] est actif.\nChaque coup critique augmente les dégâts crit. de tous les héros alliés de [#1A7331]5%[-] pendant [#1A7331]40s[-]. (Max : [#1A7331]8 fois[-])",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]70%[-].\nL'utilisation de la compétence de relève augmente toutes les attaques élémentaires de tous les héros alliés de [#1A7331]35%[-] pendant [#1A7331]40s[-].",
+   "Immunise contre les réactions pendant la canalisation des compétences normales. Faire mouche avec tous les coups restaure la jauge de magie à hauteur de [#1A7331]3%[-] de l'attaque. (Max : [#1A7331]1000[-])\nAugmente la réduction de la consommation en magie issue du passif de [#1A7331]20%[-] supplémentaires.",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]150%[-].",
+   "Lorsque les effets [#0F5CD8]Dévoreuse d'âmes[-] et [#0F5CD8]Esprit sinistre[-] sont tous deux actifs, augmente le percement de défense de l'attaque ultime de [#1A7331]20%[-].\nL'utilisation de l'attaque ultime réinitialise le temps de recharge de l'attaque spéciale, inflige des dégâts supplémentaires égaux à [#1A7331]450%[-] de l'attaque avec la prochaine attaque spéciale et réduit la résistance au percement de l'ennemi de [#1A7331]10%[-] pendant [#1A7331]30s[-].\nLes dégâts supplémentaires comptent comme des dégâts d'attaque ultime."
+  ],
+  "Bouclier": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Chaque coup porté sur un ennemi avec une attaque normale restaure la jauge de magie de [#1A7331]20[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]30%[-].",
+   "Augmente la vitesse de déplacement de [#1A7331]50%[-] lorsqu'un héros allié bénéficie d'une [#0F5CD8]barrière[-] et augmente la perforation des héros d'attribut Ténèbres à hauteur de [#1A7331]0.2%[-] de la défense. (Max : [#1A7331]80[-])\nRestaure les PV à hauteur de [#1A7331]40%[-] de la défense toutes les [#1A7331]1s[-] lorsqu'un héros allié bénéficie d'une [#0F5CD8]barrière[-].",
+   "Lorsque l'attaque spéciale fait mouche, réduit la défense des Ténèbres de l'ennemi à hauteur de [#1A7331]25%[-] de la défense pendant [#1A7331]40s[-], et toute récupération de PV restaure la jauge de magie à hauteur de [#1A7331]1%[-] de la défense. (Max : [#1A7331]500[-])",
+   "Lorsqu'un héros allié attaque un ennemi affecté par [#0F5CD8]Venin[-], augmente ses dégâts des Ténèbres de [#1A7331]30%[-].\nAprès avoir réussi l'attaque ultime sur un ennemi affecté par [#0F5CD8]Venin[-], chaque coup porté augmente l'attaque des Ténèbres de tous les héros alliés de [#1A7331]1%[-] pendant [#1A7331]40s[-]. (Max : [#1A7331]25 fois[-])",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]150%[-].",
+   "Lorsque tous les héros alliés d'attribut Ténèbres bénéficient d'une [#0F5CD8]barrière[-], augmente le percement de défense de [#1A7331]10%[-] et les dégâts crit. de [#1A7331]60%[-]."
+  ]
+ },
  "merlin": {
   "Livre": [
    "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",

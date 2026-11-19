@@ -138,7 +138,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   const localArmorFiles = dataContext.window.SEVEN_DS_DATA.armures["Armure liee"]
     .map(item => item.file);
 
-  assert.strictEqual(Object.keys(linked).length, 29);
+  assert.strictEqual(Object.keys(linked).length, 30);
   /* 83 depuis l'ajout des gravees SR : le catalogue ne contenait que les SSR,
      faute d'icones locales. Puis 93 avec la version 2.0, le 26 aout 2026 :
      les trois pieces de Ban et les sept costumes de la fournee. Puis 96 avec
@@ -147,9 +147,10 @@ const STORAGE_KEY = "confrerie7ds.teams";
      avec les deux « Sortie decontractee » de Tioreh et Griamore : un meme nom
      pour deux pieces, que leurs fichiers distinguent en prefixant le nom
      francais du heros (« Tioré — Sortie décontractée »). Puis 104 avec les
-     trois tenues d'Estia (2.3, octobre 2026). */
-  assert.strictEqual(files.length, 104);
-  assert.strictEqual(new Set(files).size, 104);
+     trois tenues d'Estia (2.3, octobre 2026), et 107 avec celles de
+     Melascula (2.4, novembre 2026). */
+  assert.strictEqual(files.length, 107);
+  assert.strictEqual(new Set(files).size, 107);
   assert.ok(Object.values(linked).every(items => items.length >= 2 && items.length <= 4));
   assert.deepStrictEqual(
     plain([...files].sort()),
@@ -157,7 +158,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   );
 }
 
-// Donnée générée réelle : 29 héros, exactement 3 types d'armes chacun.
+// Donnée générée réelle : 30 héros, exactement 3 types d'armes chacun.
 {
   const actual = { window:{} };
   vm.runInNewContext(
@@ -166,7 +167,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     { filename:"potentiels.js" }
   );
   const actualPot = actual.window.SEVEN_DS_POTENTIELS;
-  assert.strictEqual(Object.keys(actualPot).length, 29);
+  assert.strictEqual(Object.keys(actualPot).length, 30);
   assert.ok(Object.values(actualPot).every(
     byWeapon => Object.keys(byWeapon).length === 3
   ));
@@ -704,7 +705,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   );
   const armures = dataContext.window.SEVEN_DS_DATA.armures;
   const realSets = plain(armorSetsFrom(armures));
-  assert.strictEqual(realSets.length, 19, "19 sets complets attendus");
+  assert.strictEqual(realSets.length, 21, "21 sets complets attendus");
   const slots = ["Haut", "Bas", "Bottes", "Ceinture"];
   const filesBySlot = {};
   slots.forEach(slot => {
@@ -720,7 +721,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     });
   });
   // Aucun doublon de nom, et un tri français stable.
-  assert.strictEqual(new Set(realSets.map(s => s.name)).size, 19);
+  assert.strictEqual(new Set(realSets.map(s => s.name)).size, 21);
   /* Le jeu pose des crochets 「」 sur six pièces du prédateur abyssal sur
      sept, pas sur sa ceinture : ils ne doivent pas casser le set, ni garder
      leur « de » de liaison dans le libellé. */
@@ -757,7 +758,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   });
 
   const realJewelSets = plain(jewelSetsFrom(dataContext.window.SEVEN_DS_DATA.bijoux));
-  assert.strictEqual(realJewelSets.length, 14, "14 sets de bijoux attendus");
+  assert.strictEqual(realJewelSets.length, 16, "16 sets de bijoux attendus");
   assert.ok(realJewelSets.some(set => set.name === "Prédateur abyssal"));
   assert.ok(realJewelSets.some(set => set.name === "Pulsion maudite"),
     "un « de » sans article ne reste pas en tête du libellé");
@@ -780,7 +781,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     realJewelSets.some(set => set.name === "100 jours"),
     "Le set « 100 jours » ne doit pas être perdu à cause de l'accord au pluriel"
   );
-  assert.strictEqual(new Set(realJewelSets.map(s => s.name)).size, 14);
+  assert.strictEqual(new Set(realJewelSets.map(s => s.name)).size, 16);
 }
 
 console.log("PASS potentiel commun");

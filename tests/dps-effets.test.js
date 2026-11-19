@@ -56,12 +56,12 @@ const catalogue = {
     )
   },
   weapons:{
-    "gluttonous-soul-wand":{
+    "soul-glutton-wand":{
       levels:{
-        1:source("weapon:gluttonous-soul-wand:1"),
-        2:source("weapon:gluttonous-soul-wand:2"),
-        3:source("weapon:gluttonous-soul-wand:3"),
-        4:source("weapon:gluttonous-soul-wand:4")
+        1:source("weapon:soul-glutton-wand:1"),
+        2:source("weapon:soul-glutton-wand:2"),
+        3:source("weapon:soul-glutton-wand:3"),
+        4:source("weapon:soul-glutton-wand:4")
       }
     }
   },

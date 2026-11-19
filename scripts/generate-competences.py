@@ -64,6 +64,16 @@ COMPOSANTE = re.compile(
     re.IGNORECASE,
 )
 DEGATS_EGAUX = re.compile(r"damage equal to\s+", re.IGNORECASE)
+# Un coup unique sur une AUTRE base que l'attaque, et rien d'autre dans la
+# phrase. Melascula (2.4) en est le premier cas sans `damagePercent` publie :
+# « Inflicts damage equal to 59% of Defense. »
+DIRECT_AUTRE_BASE = re.compile(
+    r"^Inflicts damage equal to (\d+(?:\.\d+)?)% of (?:Defense|Max HP)\.?$",
+    re.IGNORECASE,
+)
+# « 10% of Defense up to 290% » : une montee par coup plafonnee. Ni le premier
+# pourcentage ni le plafond ne sont le degat d'un lancement.
+PLAFOND = re.compile(r"% of [A-Za-z ']+? up to \d", re.IGNORECASE)
 # Deux composantes d'un MEME coup se lient par « + ». Une virgule, un « then »
 # ou un « and » ouvrent autre chose : un buff, une jauge, une seconde frappe.
 CONNECTEUR = re.compile(r"\s*\+\s*")
@@ -311,6 +321,10 @@ def degats_de(skill):
     if champ is not None and champ > 0:
         return (champ, "direct")
 
+    autre_base = DIRECT_AUTRE_BASE.match(phrase)
+    if autre_base:
+        return (float(autre_base.group(1)), "direct")
+
     # DERNIER RECOURS, et lui seul touche des competences aujourd'hui classees
     # « non-chiffree » : tout ce qui precede a deja rendu. Voir degat_de_repli.
     repli = degat_de_repli(skill.get("descriptionEn"))
@@ -375,6 +389,8 @@ def composantes_de(skill):
                 if pourcentage is not None else [])
 
     phrase = premiere_phrase(skill.get("descriptionEn"))
+    if PLAFOND.search(phrase):
+        return []
     trouvees = [composante
                 for _position, composantes in groupes_de_degats(phrase)
                 for composante in composantes]

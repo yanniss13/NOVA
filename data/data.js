@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-10-28 15:01:54",
+    "generatedAt":  "2026-11-19 17:07:45",
     "personnages":  [
                         {
                             "id":  "ban",
@@ -122,6 +122,11 @@ window.SEVEN_DS_DATA = {
                             "id":  "manny",
                             "name":  "Manny",
                             "file":  "7ds-personnages/manny.webp"
+                        },
+                        {
+                            "id":  "melascula",
+                            "name":  "Melascula",
+                            "file":  "7ds-personnages/melascula.webp"
                         },
                         {
                             "id":  "meliodas",
@@ -850,6 +855,10 @@ window.SEVEN_DS_DATA = {
                                       "file":  "7ds-armes/Rapiere/Rapière du rugissement de la liche draconique.webp"
                                   },
                                   {
+                                      "name":  "Rapière du souffle venimeux",
+                                      "file":  "7ds-armes/Rapiere/Rapière du souffle venimeux.webp"
+                                  },
+                                  {
                                       "name":  "Rapière flamboyante",
                                       "file":  "7ds-armes/Rapiere/Rapière flamboyante.webp"
                                   },
@@ -894,12 +903,20 @@ window.SEVEN_DS_DATA = {
                                      "file":  "7ds-armures-ssr/Haut/Haut de l\u0027œil de l\u0027étoile sinistre.webp"
                                  },
                                  {
+                                     "name":  "Haut de l\u0027ombre explosive",
+                                     "file":  "7ds-armures-ssr/Haut/Haut de l\u0027ombre explosive.webp"
+                                 },
+                                 {
                                      "name":  "Haut de prédateur 「abyssal」",
                                      "file":  "7ds-armures-ssr/Haut/Haut de prédateur 「abyssal」.webp"
                                  },
                                  {
                                      "name":  "Haut de vagabond des mers",
                                      "file":  "7ds-armures-ssr/Haut/Haut de vagabond des mers.webp"
+                                 },
+                                 {
+                                     "name":  "Haut des ailes explosives",
+                                     "file":  "7ds-armures-ssr/Haut/Haut des ailes explosives.webp"
                                  },
                                  {
                                      "name":  "Haut du cauchemar ressuscité",
@@ -980,12 +997,20 @@ window.SEVEN_DS_DATA = {
                                     "file":  "7ds-armures-ssr/Bas/Bas de l\u0027obsession du destructeur.webp"
                                 },
                                 {
+                                    "name":  "Bas de l\u0027ombre explosive",
+                                    "file":  "7ds-armures-ssr/Bas/Bas de l\u0027ombre explosive.webp"
+                                },
+                                {
                                     "name":  "Bas de prédateur 「abyssal」",
                                     "file":  "7ds-armures-ssr/Bas/Bas de prédateur 「abyssal」.webp"
                                 },
                                 {
                                     "name":  "Bas de vagabond des mers",
                                     "file":  "7ds-armures-ssr/Bas/Bas de vagabond des mers.webp"
+                                },
+                                {
+                                    "name":  "Bas des ailes explosives",
+                                    "file":  "7ds-armures-ssr/Bas/Bas des ailes explosives.webp"
                                 },
                                 {
                                     "name":  "Bas du cauchemar ressuscité",
@@ -1066,12 +1091,20 @@ window.SEVEN_DS_DATA = {
                                        "file":  "7ds-armures-ssr/Bottes/Bottes de combat de l\u0027obsession du destructeur.webp"
                                    },
                                    {
+                                       "name":  "Bottes de combat de l\u0027ombre explosive",
+                                       "file":  "7ds-armures-ssr/Bottes/Bottes de combat de l\u0027ombre explosive.webp"
+                                   },
+                                   {
                                        "name":  "Bottes de combat de prédateur 「abyssal」",
                                        "file":  "7ds-armures-ssr/Bottes/Bottes de combat de prédateur 「abyssal」.webp"
                                    },
                                    {
                                        "name":  "Bottes de combat de vagabond des mers",
                                        "file":  "7ds-armures-ssr/Bottes/Bottes de combat de vagabond des mers.webp"
+                                   },
+                                   {
+                                       "name":  "Bottes de combat des ailes explosives",
+                                       "file":  "7ds-armures-ssr/Bottes/Bottes de combat des ailes explosives.webp"
                                    },
                                    {
                                        "name":  "Bottes de combat du cauchemar ressuscité",
@@ -1148,6 +1181,10 @@ window.SEVEN_DS_DATA = {
                                          "file":  "7ds-armures-ssr/Ceinture/Ceinture de l\u0027obsession du destructeur.webp"
                                      },
                                      {
+                                         "name":  "Ceinture de l\u0027ombre explosive",
+                                         "file":  "7ds-armures-ssr/Ceinture/Ceinture de l\u0027ombre explosive.webp"
+                                     },
+                                     {
                                          "name":  "Ceinture de prédateur abyssal",
                                          "file":  "7ds-armures-ssr/Ceinture/Ceinture de prédateur abyssal.webp"
                                      },
@@ -1158,6 +1195,10 @@ window.SEVEN_DS_DATA = {
                                      {
                                          "name":  "Ceinture d\u0027écailles ensanglantées",
                                          "file":  "7ds-armures-ssr/Ceinture/Ceinture d\u0027écailles ensanglantées.webp"
+                                     },
+                                     {
+                                         "name":  "Ceinture des ailes explosives",
+                                         "file":  "7ds-armures-ssr/Ceinture/Ceinture des ailes explosives.webp"
                                      },
                                      {
                                          "name":  "Ceinture du cauchemar ressuscité",
@@ -1306,6 +1347,10 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Défense solide.webp"
                                         },
                                         {
+                                            "name":  "Défiance et transgression",
+                                            "file":  "7ds-armures-ssr/Armure liee/Défiance et transgression.webp"
+                                        },
+                                        {
                                             "name":  "Dignité de la sainte",
                                             "file":  "7ds-armures-ssr/Armure liee/Dignité de la sainte.webp"
                                         },
@@ -1320,6 +1365,10 @@ window.SEVEN_DS_DATA = {
                                         {
                                             "name":  "Dignité royale",
                                             "file":  "7ds-armures-ssr/Armure liee/Dignité royale.webp"
+                                        },
+                                        {
+                                            "name":  "Don du Commandement",
+                                            "file":  "7ds-armures-ssr/Armure liee/Don du Commandement.webp"
                                         },
                                         {
                                             "name":  "Employé saisonnier",
@@ -1542,6 +1591,10 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Tenue d\u0027aventurier.webp"
                                         },
                                         {
+                                            "name":  "Tenue de banquet du royaume des démons",
+                                            "file":  "7ds-armures-ssr/Armure liee/Tenue de banquet du royaume des démons.webp"
+                                        },
+                                        {
                                             "name":  "Tenue de cérémonie",
                                             "file":  "7ds-armures-ssr/Armure liee/Tenue de cérémonie.webp"
                                         },
@@ -1646,6 +1699,10 @@ window.SEVEN_DS_DATA = {
                                       "file":  "7ds-bijoux/Anneau/Anneau de l\u0027hymne régénérateur.webp"
                                   },
                                   {
+                                      "name":  "Anneau de l\u0027ombre explosive",
+                                      "file":  "7ds-bijoux/Anneau/Anneau de l\u0027ombre explosive.webp"
+                                  },
+                                  {
                                       "name":  "Anneau de prédateur 「abyssal」",
                                       "file":  "7ds-bijoux/Anneau/Anneau de prédateur 「abyssal」.webp"
                                   },
@@ -1656,6 +1713,10 @@ window.SEVEN_DS_DATA = {
                                   {
                                       "name":  "Anneau des 100 jours (jamais porté)",
                                       "file":  "7ds-bijoux/Anneau/Anneau des 100 jours (jamais porté).webp"
+                                  },
+                                  {
+                                      "name":  "Anneau des ailes explosives",
+                                      "file":  "7ds-bijoux/Anneau/Anneau des ailes explosives.webp"
                                   },
                                   {
                                       "name":  "Anneau du cristal de vie",
@@ -1716,6 +1777,10 @@ window.SEVEN_DS_DATA = {
                                        "file":  "7ds-bijoux/Collier/Collier de l\u0027hymne régénérateur.webp"
                                    },
                                    {
+                                       "name":  "Collier de l\u0027ombre explosive",
+                                       "file":  "7ds-bijoux/Collier/Collier de l\u0027ombre explosive.webp"
+                                   },
+                                   {
                                        "name":  "Collier de prédateur 「abyssal」",
                                        "file":  "7ds-bijoux/Collier/Collier de prédateur 「abyssal」.webp"
                                    },
@@ -1726,6 +1791,10 @@ window.SEVEN_DS_DATA = {
                                    {
                                        "name":  "Collier des 100 jours (jamais porté)",
                                        "file":  "7ds-bijoux/Collier/Collier des 100 jours (jamais porté).webp"
+                                   },
+                                   {
+                                       "name":  "Collier des ailes explosives",
+                                       "file":  "7ds-bijoux/Collier/Collier des ailes explosives.webp"
                                    },
                                    {
                                        "name":  "Collier du cristal de vie",
@@ -1774,6 +1843,10 @@ window.SEVEN_DS_DATA = {
                                                      "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles de l\u0027hymne régénérateur.webp"
                                                  },
                                                  {
+                                                     "name":  "Boucles d\u0027oreilles de l\u0027ombre explosive",
+                                                     "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles de l\u0027ombre explosive.webp"
+                                                 },
+                                                 {
                                                      "name":  "Boucles d\u0027oreilles de prédateur 「abyssal」",
                                                      "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles de prédateur 「abyssal」.webp"
                                                  },
@@ -1784,6 +1857,10 @@ window.SEVEN_DS_DATA = {
                                                  {
                                                      "name":  "Boucles d\u0027oreilles des 100 jours (jamais portées)",
                                                      "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles des 100 jours (jamais portées).webp"
+                                                 },
+                                                 {
+                                                     "name":  "Boucles d\u0027oreilles des ailes explosives",
+                                                     "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles des ailes explosives.webp"
                                                  },
                                                  {
                                                      "name":  "Boucles d\u0027oreilles du chaos ténébreux",

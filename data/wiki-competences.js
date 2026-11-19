@@ -3942,6 +3942,170 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "weaponType": "SwordDual"
   }
  ],
+ "melascula": [
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]159%[-] de l'attaque. Attaquer [#1A7331]10 fois[-] un ennemi qui n'est pas affecté par [#0F5CD8]Linceul des ténèbres[-] réinitialise le temps de recharge de la compétence normale.\n1er coup : 23%\n2e coup : 25%\n3e coup : 42%\n4e coup : 69%",
+   "gameId": "melascula_lance_jumpatk",
+   "icone": "common_Lance_normalAttack.webp",
+   "nomFr": "Lumière du feu du karma",
+   "recharge": null,
+   "weaponType": "Lance"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]249%[-] de l'attaque, puis inflige [#0F5CD8]Linceul des ténèbres[-] pendant [#1A7331]15s[-]. (Max : [#1A7331]10 fois[-])\n\n* [#0F5CD8]Linceul des ténèbres[-] : réduit le taux de parade de [#1A7331]1%[-] et augmente les dégâts de Feu subis de [#1A7331]5%[-] face aux attaques de Merascylla.",
+   "gameId": "melascula_lance_skill_e",
+   "icone": "Melascula_Lance_NormalSkill.webp",
+   "nomFr": "Main démoniaque",
+   "recharge": 20.0,
+   "weaponType": "Lance"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]68%[-] de l'attaque, jusqu'à [#1A7331]340%[-]. Chaque coup porté sur un ennemi sous l'effet d'un [#0F5CD8]Déluge de Feu[-] augmente l'attaque de Feu de [#1A7331]500[-] pendant [#1A7331]12s[-]. (Max : [#1A7331]10 fois[-])",
+   "gameId": "melascula_lance_skill_q",
+   "icone": "Melascula_Lance_ActiveThird.webp",
+   "nomFr": "Ouverture des portes de l'enfer",
+   "recharge": 15.0,
+   "weaponType": "Lance"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]135%[-] de l'attaque.",
+   "gameId": "melascula_lance_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Emprise infernale",
+   "recharge": null,
+   "weaponType": "Lance"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Octroie [#0F5CD8]Mue[-] pendant [#1A7331]10s[-], réinitialise le temps de recharge de l'attaque spéciale et le réduit de [#1A7331]95%[-], et inflige des dégâts égaux à [#1A7331]45%[-] de l'attaque, jusqu'à [#1A7331]540%[-], pendant [#1A7331]9s[-].\n\n※ [#0F5CD8]Mue[-] : inflige des dégâts supplémentaires égaux à [#1A7331]20%[-] des dégâts infligés.",
+   "gameId": "melascula_lance_skill_r",
+   "icone": "Melascula_Lance_UltimateSkill.webp",
+   "nomFr": "Anneau du requiem",
+   "recharge": 10.0,
+   "weaponType": "Lance"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Chaque fois que le héros touche un ennemi affecté par [#0F5CD8]Linceul des ténèbres[-], applique [#1A7331]1 cumul(s)[-] supplémentaire(s) de [#0F5CD8]Linceul des ténèbres[-] pendant [#1A7331]15s[-]. (Max : [#1A7331]10 fois[-])\nLorsqu'un ennemi affecté par [#0F5CD8]Linceul des ténèbres[-] est attaqué, augmente les dégâts crit. de [#1A7331]5%[-] et augmente l'attaque de Feu de [#1A7331]4%[-] pour chaque tranche de [#1A7331]1 cumul(s)[-].\n\n* [#0F5CD8]Linceul des ténèbres[-] : réduit le taux de parade de [#1A7331]1%[-] et augmente les dégâts de Feu subis de [#1A7331]5%[-] face aux attaques de Merascylla.",
+   "gameId": "melascula_lance_passive",
+   "icone": "Melascula_Lance_SkillPassive.webp",
+   "nomFr": "Marque de l'esprit vengeur",
+   "recharge": 0.0,
+   "weaponType": "Lance"
+  },
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]72%[-] de l'attaque.\nAttaquer [#1A7331]5 fois[-] l'ennemi avec cette attaque octroie l'effet [#0F5CD8]Dévoreuse d'âmes[-] pendant [#1A7331]20s[-].\n1er coup : 11%\n2e coup : 11%\n3e coup : 18%\n4e coup : 32%\n\n※ [#0F5CD8]Dévoreuse d'âmes[-] : réduit la résistance crit. de l'ennemi de [#1A7331]4%[-] à chaque coup porté pendant [#1A7331]40s[-] (max : [#1A7331]5 fois[-]) et restaure la jauge de relève à hauteur de [#1A7331]0.4%[-] de l'attaque. (Max : [#1A7331]100[-]) (Temps de recharge : [#1A7331]0.5s[-])",
+   "gameId": "melascula_rapier_jumpatk",
+   "icone": "common_Rapier_normalAttack.webp",
+   "nomFr": "Appel de la mort",
+   "recharge": null,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]123%[-] de l'attaque.\nAttaquer [#1A7331]5 fois[-] l'ennemi avec cette attaque octroie l'effet [#0F5CD8]Esprit sinistre[-] pendant [#1A7331]20s[-].\n1er coup : 31%\n2e coup : 36%\n3e coup : 56%\n\n※ [#0F5CD8]Esprit sinistre[-] : réduit la défense crit. de l'ennemi de [#1A7331]8%[-] à chaque coup porté pendant [#1A7331]40s[-] (max : [#1A7331]5 fois[-]) et restaure la jauge de magie à hauteur de [#1A7331]0.2%[-] de l'attaque. (Max : [#1A7331]50[-]) (Temps de recharge : [#1A7331]0.5s[-])",
+   "gameId": "melascula_rapier_skill_e_atk1",
+   "icone": "Melascula_Rapier_NormalSkill_1.webp",
+   "nomFr": "Grâce impie",
+   "recharge": 21.0,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]74%[-] de l'attaque. Si les effets [#0F5CD8]Dévoreuse d'âmes[-] et [#0F5CD8]Esprit sinistre[-] sont tous deux actifs, inflige [#0F5CD8]Arrachement d'âme[-] aux ennemis pendant [#1A7331]40s[-].\n\n※ [#0F5CD8]Arrachement d'âme[-] : réduit la résistance au percement de [#1A7331]10%[-] et la défense de [#1A7331]15%[-].",
+   "gameId": "melascula_rapier_skill_q",
+   "icone": "Melascula_Rapier_ActiveThird_1.webp",
+   "nomFr": "Débordement d'âmes",
+   "recharge": 19.0,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]63%[-] de l'attaque.",
+   "gameId": "melascula_rapier_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Main des ténèbres",
+   "recharge": null,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]321%[-] de l'attaque.\nSi l'effet [#0F5CD8]Dévoreuse d'âmes[-] est actif, cette attaque augmente les dégâts crit. de [#1A7331]100%[-]. Si l'effet [#0F5CD8]Esprit sinistre[-] est actif, elle augmente les dégâts subis par les ennemis de [#1A7331]50%[-] pendant [#1A7331]40s[-].",
+   "gameId": "melascula_rapier_skill_r",
+   "icone": "Melascula_Rapier_UltimateSkill.webp",
+   "nomFr": "Floraison noire",
+   "recharge": 10.0,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Si les effets [#0F5CD8]Dévoreuse d'âmes[-] et [#0F5CD8]Esprit sinistre[-] sont tous deux actifs, réduit la consommation en magie de [#1A7331]30%[-] et augmente les dégâts d'attaque ultime de [#1A7331]120%[-].\nLorsqu'un héros allié active un [#0F5CD8]Déluge[-], augmente les dégâts crit. de tous les héros alliés de [#1A7331]40%[-] pendant [#1A7331]30s[-].",
+   "gameId": "melascula_rapier_passive",
+   "icone": "Melascula_Rapier_SkillPassive.webp",
+   "nomFr": "Soif d'âmes",
+   "recharge": 0.0,
+   "weaponType": "Rapier"
+  },
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]68%[-] de la défense et réduit la résistance aux Ténèbres de [#1A7331]5%[-] pendant [#1A7331]40s[-]. (Max : [#1A7331]5 fois[-])\n1er coup : 10%\n2e coup : 12%\n3e coup : 16%\n4e coup : 30%",
+   "gameId": "melascula_shield_jumpatk",
+   "icone": "common_Shield_normalAttack.webp",
+   "nomFr": "Aiguillon de la vipère",
+   "recharge": null,
+   "weaponType": "Shield"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Invoque un serpent qui traque les ennemis et inflige des dégâts égaux à [#1A7331]6%[-] de la défense toutes les [#1A7331]0.3s[-] pendant [#1A7331]10s[-].\nLe serpent [#0F5CD8]provoque[-] les ennemis proches et leur inflige [#0F5CD8]Venin[-] pendant [#1A7331]30s[-] pour chaque coup porté. (Max : [#1A7331]10 fois[-])\n\n* [#0F5CD8]Venin[-] : augmente les dégâts des Ténèbres subis de [#1A7331]3%[-] et réduit la défense crit. de [#1A7331]4%[-].",
+   "gameId": "melascula_shield_skill_e",
+   "icone": "Melascula_Shield_NormalSkill.webp",
+   "nomFr": "Traque de la vipère",
+   "recharge": 22.0,
+   "weaponType": "Shield"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Immunise contre les réactions pendant l'utilisation de la compétence.\nOctroie des [#0F5CD8]barrières[-] à tous les héros alliés égales à [#1A7331]120%[-] de la défense pendant [#1A7331]15s[-], inflige des dégâts égaux à [#1A7331]70%[-] de la défense et restaure les PV de tous les alliés à hauteur de [#1A7331]230%[-] de la défense.",
+   "gameId": "melascula_shield_skill_q",
+   "icone": "Melascula_Shield_ActiveThird.webp",
+   "nomFr": "Siphon d'âme",
+   "recharge": 25.0,
+   "weaponType": "Shield"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]59%[-] de la défense.",
+   "gameId": "melascula_shield_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Pluie de venin",
+   "recharge": null,
+   "weaponType": "Shield"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]10%[-] de la défense, jusqu'à [#1A7331]290%[-]. Octroie une [#0F5CD8]barrière[-] aux alliés proches égale à [#1A7331]200%[-] de la défense pendant [#1A7331]20s[-] chaque fois que [#1A7331]5 coup(s)[-] sont portés avec l'attaque.\nChaque coup de l'attaque porté sur un ennemi qui a atteint le nombre maximal de cumuls de [#0F5CD8]Venin[-] augmente l'efficacité des barrières de tous les héros alliés de [#1A7331]10%[-] pendant [#1A7331]5s[-]. (Max : [#1A7331]20 fois[-])",
+   "gameId": "melascula_shield_skill_r",
+   "icone": "Melascula_Shield_UltimateSkill.webp",
+   "nomFr": "Poison mortel",
+   "recharge": 30.0,
+   "weaponType": "Shield"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Lorsqu'un héros allié bénéficie d'une [#0F5CD8]barrière[-], augmente l'attaque des Ténèbres à hauteur de [#1A7331]8%[-] de la défense du héros (max : [#1A7331]4500[-]) et restaure la jauge de magie à hauteur de [#1A7331]0.2%[-] de la défense (max : [#1A7331]100[-]) toutes les [#1A7331]1s[-].",
+   "gameId": "melascula_shield_passive",
+   "icone": "Melascula_Shield_SkillPassive.webp",
+   "nomFr": "Étreinte de la vipère",
+   "recharge": 0.0,
+   "weaponType": "Shield"
+  }
+ ],
  "meliodas": [
   {
    "categorie": "NORMAL",
