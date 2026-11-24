@@ -36,6 +36,10 @@ import client_content
 
 FICHE = "https://7dsorigin.app/fr/characters/{slug}"
 CIBLE = RACINE / "data" / "wiki-competences.js"
+# Corrections relevees dans les textes et tables du jeu, la ou la source se
+# trompe. Voir son champ `_source`.
+CORRECTIONS = RACINE / "scripts" / "wiki-corrections.json"
+CHAMPS_CORRIGEABLES = ("descriptionFr", "recharge", "icone")
 # En deca, la page a change de forme : mieux vaut echouer que publier un
 # catalogue ampute.
 HEROS_MINIMUM = 20
@@ -117,6 +121,50 @@ def morceaux_de_texte(payload):
     return morceaux
 
 
+def corrections():
+    """Les corrections par gameId, champs controles."""
+    brut = json.loads(CORRECTIONS.read_text(encoding="utf-8"))["corrections"]
+    for game_id, correction in brut.items():
+        champs = set(correction) - {"heros"}
+        if not correction.get("heros") or not champs                 or not champs <= set(CHAMPS_CORRIGEABLES):
+            raise CatalogueIncomplet("correction invalide : %s" % game_id)
+    return brut
+
+
+def corrige(slug, competences, table=None):
+    """Applique a un heros les corrections qui le visent, sans muter l'entree."""
+    table = corrections() if table is None else table
+    resultat = []
+    for competence in competences:
+        correction = table.get(competence.get("gameId"))
+        if correction and correction["heros"] == slug:
+            competence = dict(competence)
+            for champ in CHAMPS_CORRIGEABLES:
+                if champ in correction:
+                    competence[champ] = correction[champ]
+        resultat.append(competence)
+    return resultat
+
+
+def corrige_catalogue(catalogue, exiger=True):
+    """Corrige tout le catalogue et refuse une correction restee sans cible :
+    un gameId renomme par la source ne doit pas laisser l'erreur revenir en
+    silence."""
+    table = corrections()
+    resultat = {slug: corrige(slug, liste, table)
+                for slug, liste in catalogue.items()}
+    presents = {(slug, c.get("gameId"))
+                for slug, liste in resultat.items() for c in liste}
+    if not exiger:
+        return resultat
+    orphelines = sorted(game_id for game_id, correction in table.items()
+                        if (correction["heros"], game_id) not in presents)
+    if orphelines:
+        raise CatalogueIncomplet(
+            "corrections sans competence : " + ", ".join(orphelines))
+    return resultat
+
+
 def resout(description, morceaux):
     """Suit un renvoi vers un morceau ; rend le texte tel quel sinon."""
     renvoi = RENVOI.match(description or "")
@@ -153,6 +201,10 @@ def competences_du_payload(payload):
     return retenues
 
 
+def competences_du_payload_corrigees(slug, payload):
+    return corrige(slug, competences_du_payload(payload))
+
+
 def client_wiki_skills(slug, snapshot=None):
     raw = client_content.client_section(slug, "wikiSkills", snapshot)
     if raw is None:
@@ -164,6 +216,7 @@ def client_wiki_skills(slug, snapshot=None):
         if skill.get("localisation", {}).get("status") == "missing-from-export":
             entry["localisation"] = skill["localisation"]
         skills.append(entry)
+    skills = corrige(slug, skills)
     valide(slug, skills)
     return skills
 
@@ -173,7 +226,7 @@ def competences_du(slug):
     if local is not None:
         return local
     payload = _gen.flight_payload(_gen.fetch(FICHE.format(slug=slug)))
-    return competences_du_payload(payload)
+    return competences_du_payload_corrigees(slug, payload)
 
 
 def valide(slug, competences):
@@ -218,6 +271,8 @@ def rendu(catalogue):
     corps = json.dumps(catalogue, ensure_ascii=False, indent=1, sort_keys=True)
     return (
         "// Genere par generate-wiki.py : pages FR de 7dsorigin.app + contenu-jeu.json.\n"
+        "// Corrige par scripts/wiki-corrections.json, releve dans les textes et\n"
+        "// tables du jeu (2.4.2, 24/11/2026) la ou la source se trompe.\n"
         "// Catalogue de LECTURE du wiki : noms et descriptions francais,\n"
         "// PASSIFS INCLUS. Ne pas confondre avec data/competences.js, qui\n"
         "// est le catalogue de calcul du comparateur de degats.\n"
@@ -239,7 +294,13 @@ def main(argv=None, cible=None):
         if not cible.exists():
             raise SystemExit("wiki-competences.js doit etre genere")
         base = client_content.read_window_assignment(cible, "SEVEN_DS_WIKI_COMPETENCES")
-        catalogue, digest = client_content.replace_skill_entries(base, client_wiki_skills)
+        # Les heros historiques ne sont pas relus en --client-only : leurs
+        # corrections s'appliquent donc a la base, avant la garde historique.
+        # Une base sans les heros clients ne peut pas encore les satisfaire :
+        # l'exigence porte sur le catalogue final.
+        catalogue, digest = client_content.replace_skill_entries(
+            corrige_catalogue(base, exiger=False), client_wiki_skills)
+        catalogue = corrige_catalogue(catalogue)
         if options.check:
             if base != catalogue or set(base) != set(slugs()):
                 raise SystemExit("wiki-competences.js doit etre regenere")
@@ -259,7 +320,8 @@ def main(argv=None, cible=None):
         valide(slug, competences)
         catalogue[slug] = competences
         print("%-16s %2d competences" % (slug, len(competences)))
-    catalogue = client_content.reprendre_retirees(catalogue, commite)
+    catalogue = corrige_catalogue(
+        client_content.reprendre_retirees(catalogue, commite))
 
     if len(catalogue) < HEROS_MINIMUM:
         raise SystemExit(

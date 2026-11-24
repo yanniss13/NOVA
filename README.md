@@ -72,7 +72,7 @@ python scripts/generate-wiki.py
 python scripts/generate-effets-dps.py
 ```
 
-Les données viennent de deux endroits, et chaque fichier de `data/` nomme le sien dans son en-tête. La source publique est `7dsorigin.app`. Ce qu'aucun site public ne publie — transcendances, jauges, recharges de magie, ultimes combinés — est lu dans les données du jeu, installé localement.
+Les données viennent de deux endroits, et chaque fichier de `data/` nomme le sien dans son en-tête. La source publique est `7dsorigin.app`. Ce qu'aucun site public ne publie — transcendances, jauges, recharges de magie, ultimes combinés — est lu dans les données du jeu, installé localement. Les textes, recharges et icônes de compétences du wiki que la source publique donne faux sont corrigés par `scripts/wiki-corrections.json`, relevé dans les textes et tables du jeu (version 2.4.2, 24 novembre 2026) et appliqué par `scripts/generate-wiki.py`.
 
 Pour Khala, que le site public ne publie pas, tout vient du snapshot commité `7ds-stats/contenu-jeu.json`, extrait des tables du jeu : statistiques, potentiels, armes compatibles, armures liées, compétences, passifs et effets. Les générateurs de `scripts/` qui la couvrent acceptent `--client-only` : ils actualisent ces entrées hors ligne et vérifient que les données des 26 autres héros restent identiques. Leur option `--check` contrôle aussi que les entrées locales sont à jour. Une description absente de l’export reste déclarée non couverte ; les mécanismes ambigus ne sont pas chiffrés.
 

@@ -112,7 +112,10 @@ import { ROLES_HEROS, brancherFiche, ouvrirObjetDuWiki } from "./wiki.js";
        laisserait croire a un compte a rebours qui n'existe pas. */
     if(competence.recharge){
       entete.appendChild(
-        el("span",{class:"wiki-skill-cd", text:competence.recharge+" s"})
+        /* Virgule francaise : la recharge du jeu tombe souvent au dixieme
+           (« 18,6 s »), et « 18.6 s » se lirait a l'anglaise. */
+        el("span",{class:"wiki-skill-cd",
+          text:String(competence.recharge).replace(".", ",")+" s"})
       );
     }
     /* UNE DESCRIPTION ABSENTE SE DIT. Sans cela le membre lit un nom, une

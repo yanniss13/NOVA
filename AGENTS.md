@@ -1893,6 +1893,13 @@ depuis `7ds-ui/skills/`. `python scripts/telecharger-images.py` complète le
 dossier : il lit les noms dans le catalogue commité, sans revisiter les
 fiches. `tests/wiki-catalogue.test.js` refuse une icône citée mais absente.
 
+**Corrections du jeu** : `scripts/wiki-corrections.json` (gameId → `descriptionFr`,
+`recharge` ou `icone`) corrige ce que 7dsorigin.app ou le vieil export de Khala
+donnent faux : recharges tronquées (18 au lieu de 18,6), passifs à 0 au lieu de
+`null`, icônes de compétences améliorées. `generate-wiki.py` l'applique dans les
+deux chemins, et refuse une correction dont la compétence a disparu. La fiche
+affiche la recharge avec une virgule (« 18,6 s »).
+
 **Deux pièges de la source, relevés à la mesure et pas supposés :**
 
 - une description peut n'être qu'un **renvoi** — `"$38"` — vers un texte rangé

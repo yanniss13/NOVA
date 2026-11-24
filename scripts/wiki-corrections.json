@@ -1,0 +1,785 @@
+{
+ "_source": [
+  "Corrections du catalogue de lecture du wiki (data/wiki-competences.js),",
+  "appliquees par scripts/generate-wiki.py apres la lecture de 7dsorigin.app",
+  "et de 7ds-stats/contenu-jeu.json, dans les deux chemins (reseau et",
+  "--client-only) pour que --check reste d'accord avec la generation.",
+  "Verifiees le 24/11/2026 contre les textes et tables du jeu, version 2.4.2.",
+  "Trois sortes : descriptions fausses (Khala, export 2.1 perime ; Gil Thunder,",
+  "texte faux sur 7dsorigin.app), recharges tronquees par 7dsorigin.app ou",
+  "a 0 sur des passifs (une absence reste une absence : null), et icones",
+  "des competences ameliorees qui reprenaient celle de la version normale.",
+  "Cle = gameId ; heros = slug du site ; seuls les champs presents remplacent."
+ ],
+ "corrections": {
+  "ban_cudgel3c_passive": {
+   "heros": "ban",
+   "recharge": null
+  },
+  "ban_cudgel3c_skill_e": {
+   "heros": "ban",
+   "recharge": 18.6
+  },
+  "ban_cudgel3c_skill_q_1": {
+   "heros": "ban",
+   "recharge": 15.6
+  },
+  "ban_gauntlets_passive": {
+   "heros": "ban",
+   "recharge": null
+  },
+  "ban_gauntlets_skill_e": {
+   "heros": "ban",
+   "recharge": 27.3
+  },
+  "ban_gauntlets_skill_q": {
+   "heros": "ban",
+   "recharge": 19.6
+  },
+  "ban_sword2h_passive": {
+   "heros": "ban",
+   "recharge": null
+  },
+  "ban_sword2h_skill_e": {
+   "heros": "ban",
+   "recharge": 20.4
+  },
+  "ban_sword2h_skill_q": {
+   "heros": "ban",
+   "recharge": 11.6
+  },
+  "bug_axe_passive": {
+   "heros": "bug",
+   "recharge": null
+  },
+  "bug_axe_skill_rmb_ready": {
+   "heros": "bug",
+   "recharge": 16.2
+  },
+  "bug_book_passive": {
+   "heros": "bug",
+   "recharge": null
+  },
+  "bug_sworddual_passive": {
+   "heros": "bug",
+   "recharge": null
+  },
+  "bug_sworddual_skill_e": {
+   "heros": "bug",
+   "recharge": 20.9
+  },
+  "calla_cudgel3c_passive": {
+   "heros": "khala",
+   "recharge": null
+  },
+  "calla_gauntlets_passive": {
+   "heros": "khala",
+   "recharge": null
+  },
+  "calla_sworddual_passive": {
+   "heros": "khala",
+   "descriptionFr": "Attaquer un ennemi augmente les chances crit. du héros de [#1A7331]40%[-] de la résistance crit. (Max : [#1A7331]30%[-]) et ses dégâts crit. de [#1A7331]35%[-] de la défense crit. (Max : [#1A7331]70%[-]).\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], les temps de recharge de toutes ses compétences sont réinitialisés.\nÀ chaque octroi de l'effet [#0F5CD8]Contrefaçon - Épées doubles[-], augmente les dégâts d'attaque normale du héros de [#1A7331]10%[-] et sa perforation de [#1A7331]6[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]10 fois[-])",
+   "recharge": null
+  },
+  "calla_sworddual_skill_r": {
+   "heros": "khala",
+   "descriptionFr": "Octroie [#0F5CD8]Miroir - Contrefaçon[-] toutes les [#1A7331]1 s[-] pendant [#1A7331]10 s[-] en étant à portée. La zone dure [#1A7331]20 s[-].\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Lame mirage[-]\nInflige des dégâts égaux à [#1A7331]294%[-] de l'attaque, puis octroie [#1A7331]1 cumul(s)[-] de [#0F5CD8]Mirage[-]. (Max : [#1A7331]5 fois[-])\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], la compétence inflige des dégâts supplémentaires égaux à [#1A7331]360%[-] de l'attaque, puis retire l'effet.\n\n※[#0F5CD8]Mirage[-] : augmente les dégâts crit. des attaques normales de [#1A7331]15%[-]. L'effet persiste tant que le héros est en combat."
+  },
+  "daisy_book_passive": {
+   "heros": "daisy",
+   "recharge": null
+  },
+  "daisy_book_skill_rmb": {
+   "heros": "daisy",
+   "recharge": 8.4
+  },
+  "daisy_shield_passive": {
+   "heros": "daisy",
+   "recharge": null
+  },
+  "daisy_wand_passive": {
+   "heros": "daisy",
+   "recharge": null
+  },
+  "daisy_wand_skill_e": {
+   "heros": "daisy",
+   "recharge": 18.2
+  },
+  "daisy_wand_skill_rmb_ready": {
+   "heros": "daisy",
+   "recharge": 16.1
+  },
+  "derieri_axe_passive": {
+   "heros": "derieri",
+   "recharge": null
+  },
+  "derieri_gauntlets_passive": {
+   "heros": "derieri",
+   "recharge": null
+  },
+  "derieri_gauntlets_skill_r_enchant": {
+   "heros": "derieri",
+   "icone": "Derieri_Gauntlets_UltimateSKill_Enchant.webp"
+  },
+  "derieri_sword2h_passive": {
+   "heros": "derieri",
+   "recharge": null
+  },
+  "diane_axe_passive": {
+   "heros": "diane",
+   "recharge": null
+  },
+  "diane_cudgel3c_passive": {
+   "heros": "diane",
+   "recharge": null
+  },
+  "diane_gauntlets_passive": {
+   "heros": "diane",
+   "recharge": null
+  },
+  "drake_staff_passive": {
+   "heros": "drake",
+   "recharge": null
+  },
+  "drake_staff_skill_e": {
+   "heros": "drake",
+   "recharge": 13.2
+  },
+  "drake_staff_skill_rmb": {
+   "heros": "drake",
+   "recharge": 8.5
+  },
+  "drake_sword1h_passive": {
+   "heros": "drake",
+   "recharge": null
+  },
+  "drake_sword1h_skill_e": {
+   "heros": "drake",
+   "recharge": 20.9
+  },
+  "drake_sword1h_skill_rmb": {
+   "heros": "drake",
+   "recharge": 10.4
+  },
+  "drake_sword2h_passive": {
+   "heros": "drake",
+   "recharge": null
+  },
+  "drake_sword2h_skill_rmb_1": {
+   "heros": "drake",
+   "recharge": 7.5
+  },
+  "dreydrin_axe_passive": {
+   "heros": "dreydrin",
+   "recharge": null
+  },
+  "dreydrin_axe_skill_e": {
+   "heros": "dreydrin",
+   "recharge": 17.3
+  },
+  "dreydrin_axe_skill_rmb_ready": {
+   "heros": "dreydrin",
+   "recharge": 7.5
+  },
+  "dreydrin_rapier_passive": {
+   "heros": "dreydrin",
+   "recharge": null
+  },
+  "dreydrin_rapier_skill_e": {
+   "heros": "dreydrin",
+   "recharge": 17.6
+  },
+  "dreydrin_rapier_skill_rmb": {
+   "heros": "dreydrin",
+   "recharge": 8.2
+  },
+  "dreydrin_shield_passive": {
+   "heros": "dreydrin",
+   "recharge": null
+  },
+  "dreydrin_shield_skill_e": {
+   "heros": "dreydrin",
+   "recharge": 16.2
+  },
+  "dreydrin_shield_skill_rmb_ready": {
+   "heros": "dreydrin",
+   "recharge": 20.2
+  },
+  "dreyfus_lance_passive": {
+   "heros": "dreyfus",
+   "recharge": null
+  },
+  "dreyfus_lance_skill_e": {
+   "heros": "dreyfus",
+   "recharge": 18.1
+  },
+  "dreyfus_lance_skill_rmb": {
+   "heros": "dreyfus",
+   "recharge": 7.9
+  },
+  "dreyfus_rapier_passive": {
+   "heros": "dreyfus",
+   "recharge": null
+  },
+  "dreyfus_rapier_skill_e": {
+   "heros": "dreyfus",
+   "recharge": 18.2
+  },
+  "dreyfus_rapier_skill_rmb_1": {
+   "heros": "dreyfus",
+   "recharge": 7.5
+  },
+  "dreyfus_sword1h_passive": {
+   "heros": "dreyfus",
+   "recharge": null
+  },
+  "dreyfus_sword1h_skill_e": {
+   "heros": "dreyfus",
+   "recharge": 17.4
+  },
+  "elaine_book_passive": {
+   "heros": "elaine",
+   "recharge": null
+  },
+  "elaine_book_skill_rmb": {
+   "heros": "elaine",
+   "recharge": 12.7
+  },
+  "elaine_staff_passive": {
+   "heros": "elaine",
+   "recharge": null
+  },
+  "elaine_staff_skill_rmb": {
+   "heros": "elaine",
+   "recharge": 13.3
+  },
+  "elaine_wand_passive": {
+   "heros": "elaine",
+   "recharge": null
+  },
+  "elaine_wand_skill_e": {
+   "heros": "elaine",
+   "recharge": 17.3
+  },
+  "elaine_wand_skill_rmb_ready": {
+   "heros": "elaine",
+   "recharge": 10.9
+  },
+  "elizabeth_book_passive": {
+   "heros": "elizabeth",
+   "recharge": null
+  },
+  "elizabeth_staff_passive": {
+   "heros": "elizabeth",
+   "recharge": null
+  },
+  "elizabeth_wand_passive": {
+   "heros": "elizabeth",
+   "recharge": null
+  },
+  "escanor_axe_passive": {
+   "heros": "escanor",
+   "recharge": null
+  },
+  "escanor_axe_skill_rmb_ready": {
+   "heros": "escanor",
+   "recharge": 13.5
+  },
+  "escanor_shield_passive": {
+   "heros": "escanor",
+   "recharge": null
+  },
+  "escanor_shield_skill_rmb": {
+   "heros": "escanor",
+   "recharge": 25.5
+  },
+  "escanor_sword2h_passive": {
+   "heros": "escanor",
+   "recharge": null
+  },
+  "escanor_sword2h_skill_rmb": {
+   "heros": "escanor",
+   "recharge": 13.5
+  },
+  "estia_book_passive": {
+   "heros": "estia",
+   "recharge": null
+  },
+  "estia_book_skill_e": {
+   "heros": "estia",
+   "recharge": 18.1
+  },
+  "estia_rapier_passive": {
+   "heros": "estia",
+   "recharge": null
+  },
+  "estia_wand_passive": {
+   "heros": "estia",
+   "recharge": null
+  },
+  "gil_thunder_lance_jumpatk": {
+   "heros": "gil-thunder",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]138%[-] de l'attaque.\n1er coup : 20%\n2e coup : 23%\n3e coup : 35%\n4e coup : 60%"
+  },
+  "gil_thunder_lance_skill_e": {
+   "heros": "gil-thunder",
+   "recharge": 13.2
+  },
+  "gil_thunder_lance_skill_rmb": {
+   "heros": "gil-thunder",
+   "recharge": 7.5
+  },
+  "gil_thunder_sword1h_skill_e": {
+   "heros": "gil-thunder",
+   "recharge": 15.6
+  },
+  "gil_thunder_sword1h_skill_rmb": {
+   "heros": "gil-thunder",
+   "recharge": 10.4
+  },
+  "gilthunder_lance_passive": {
+   "heros": "gil-thunder",
+   "recharge": null
+  },
+  "gilthunder_shield_passive": {
+   "heros": "gil-thunder",
+   "recharge": null
+  },
+  "gilthunder_sword1h_passive": {
+   "heros": "gil-thunder",
+   "recharge": null
+  },
+  "gowther_book_passive": {
+   "heros": "gowther",
+   "recharge": null
+  },
+  "gowther_book_skill_e": {
+   "heros": "gowther",
+   "recharge": 27.7
+  },
+  "gowther_book_skill_q": {
+   "heros": "gowther",
+   "recharge": 11.8
+  },
+  "gowther_staff_passive": {
+   "heros": "gowther",
+   "recharge": null
+  },
+  "gowther_staff_skill_e": {
+   "heros": "gowther",
+   "recharge": 19.9
+  },
+  "gowther_staff_skill_q": {
+   "heros": "gowther",
+   "recharge": 16.3
+  },
+  "gowther_wand_passive": {
+   "heros": "gowther",
+   "recharge": null
+  },
+  "gowther_wand_skill_e": {
+   "heros": "gowther",
+   "recharge": 28.1
+  },
+  "gowther_wand_skill_q_ready": {
+   "heros": "gowther",
+   "recharge": 24.6
+  },
+  "griamore_cudgel3c_passive": {
+   "heros": "griamore",
+   "recharge": null
+  },
+  "griamore_cudgel3c_skill_e": {
+   "heros": "griamore",
+   "recharge": 13.5
+  },
+  "griamore_cudgel3c_skill_rmb": {
+   "heros": "griamore",
+   "recharge": 15.1
+  },
+  "griamore_gauntlets_passive": {
+   "heros": "griamore",
+   "recharge": null
+  },
+  "griamore_gauntlets_skill_rmb": {
+   "heros": "griamore",
+   "recharge": 10.5
+  },
+  "griamore_shield_passive": {
+   "heros": "griamore",
+   "recharge": null
+  },
+  "griamore_shield_skill_rmb_ready": {
+   "heros": "griamore",
+   "recharge": 10.5
+  },
+  "guila_lance_passive": {
+   "heros": "guila",
+   "recharge": null
+  },
+  "guila_lance_skill_rmb": {
+   "heros": "guila",
+   "recharge": 7.5
+  },
+  "guila_rapier_passive": {
+   "heros": "guila",
+   "recharge": null
+  },
+  "guila_rapier_skill_rmb": {
+   "heros": "guila",
+   "recharge": 11.9
+  },
+  "guila_shield_passive": {
+   "heros": "guila",
+   "recharge": null
+  },
+  "hendrickson_lance_passive": {
+   "heros": "hendrickson",
+   "recharge": null
+  },
+  "hendrickson_lance_skill_e": {
+   "heros": "hendrickson",
+   "recharge": 15.7
+  },
+  "hendrickson_sword1h_passive": {
+   "heros": "hendrickson",
+   "recharge": null
+  },
+  "hendrickson_sword1h_skill_rmb": {
+   "heros": "hendrickson",
+   "recharge": 7.5
+  },
+  "hendrickson_sworddual_passive": {
+   "heros": "hendrickson",
+   "recharge": null
+  },
+  "hendrickson_sworddual_skill_rmb": {
+   "heros": "hendrickson",
+   "recharge": 11.6
+  },
+  "howzer_cudgel3c_passive": {
+   "heros": "howzer",
+   "recharge": null
+  },
+  "howzer_cudgel3c_skill_rmb": {
+   "heros": "howzer",
+   "recharge": 12.6
+  },
+  "howzer_gauntlets_passive": {
+   "heros": "howzer",
+   "recharge": null
+  },
+  "howzer_gauntlets_skill_e": {
+   "heros": "howzer",
+   "recharge": 18.7
+  },
+  "howzer_gauntlets_skill_rmb_1": {
+   "heros": "howzer",
+   "recharge": 10.8
+  },
+  "howzer_lance_passive": {
+   "heros": "howzer",
+   "recharge": null
+  },
+  "howzer_lance_skill_e": {
+   "heros": "howzer",
+   "recharge": 15.7
+  },
+  "jericho_lance_passive": {
+   "heros": "jericho",
+   "recharge": null
+  },
+  "jericho_lance_skill_e": {
+   "heros": "jericho",
+   "recharge": 35.4
+  },
+  "jericho_lance_skill_rmb": {
+   "heros": "jericho",
+   "recharge": 12.1
+  },
+  "jericho_rapier_passive": {
+   "heros": "jericho",
+   "recharge": null
+  },
+  "jericho_rapier_skill_e": {
+   "heros": "jericho",
+   "recharge": 22.1
+  },
+  "jericho_rapier_skill_rmb": {
+   "heros": "jericho",
+   "recharge": 17.2
+  },
+  "jericho_sworddual_passive": {
+   "heros": "jericho",
+   "recharge": null
+  },
+  "jericho_sworddual_skill_rmb": {
+   "heros": "jericho",
+   "recharge": 13.6
+  },
+  "king_book_passive": {
+   "heros": "king",
+   "recharge": null
+  },
+  "king_staff_passive": {
+   "heros": "king",
+   "recharge": null
+  },
+  "king_staff_skill_rmb": {
+   "heros": "king",
+   "recharge": 7.5
+  },
+  "king_wand_passive": {
+   "heros": "king",
+   "recharge": null
+  },
+  "klotho_book_passive": {
+   "heros": "klotho",
+   "recharge": null
+  },
+  "klotho_book_skill_rmb": {
+   "heros": "klotho",
+   "recharge": 29.1
+  },
+  "klotho_rapier_passive": {
+   "heros": "klotho",
+   "recharge": null
+  },
+  "klotho_rapier_skill_e": {
+   "heros": "klotho",
+   "recharge": 17.5
+  },
+  "klotho_rapier_skill_rmb_ready": {
+   "heros": "klotho",
+   "recharge": 23.8
+  },
+  "klotho_staff_normalatk_enchant_ready": {
+   "heros": "klotho",
+   "icone": "Klotho_Staff_NormalAtk_Enchant.webp"
+  },
+  "klotho_staff_passive": {
+   "heros": "klotho",
+   "recharge": null
+  },
+  "klotho_staff_skill_e": {
+   "heros": "klotho",
+   "recharge": 21.4
+  },
+  "klotho_staff_skill_rmb": {
+   "heros": "klotho",
+   "recharge": 25.8
+  },
+  "lancelot_gauntlets_passive": {
+   "heros": "lancelot",
+   "recharge": null
+  },
+  "lancelot_gauntlets_skill_e_ready": {
+   "heros": "lancelot",
+   "recharge": 23.5
+  },
+  "lancelot_staff_passive": {
+   "heros": "lancelot",
+   "recharge": null
+  },
+  "lancelot_staff_skill_e": {
+   "heros": "lancelot",
+   "recharge": 17.8
+  },
+  "lancelot_staff_skill_q": {
+   "heros": "lancelot",
+   "recharge": 10.6
+  },
+  "lancelot_staff_skill_r_enchant": {
+   "heros": "lancelot",
+   "icone": "Lancelot_Staff_NormalAtk_Enchant_2.webp"
+  },
+  "lancelot_sword1h_passive": {
+   "heros": "lancelot",
+   "recharge": null
+  },
+  "lancelot_sword1h_skill_e_atk1": {
+   "heros": "lancelot",
+   "recharge": 21.2
+  },
+  "manny_staff_passive": {
+   "heros": "manny",
+   "recharge": null
+  },
+  "manny_sword1h_passive": {
+   "heros": "manny",
+   "recharge": null
+  },
+  "manny_sword1h_skill_rmb": {
+   "heros": "manny",
+   "recharge": 11.2
+  },
+  "manny_sworddual_passive": {
+   "heros": "manny",
+   "recharge": null
+  },
+  "manny_sworddual_skill_e": {
+   "heros": "manny",
+   "recharge": 26.9
+  },
+  "manny_sworddual_skill_rmb": {
+   "heros": "manny",
+   "recharge": 13.6
+  },
+  "melascula_lance_passive": {
+   "heros": "melascula",
+   "recharge": null
+  },
+  "melascula_rapier_passive": {
+   "heros": "melascula",
+   "recharge": null
+  },
+  "melascula_rapier_skill_e_atk1": {
+   "heros": "melascula",
+   "recharge": 21.4
+  },
+  "melascula_rapier_skill_q": {
+   "heros": "melascula",
+   "recharge": 19.3
+  },
+  "melascula_shield_passive": {
+   "heros": "melascula",
+   "recharge": null
+  },
+  "melascula_shield_skill_e": {
+   "heros": "melascula",
+   "recharge": 22.5
+  },
+  "meliodas_axe_passive": {
+   "heros": "meliodas",
+   "recharge": null
+  },
+  "meliodas_axe_skill_rmb_ready": {
+   "heros": "meliodas",
+   "recharge": 25.8
+  },
+  "meliodas_sword1h_passive": {
+   "heros": "meliodas",
+   "recharge": null
+  },
+  "meliodas_sworddual_passive": {
+   "heros": "meliodas",
+   "recharge": null
+  },
+  "merlin_book_normalatk_enchant_ready": {
+   "heros": "merlin",
+   "icone": "Merlin_Enchant_Book_NormalAttack.webp"
+  },
+  "merlin_book_passive": {
+   "heros": "merlin",
+   "recharge": null
+  },
+  "merlin_staff_passive": {
+   "heros": "merlin",
+   "recharge": null
+  },
+  "merlin_staff_skill_e": {
+   "heros": "merlin",
+   "recharge": 16.5
+  },
+  "merlin_staff_skill_q": {
+   "heros": "merlin",
+   "recharge": 9.4
+  },
+  "merlin_wand_passive": {
+   "heros": "merlin",
+   "recharge": null
+  },
+  "merlin_wand_skill_e_enchant": {
+   "heros": "merlin",
+   "icone": "Merlin_Enchant_Wand_NormalSkill.webp"
+  },
+  "merlin_wand_skill_q": {
+   "heros": "merlin",
+   "recharge": 16.5
+  },
+  "slader_axe_passive": {
+   "heros": "slader",
+   "recharge": null
+  },
+  "slader_axe_skill_rmb_ready": {
+   "heros": "slader",
+   "recharge": 9.4
+  },
+  "slader_cudgel3c_passive": {
+   "heros": "slader",
+   "recharge": null
+  },
+  "slader_cudgel3c_skill_e": {
+   "heros": "slader",
+   "recharge": 16.2
+  },
+  "slader_cudgel3c_skill_rmb": {
+   "heros": "slader",
+   "recharge": 10.5
+  },
+  "slader_sword2h_passive": {
+   "heros": "slader",
+   "recharge": null
+  },
+  "slader_sword2h_skill_rmb_1": {
+   "heros": "slader",
+   "recharge": 7.5
+  },
+  "tioreh_book_passive": {
+   "heros": "tioreh",
+   "recharge": null
+  },
+  "tioreh_book_skill_e": {
+   "heros": "tioreh",
+   "recharge": 20.8
+  },
+  "tioreh_staff_passive": {
+   "heros": "tioreh",
+   "recharge": null
+  },
+  "tioreh_staff_skill_rmb": {
+   "heros": "tioreh",
+   "recharge": 10.2
+  },
+  "tioreh_wand_passive": {
+   "heros": "tioreh",
+   "recharge": null
+  },
+  "tioreh_wand_skill_rmb_ready": {
+   "heros": "tioreh",
+   "recharge": 8.5
+  },
+  "tristan_sword1h_passive": {
+   "heros": "tristan",
+   "recharge": null
+  },
+  "tristan_sword1h_skill_e": {
+   "heros": "tristan",
+   "recharge": 17.9
+  },
+  "tristan_sword1h_skill_rmb": {
+   "heros": "tristan",
+   "recharge": 9.3
+  },
+  "tristan_sword2h_passive": {
+   "heros": "tristan",
+   "recharge": null
+  },
+  "tristan_sword2h_skill_rmb_ready": {
+   "heros": "tristan",
+   "recharge": 8.4
+  },
+  "tristan_sworddual_passive": {
+   "heros": "tristan",
+   "recharge": null
+  },
+  "tristan_sworddual_skill_e": {
+   "heros": "tristan",
+   "recharge": 16.2
+  },
+  "tristan_sworddual_skill_rmb": {
+   "heros": "tristan",
+   "recharge": 7.8
+  }
+ }
+}

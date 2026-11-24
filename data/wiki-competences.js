@@ -1,4 +1,6 @@
 // Genere par generate-wiki.py : pages FR de 7dsorigin.app + contenu-jeu.json.
+// Corrige par scripts/wiki-corrections.json, releve dans les textes et
+// tables du jeu (2.4.2, 24/11/2026) la ou la source se trompe.
 // Catalogue de LECTURE du wiki : noms et descriptions francais,
 // PASSIFS INCLUS. Ne pas confondre avec data/competences.js, qui
 // est le catalogue de calcul du comparateur de degats.
@@ -22,7 +24,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "ban_cudgel3c_skill_e",
    "icone": "Ban_Cudgel3c_NormalSkill.webp",
    "nomFr": "Ruée en spirale",
-   "recharge": 18.0,
+   "recharge": 18.6,
    "weaponType": "Cudgel3c"
   },
   {
@@ -31,7 +33,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "ban_cudgel3c_skill_q_1",
    "icone": "Ban_Cudgel3c_ActiveThird_1.webp",
    "nomFr": "Balayage rapide",
-   "recharge": 15.0,
+   "recharge": 15.6,
    "weaponType": "Cudgel3c"
   },
   {
@@ -58,7 +60,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "ban_cudgel3c_passive",
    "icone": "Ban_Cudgel3c_SkillPassive.webp",
    "nomFr": "Rythme jubilatoire",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Cudgel3c"
   },
   {
@@ -76,7 +78,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "ban_gauntlets_skill_e",
    "icone": "Ban_Gauntlets_NormalSkill.webp",
    "nomFr": "« Détournement »",
-   "recharge": 27.0,
+   "recharge": 27.3,
    "weaponType": "Gauntlets"
   },
   {
@@ -85,7 +87,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "ban_gauntlets_skill_q",
    "icone": "Ban_Gauntlets_ActiveThird.webp",
    "nomFr": "Uppercut abyssal",
-   "recharge": 19.0,
+   "recharge": 19.6,
    "weaponType": "Gauntlets"
   },
   {
@@ -112,7 +114,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "ban_gauntlets_passive",
    "icone": "Ban_Gauntlets_SkillPassive.webp",
    "nomFr": "Instinct de voleur",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Gauntlets"
   },
   {
@@ -130,7 +132,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "ban_sword2h_skill_e",
    "icone": "Ban_Sword2h_NormalSkill.webp",
    "nomFr": "Fracassement",
-   "recharge": 20.0,
+   "recharge": 20.4,
    "weaponType": "Sword2h"
   },
   {
@@ -139,7 +141,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "ban_sword2h_skill_q",
    "icone": "Ban_Sword2h_ActiveThird.webp",
    "nomFr": "Broyage brutal",
-   "recharge": 11.0,
+   "recharge": 11.6,
    "weaponType": "Sword2h"
   },
   {
@@ -166,7 +168,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "ban_sword2h_passive",
    "icone": "Ban_Sword2h_SkillPassive.webp",
    "nomFr": "Physique infatigable",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword2h"
   }
  ],
@@ -195,7 +197,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "bug_axe_skill_rmb_ready",
    "icone": "Bug_Axe_ActiveThird.webp",
    "nomFr": "Pulvérisation des abysses",
-   "recharge": 16.0,
+   "recharge": 16.2,
    "weaponType": "Axe"
   },
   {
@@ -222,7 +224,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "bug_axe_passive",
    "icone": "Bug_Axe_Passive.webp",
    "nomFr": "Trublion",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Axe"
   },
   {
@@ -276,7 +278,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "bug_book_passive",
    "icone": "Bug_Book_Passive.webp",
    "nomFr": "Dérision",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Book"
   },
   {
@@ -294,7 +296,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "bug_sworddual_skill_e",
    "icone": "Bug_SwordDual_NormalSkill.webp",
    "nomFr": "Extermination",
-   "recharge": 20.0,
+   "recharge": 20.9,
    "weaponType": "SwordDual"
   },
   {
@@ -330,7 +332,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "bug_sworddual_passive",
    "icone": "Bug_SwordDual_Passive.webp",
    "nomFr": "Blitz",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "SwordDual"
   }
  ],
@@ -359,7 +361,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "daisy_book_skill_rmb",
    "icone": "Daisy_Book_ActiveThird.webp",
    "nomFr": "Réveil électrisant !",
-   "recharge": 8.0,
+   "recharge": 8.4,
    "weaponType": "Book"
   },
   {
@@ -386,7 +388,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "daisy_book_passive",
    "icone": "Daisy_Book_Passive.webp",
    "nomFr": "Charge statique",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Book"
   },
   {
@@ -440,7 +442,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "daisy_shield_passive",
    "icone": "Daisy_Shield_Passive.webp",
    "nomFr": "Mon ami Domby",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Shield"
   },
   {
@@ -458,7 +460,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "daisy_wand_skill_e",
    "icone": "Daisy_Wand_NormalSkill.webp",
    "nomFr": "Bombe de graine",
-   "recharge": 18.0,
+   "recharge": 18.2,
    "weaponType": "Wand"
   },
   {
@@ -467,7 +469,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "daisy_wand_skill_rmb_ready",
    "icone": "Daisy_Wand_ActiveThird.webp",
    "nomFr": "Flash fruité",
-   "recharge": 16.0,
+   "recharge": 16.1,
    "weaponType": "Wand"
   },
   {
@@ -494,7 +496,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "daisy_wand_passive",
    "icone": "Daisy_Wand_Passive.webp",
    "nomFr": "Fille excentrique",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Wand"
   }
  ],
@@ -550,7 +552,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "derieri_axe_passive",
    "icone": "Derieri_Axe_Passive.webp",
    "nomFr": "Charge ténébreuse",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Axe"
   },
   {
@@ -593,7 +595,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "categorie": "ULTIMATE",
    "descriptionFr": "Inflige des dégâts égaux à [#1A7331]1150%[-] de l'attaque.\nLa première frappe inflige [#0F5CD8]Étourdissement[-] pendant [#1A7331]3s[-].\n1er coup : 350%\n2e coup : 380%\n3e coup : 420%\nNe consomme pas de magie. [#3C22D6]Attaque ultime : Dévastation[-] devient disponible si l'effet [#0F5CD8]Combo de coups[-] atteint le nombre de cumuls max.\n\n[#3C22D6]Dévastation[-]\nInflige des dégâts égaux à [#1A7331]650%[-] de l’attaque, puis retire [#0F5CD8]Combo de coups[-].",
    "gameId": "derieri_gauntlets_skill_r_enchant",
-   "icone": "Derieri_Gauntlets_UltimateSkill_1.webp",
+   "icone": "Derieri_Gauntlets_UltimateSKill_Enchant.webp",
    "nomFr": "« Étoile combo »",
    "recharge": 10.0,
    "weaponType": "Gauntlets"
@@ -604,7 +606,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "derieri_gauntlets_passive",
    "icone": "Derieri_Gauntlets_Passive.webp",
    "nomFr": "Amplification de combo",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Gauntlets"
   },
   {
@@ -658,7 +660,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "derieri_sword2h_passive",
    "icone": "Derieri_Sword2h_Passive.webp",
    "nomFr": "Marque ardente",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword2h"
   }
  ],
@@ -714,7 +716,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "diane_axe_passive",
    "icone": "Diane_Axe_Passive.webp",
    "nomFr": "Fille géante",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Axe"
   },
   {
@@ -768,7 +770,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "diane_cudgel3c_passive",
    "icone": "Diane_Cudgel3c_Passive.webp",
    "nomFr": "Souffle des géants",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Cudgel3c"
   },
   {
@@ -822,7 +824,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "diane_gauntlets_passive",
    "icone": "Diane_Gauntlets_Passive.webp",
    "nomFr": "Art secret des géants",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Gauntlets"
   }
  ],
@@ -842,7 +844,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "drake_staff_skill_e",
    "icone": "Drake_Staff_NormalSkill.webp",
    "nomFr": "Lance foudroyante",
-   "recharge": 13.0,
+   "recharge": 13.2,
    "weaponType": "Staff"
   },
   {
@@ -851,7 +853,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "drake_staff_skill_rmb",
    "icone": "Drake_Staff_ActiveThird.webp",
    "nomFr": "Tempête de Foudre",
-   "recharge": 8.0,
+   "recharge": 8.5,
    "weaponType": "Staff"
   },
   {
@@ -878,7 +880,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "drake_staff_passive",
    "icone": "Drake_Staff_Passive.webp",
    "nomFr": "Autorité de roi",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Staff"
   },
   {
@@ -896,7 +898,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "drake_sword1h_skill_e",
    "icone": "Drake_Sword1h_NormalSkill.webp",
    "nomFr": "Pulsion",
-   "recharge": 20.0,
+   "recharge": 20.9,
    "weaponType": "Sword1h"
   },
   {
@@ -905,7 +907,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "drake_sword1h_skill_rmb",
    "icone": "Drake_Sword1h_ActiveThird.webp",
    "nomFr": "Taillade éclair",
-   "recharge": 10.0,
+   "recharge": 10.4,
    "weaponType": "Sword1h"
   },
   {
@@ -932,7 +934,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "drake_sword1h_passive",
    "icone": "Drake_Sword1h_Passive.webp",
    "nomFr": "Roi belliqueux",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword1h"
   },
   {
@@ -959,7 +961,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "drake_sword2h_skill_rmb_1",
    "icone": "Drake_Sword2h_ActiveThird.webp",
    "nomFr": "Taillade perforante",
-   "recharge": 7.0,
+   "recharge": 7.5,
    "weaponType": "Sword2h"
   },
   {
@@ -986,7 +988,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "drake_sword2h_passive",
    "icone": "Drake_Sword2h_Passive.webp",
    "nomFr": "Roi des dragons",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword2h"
   }
  ],
@@ -1006,7 +1008,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreydrin_axe_skill_e",
    "icone": "Dreydrin_Axe_NormalSkill.webp",
    "nomFr": "Cri de guerre",
-   "recharge": 17.0,
+   "recharge": 17.3,
    "weaponType": "Axe"
   },
   {
@@ -1015,7 +1017,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreydrin_axe_skill_rmb_ready",
    "icone": "Dreydrin_Axe_ActiveThird.webp",
    "nomFr": "Écrasement puissant",
-   "recharge": 7.0,
+   "recharge": 7.5,
    "weaponType": "Axe"
   },
   {
@@ -1042,7 +1044,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreydrin_axe_passive",
    "icone": "Dreydrin_Axe_Passive.webp",
    "nomFr": "Sens du combat",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Axe"
   },
   {
@@ -1060,7 +1062,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreydrin_rapier_skill_e",
    "icone": "Dreydrin_Rapier_NormalSkill.webp",
    "nomFr": "Volonté divine",
-   "recharge": 17.0,
+   "recharge": 17.6,
    "weaponType": "Rapier"
   },
   {
@@ -1069,7 +1071,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreydrin_rapier_skill_rmb",
    "icone": "Dreydrin_Rapier_ActiveThird.webp",
    "nomFr": "Pulsation lumineuse",
-   "recharge": 8.0,
+   "recharge": 8.2,
    "weaponType": "Rapier"
   },
   {
@@ -1096,7 +1098,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreydrin_rapier_passive",
    "icone": "Dreydrin_Rapier_Passive.webp",
    "nomFr": "Esprit divisé",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Rapier"
   },
   {
@@ -1114,7 +1116,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreydrin_shield_skill_e",
    "icone": "Dreydrin_Shield_NormalSkill.webp",
    "nomFr": "Bouclier fracassant",
-   "recharge": 16.0,
+   "recharge": 16.2,
    "weaponType": "Shield"
   },
   {
@@ -1123,7 +1125,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreydrin_shield_skill_rmb_ready",
    "icone": "Dreydrin_Shield_ActiveThird.webp",
    "nomFr": "Champ de boucliers",
-   "recharge": 20.0,
+   "recharge": 20.2,
    "weaponType": "Shield"
   },
   {
@@ -1150,7 +1152,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreydrin_shield_passive",
    "icone": "Dreydrin_Shield_Passive.webp",
    "nomFr": "Volonté inébranlable",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Shield"
   }
  ],
@@ -1170,7 +1172,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreyfus_lance_skill_e",
    "icone": "Dreyfus_Lance_NormalSkill.webp",
    "nomFr": "Pilier de lumière",
-   "recharge": 18.0,
+   "recharge": 18.1,
    "weaponType": "Lance"
   },
   {
@@ -1179,7 +1181,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreyfus_lance_skill_rmb",
    "icone": "Dreyfus_Lance_ActiveThird.webp",
    "nomFr": "Brisure sacrée",
-   "recharge": 7.0,
+   "recharge": 7.9,
    "weaponType": "Lance"
   },
   {
@@ -1206,7 +1208,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreyfus_lance_passive",
    "icone": "Dreyfus_Lance_Passive.webp",
    "nomFr": "Collision de barrière",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Lance"
   },
   {
@@ -1224,7 +1226,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreyfus_rapier_skill_e",
    "icone": "Dreyfus_Rapier_NormalSkill.webp",
    "nomFr": "Foudre perçante",
-   "recharge": 18.0,
+   "recharge": 18.2,
    "weaponType": "Rapier"
   },
   {
@@ -1233,7 +1235,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreyfus_rapier_skill_rmb_1",
    "icone": "Dreyfus_Rapier_ActiveThird.webp",
    "nomFr": "Brise-dard",
-   "recharge": 7.0,
+   "recharge": 7.5,
    "weaponType": "Rapier"
   },
   {
@@ -1260,7 +1262,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreyfus_rapier_passive",
    "icone": "Dreyfus_Rapier_Passive.webp",
    "nomFr": "Estoc lacérant",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Rapier"
   },
   {
@@ -1278,7 +1280,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreyfus_sword1h_skill_e",
    "icone": "Dreyfus_Sword1H_NormalSkill.webp",
    "nomFr": "Lame de Terre",
-   "recharge": 17.0,
+   "recharge": 17.4,
    "weaponType": "Sword1h"
   },
   {
@@ -1314,7 +1316,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "dreyfus_sword1h_passive",
    "icone": "Dreyfus_Sword1h_Passive.webp",
    "nomFr": "Honneur de capitaine",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword1h"
   }
  ],
@@ -1343,7 +1345,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "elaine_book_skill_rmb",
    "icone": "Elaine_Book_ActiveThird.webp",
    "nomFr": "Domaine de la sainte",
-   "recharge": 12.0,
+   "recharge": 12.7,
    "weaponType": "Book"
   },
   {
@@ -1370,7 +1372,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "elaine_book_passive",
    "icone": "Elaine_Book_Passive.webp",
    "nomFr": "Protection de la sainte",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Book"
   },
   {
@@ -1397,7 +1399,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "elaine_staff_skill_rmb",
    "icone": "Elaine_Staff_ActiveThird.webp",
    "nomFr": "Onde lumineuse",
-   "recharge": 13.0,
+   "recharge": 13.3,
    "weaponType": "Staff"
   },
   {
@@ -1424,7 +1426,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "elaine_staff_passive",
    "icone": "Elaine_Staff_Passive.webp",
    "nomFr": "Assistance de la sainte",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Staff"
   },
   {
@@ -1442,7 +1444,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "elaine_wand_skill_e",
    "icone": "Elaine_Wand_NormalSkill.webp",
    "nomFr": "Vents tranchants",
-   "recharge": 17.0,
+   "recharge": 17.3,
    "weaponType": "Wand"
   },
   {
@@ -1451,7 +1453,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "elaine_wand_skill_rmb_ready",
    "icone": "Elaine_Wand_ActiveThird.webp",
    "nomFr": "Voile tourbillonnant",
-   "recharge": 10.0,
+   "recharge": 10.9,
    "weaponType": "Wand"
   },
   {
@@ -1478,7 +1480,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "elaine_wand_passive",
    "icone": "Elaine_Wand_Passive.webp",
    "nomFr": "Jugement de la sainte",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Wand"
   }
  ],
@@ -1534,7 +1536,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "elizabeth_book_passive",
    "icone": "Elizabeth_Book_Passive.webp",
    "nomFr": "Princesse de la plage",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Book"
   },
   {
@@ -1588,7 +1590,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "elizabeth_staff_passive",
    "icone": "Elizabeth_Staff_Passive.webp",
    "nomFr": "Vent favorable de la déesse",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Staff"
   },
   {
@@ -1642,7 +1644,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "elizabeth_wand_passive",
    "icone": "Elizabeth_Wand_Passive.webp",
    "nomFr": "Prière de sainte",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Wand"
   }
  ],
@@ -1671,7 +1673,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "escanor_axe_skill_rmb_ready",
    "icone": "Escanor_Axe_ActiveThird.webp",
    "nomFr": "Soleil condensé",
-   "recharge": 13.0,
+   "recharge": 13.5,
    "weaponType": "Axe"
   },
   {
@@ -1698,7 +1700,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "escanor_axe_passive",
    "icone": "Escanor_Axe_Passive.webp",
    "nomFr": "Éruption solaire",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Axe"
   },
   {
@@ -1725,7 +1727,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "escanor_shield_skill_rmb",
    "icone": "Escanor_Shield_ActiveThird.webp",
    "nomFr": "Assaut solaire",
-   "recharge": 25.0,
+   "recharge": 25.5,
    "weaponType": "Shield"
   },
   {
@@ -1752,7 +1754,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "escanor_shield_passive",
    "icone": "Escanor_Shield_Passive.webp",
    "nomFr": "Protection du soleil",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Shield"
   },
   {
@@ -1779,7 +1781,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "escanor_sword2h_skill_rmb",
    "icone": "Escanor_Sword2h_ActiveThird.webp",
    "nomFr": "Impact solaire",
-   "recharge": 13.0,
+   "recharge": 13.5,
    "weaponType": "Sword2h"
   },
   {
@@ -1806,7 +1808,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "escanor_sword2h_passive",
    "icone": "Escanor_Sword2h_Passive.webp",
    "nomFr": "Lumière directrice",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword2h"
   }
  ],
@@ -1826,7 +1828,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "estia_book_skill_e",
    "icone": "Estia_Book_NormalSkill.webp",
    "nomFr": "Compte à rebours à bulles",
-   "recharge": 18.0,
+   "recharge": 18.1,
    "weaponType": "Book"
   },
   {
@@ -1862,7 +1864,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "estia_book_passive",
    "icone": "Estia_Book_SkillPassive.webp",
    "nomFr": "Curiosité bleue",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Book"
   },
   {
@@ -1916,7 +1918,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "estia_rapier_passive",
    "icone": "Estia_Rapier_SkillPassive.webp",
    "nomFr": "Torrent silencieux",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Rapier"
   },
   {
@@ -1970,14 +1972,14 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "estia_wand_passive",
    "icone": "Estia_Wand_SkillPassive.webp",
    "nomFr": "Compagnons aquatiques",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Wand"
   }
  ],
  "gil-thunder": [
   {
    "categorie": "NORMAL",
-   "descriptionFr": "Inflige des dégâts physiques égaux à 63% de l’attaque à l’ennemi.\n - 1er coup : dégâts physiques égaux à 9% de l’attaque\n - 2e coup : dégâts physiques égaux à 12% de l’attaque\n - 3e coup : dégâts physiques égaux à 15% de l’attaque\n - 4e coup : dégâts physiques égaux à 27% de l’attaque",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]138%[-] de l'attaque.\n1er coup : 20%\n2e coup : 23%\n3e coup : 35%\n4e coup : 60%",
    "gameId": "gil_thunder_lance_jumpatk",
    "icone": "common_Lance_normalAttack.webp",
    "nomFr": "Percée foudroyante",
@@ -1990,7 +1992,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gil_thunder_lance_skill_e",
    "icone": "Gil_Lance_NormalSkill.webp",
    "nomFr": "Charge électrique",
-   "recharge": 13.0,
+   "recharge": 13.2,
    "weaponType": "Lance"
   },
   {
@@ -1999,7 +2001,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gil_thunder_lance_skill_rmb",
    "icone": "Gil_Lance_ActiveThird.webp",
    "nomFr": "Déferlement foudroyant",
-   "recharge": 7.0,
+   "recharge": 7.5,
    "weaponType": "Lance"
   },
   {
@@ -2026,7 +2028,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gilthunder_lance_passive",
    "icone": "Gil_Thunder_Lance_Passive.webp",
    "nomFr": "Foudre ardente",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Lance"
   },
   {
@@ -2080,7 +2082,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gilthunder_shield_passive",
    "icone": "Gil_Thunder_Shield_Passive.webp",
    "nomFr": "Avatar foudroyant",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Shield"
   },
   {
@@ -2098,7 +2100,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gil_thunder_sword1h_skill_e",
    "icone": "Gil_Sword1h_NormalSkill.webp",
    "nomFr": "Épée foudroyante",
-   "recharge": 15.0,
+   "recharge": 15.6,
    "weaponType": "Sword1h"
   },
   {
@@ -2107,7 +2109,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gil_thunder_sword1h_skill_rmb",
    "icone": "Gil_Sword1h_ActiveThird.webp",
    "nomFr": "Division foudroyante",
-   "recharge": 10.0,
+   "recharge": 10.4,
    "weaponType": "Sword1h"
   },
   {
@@ -2134,7 +2136,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gilthunder_sword1h_passive",
    "icone": "Gil_Sword1h_Passive.webp",
    "nomFr": "Frappe du roi de la Foudre",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword1h"
   }
  ],
@@ -2154,7 +2156,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gowther_book_skill_e",
    "icone": "Gowther_Book_NormalSkill.webp",
    "nomFr": "Lien cauchemardesque",
-   "recharge": 27.0,
+   "recharge": 27.7,
    "weaponType": "Book"
   },
   {
@@ -2163,7 +2165,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gowther_book_skill_q",
    "icone": "Gowther_Book_ActiveThird.webp",
    "nomFr": "Dissonance mémorielle",
-   "recharge": 11.0,
+   "recharge": 11.8,
    "weaponType": "Book"
   },
   {
@@ -2190,7 +2192,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gowther_book_passive",
    "icone": "Gowther_Book_Passive.webp",
    "nomFr": "Alter ego",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Book"
   },
   {
@@ -2208,7 +2210,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gowther_staff_skill_e",
    "icone": "Gowther_Staff_NormalSkill.webp",
    "nomFr": "Impact circulaire",
-   "recharge": 19.0,
+   "recharge": 19.9,
    "weaponType": "Staff"
   },
   {
@@ -2217,7 +2219,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gowther_staff_skill_q",
    "icone": "Gowther_Staff_ActiveThird.webp",
    "nomFr": "Champ d'intrusion",
-   "recharge": 16.0,
+   "recharge": 16.3,
    "weaponType": "Staff"
   },
   {
@@ -2244,7 +2246,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gowther_staff_passive",
    "icone": "Gowther_Staff_Passive.webp",
    "nomFr": "Sens d'intrusion",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Staff"
   },
   {
@@ -2262,7 +2264,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gowther_wand_skill_e",
    "icone": "Gowther_Wand_NormalSkill.webp",
    "nomFr": "Salve de flèches",
-   "recharge": 28.0,
+   "recharge": 28.1,
    "weaponType": "Wand"
   },
   {
@@ -2271,7 +2273,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gowther_wand_skill_q_ready",
    "icone": "Gowther_Wand_ActiveThird.webp",
    "nomFr": "Flèche sauvage",
-   "recharge": 24.0,
+   "recharge": 24.6,
    "weaponType": "Wand"
   },
   {
@@ -2298,7 +2300,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "gowther_wand_passive",
    "icone": "Gowther_Wand_Passive.webp",
    "nomFr": "Confusion des sens",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Wand"
   }
  ],
@@ -2318,7 +2320,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "griamore_cudgel3c_skill_e",
    "icone": "Griamore_Cudgel3c_NormalSkill.webp",
    "nomFr": "Pression murale",
-   "recharge": 13.0,
+   "recharge": 13.5,
    "weaponType": "Cudgel3c"
   },
   {
@@ -2327,7 +2329,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "griamore_cudgel3c_skill_rmb",
    "icone": "Griamore_Cudgel3c_ActiveThird.webp",
    "nomFr": "Sphère murale",
-   "recharge": 15.0,
+   "recharge": 15.1,
    "weaponType": "Cudgel3c"
   },
   {
@@ -2354,7 +2356,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "griamore_cudgel3c_passive",
    "icone": "Griamore_Cudgel3c_Passive.webp",
    "nomFr": "Prouesse physique",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Cudgel3c"
   },
   {
@@ -2381,7 +2383,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "griamore_gauntlets_skill_rmb",
    "icone": "Griamore_Gauntlets_ActiveThird.webp",
    "nomFr": "Poing de puissance",
-   "recharge": 10.0,
+   "recharge": 10.5,
    "weaponType": "Gauntlets"
   },
   {
@@ -2408,7 +2410,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "griamore_gauntlets_passive",
    "icone": "Griamore_Gauntlets_Passive.webp",
    "nomFr": "Mémoire musculaire",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Gauntlets"
   },
   {
@@ -2435,7 +2437,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "griamore_shield_skill_rmb_ready",
    "icone": "Griamore_shield_ActiveThird.webp",
    "nomFr": "Impact de bouclier",
-   "recharge": 10.0,
+   "recharge": 10.5,
    "weaponType": "Shield"
   },
   {
@@ -2462,7 +2464,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "griamore_shield_passive",
    "icone": "Griamore_Shield_Passive.webp",
    "nomFr": "Maîtrise des murs",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Shield"
   }
  ],
@@ -2491,7 +2493,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "guila_lance_skill_rmb",
    "icone": "Guila_Lance_ActiveThird.webp",
    "nomFr": "Canon de flamme",
-   "recharge": 7.0,
+   "recharge": 7.5,
    "weaponType": "Lance"
   },
   {
@@ -2518,7 +2520,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "guila_lance_passive",
    "icone": "Guila_Lance_Passive.webp",
    "nomFr": "Démon ardent",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Lance"
   },
   {
@@ -2545,7 +2547,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "guila_rapier_skill_rmb",
    "icone": "Guila_Rapier_ActiveThird.webp",
    "nomFr": "Perforation ardente",
-   "recharge": 11.0,
+   "recharge": 11.9,
    "weaponType": "Rapier"
   },
   {
@@ -2572,7 +2574,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "guila_rapier_passive",
    "icone": "Guila_Rapier_Passive.webp",
    "nomFr": "Notoriété",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Rapier"
   },
   {
@@ -2626,7 +2628,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "guila_shield_passive",
    "icone": "Guila_Shield_Passive.webp",
    "nomFr": "Protection ardente",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Shield"
   }
  ],
@@ -2646,7 +2648,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "hendrickson_lance_skill_e",
    "icone": "Hendrickson_Lance_NormalSkill.webp",
    "nomFr": "« Tour d'acide »",
-   "recharge": 15.0,
+   "recharge": 15.7,
    "weaponType": "Lance"
   },
   {
@@ -2682,7 +2684,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "hendrickson_lance_passive",
    "icone": "Hendrickson_Lance_Passive.webp",
    "nomFr": "Chevalier sacré vétéran",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Lance"
   },
   {
@@ -2709,7 +2711,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "hendrickson_sword1h_skill_rmb",
    "icone": "Hendrickson_Sword1H_ActiveThird.webp",
    "nomFr": "Perforation divine",
-   "recharge": 7.0,
+   "recharge": 7.5,
    "weaponType": "Sword1h"
   },
   {
@@ -2736,7 +2738,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "hendrickson_sword1h_passive",
    "icone": "Hendrickson_Sword1h_Passive.webp",
    "nomFr": "Ralliement de capitaine",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword1h"
   },
   {
@@ -2763,7 +2765,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "hendrickson_sworddual_skill_rmb",
    "icone": "Hendrickson_SwordDual_ActiveThird.webp",
    "nomFr": "Épée éclair",
-   "recharge": 11.0,
+   "recharge": 11.6,
    "weaponType": "SwordDual"
   },
   {
@@ -2790,7 +2792,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "hendrickson_sworddual_passive",
    "icone": "Hendrickson_SwordDual_Passive.webp",
    "nomFr": "Regain de moral",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "SwordDual"
   }
  ],
@@ -2819,7 +2821,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "howzer_cudgel3c_skill_rmb",
    "icone": "Howzer_Cudgel3c_ActiveThird.webp",
    "nomFr": "Poignard précis",
-   "recharge": 12.0,
+   "recharge": 12.6,
    "weaponType": "Cudgel3c"
   },
   {
@@ -2846,7 +2848,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "howzer_cudgel3c_passive",
    "icone": "Howzer_Cudgel3c_Passive.webp",
    "nomFr": "Œil du cyclone",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Cudgel3c"
   },
   {
@@ -2864,7 +2866,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "howzer_gauntlets_skill_e",
    "icone": "Howzer_Gauntlets_NormalSkill.webp",
    "nomFr": "Combo",
-   "recharge": 18.0,
+   "recharge": 18.7,
    "weaponType": "Gauntlets"
   },
   {
@@ -2873,7 +2875,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "howzer_gauntlets_skill_rmb_1",
    "icone": "Howzer_Gauntlets_ActiveThird.webp",
    "nomFr": "Impact cyclonique",
-   "recharge": 10.0,
+   "recharge": 10.8,
    "weaponType": "Gauntlets"
   },
   {
@@ -2900,7 +2902,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "howzer_gauntlets_passive",
    "icone": "Howzer_Gauntlets_Passive.webp",
    "nomFr": "Rugissement de la tempête",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Gauntlets"
   },
   {
@@ -2918,7 +2920,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "howzer_lance_skill_e",
    "icone": "Howzer_Lance_NormalSkill.webp",
    "nomFr": "Rafale aspirante",
-   "recharge": 15.0,
+   "recharge": 15.7,
    "weaponType": "Lance"
   },
   {
@@ -2954,7 +2956,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "howzer_lance_passive",
    "icone": "Howzer_Lance_Passive.webp",
    "nomFr": "Cœur de la tempête",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Lance"
   }
  ],
@@ -2974,7 +2976,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "jericho_lance_skill_e",
    "icone": "Jericho_Lance_NormalSkill.webp",
    "nomFr": "Roche de glace",
-   "recharge": 35.0,
+   "recharge": 35.4,
    "weaponType": "Lance"
   },
   {
@@ -2983,7 +2985,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "jericho_lance_skill_rmb",
    "icone": "Jericho_Lance_ActiveThird.webp",
    "nomFr": "Vague de froid",
-   "recharge": 12.0,
+   "recharge": 12.1,
    "weaponType": "Lance"
   },
   {
@@ -3010,7 +3012,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "jericho_lance_passive",
    "icone": "Jericho_Lance_Passive.webp",
    "nomFr": "Protection glaciale",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Lance"
   },
   {
@@ -3028,7 +3030,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "jericho_rapier_skill_e",
    "icone": "Jericho_Rapier_NormalSkill.webp",
    "nomFr": "Danse de la lame de givre",
-   "recharge": 22.0,
+   "recharge": 22.1,
    "weaponType": "Rapier"
   },
   {
@@ -3037,7 +3039,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "jericho_rapier_skill_rmb",
    "icone": "Jericho_Rapier_ActiveThird.webp",
    "nomFr": "Poignard croc-de-givre",
-   "recharge": 17.0,
+   "recharge": 17.2,
    "weaponType": "Rapier"
   },
   {
@@ -3064,7 +3066,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "jericho_rapier_passive",
    "icone": "Jericho_Rapier_Passive.webp",
    "nomFr": "Barrage glacial",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Rapier"
   },
   {
@@ -3091,7 +3093,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "jericho_sworddual_skill_rmb",
    "icone": "Jericho_SwordDual_ActiveThird.webp",
    "nomFr": "Danse jumelle de glace",
-   "recharge": 13.0,
+   "recharge": 13.6,
    "weaponType": "SwordDual"
   },
   {
@@ -3118,7 +3120,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "jericho_sworddual_passive",
    "icone": "Jericho_SwordDual_Passive.webp",
    "nomFr": "Givre tranchant",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "SwordDual"
   }
  ],
@@ -3152,7 +3154,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
   },
   {
    "categorie": "ULTIMATE",
-   "descriptionFr": "Octroie [#0F5CD8]Miroir - Contrefaçon[-] toutes les [#1A7331]1 s[-] pendant [#1A7331]10 s[-] en étant à portée. La zone dure [#1A7331]20 s[-].\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Lame mirage[-]\nInflige des dégâts égaux à [#1A7331]294%[-] de l'attaque, puis octroie [#1A7331]1 cumul(s)[-] de [#0F5CD8]Mirage[-]. (Max : [#1A7331]5 fois[-])\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], la compétence inflige des dégâts supplémentaires égaux à [#1A7331]310%[-] de l'attaque, puis retire l'effet.\n\n※[#0F5CD8]Mirage[-] : augmente les dégâts crit. des attaques normales de [#1A7331]15%[-]. L'effet persiste tant que le héros est en combat.",
+   "descriptionFr": "Octroie [#0F5CD8]Miroir - Contrefaçon[-] toutes les [#1A7331]1 s[-] pendant [#1A7331]10 s[-] en étant à portée. La zone dure [#1A7331]20 s[-].\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Lame mirage[-]\nInflige des dégâts égaux à [#1A7331]294%[-] de l'attaque, puis octroie [#1A7331]1 cumul(s)[-] de [#0F5CD8]Mirage[-]. (Max : [#1A7331]5 fois[-])\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], la compétence inflige des dégâts supplémentaires égaux à [#1A7331]360%[-] de l'attaque, puis retire l'effet.\n\n※[#0F5CD8]Mirage[-] : augmente les dégâts crit. des attaques normales de [#1A7331]15%[-]. L'effet persiste tant que le héros est en combat.",
    "gameId": "calla_sworddual_skill_r",
    "icone": "Calla_SwordDual_UltimateSkill.webp",
    "nomFr": "Arsenal miroir",
@@ -3170,11 +3172,11 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
   },
   {
    "categorie": "PASSIVE",
-   "descriptionFr": "Attaquez un ennemi augmente les chances crit. du héros de [#1A7331]40%[-] de la résistance crit. (Max : [#1A7331]30%[-]) et ses dégâts crit. de [#1A7331]35%[-] de la défense crit. (Max : [#1A7331]70%[-]).\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], les temps de recharge de toutes ses compétences sont réinitialisés.\nÀ chaque octroi de l'effet [#0F5CD8]Contrefaçon - Épées doubles[-], augmente les dégâts d'attaque normale du héros de [#1A7331]10%[-] et sa perforation de [#1A7331]6[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]10 fois[-])",
+   "descriptionFr": "Attaquer un ennemi augmente les chances crit. du héros de [#1A7331]40%[-] de la résistance crit. (Max : [#1A7331]30%[-]) et ses dégâts crit. de [#1A7331]35%[-] de la défense crit. (Max : [#1A7331]70%[-]).\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], les temps de recharge de toutes ses compétences sont réinitialisés.\nÀ chaque octroi de l'effet [#0F5CD8]Contrefaçon - Épées doubles[-], augmente les dégâts d'attaque normale du héros de [#1A7331]10%[-] et sa perforation de [#1A7331]6[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]10 fois[-])",
    "gameId": "calla_sworddual_passive",
    "icone": "Calla_SwordDual_Passive.webp",
    "nomFr": "Copieuse",
-   "recharge": 0,
+   "recharge": null,
    "weaponType": "SwordDual"
   },
   {
@@ -3228,7 +3230,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "calla_cudgel3c_passive",
    "icone": "Calla_Cudgel3c_Passive.webp",
    "nomFr": "Acrobate aérienne",
-   "recharge": 0,
+   "recharge": null,
    "weaponType": "Cudgel3c"
   },
   {
@@ -3282,7 +3284,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "calla_gauntlets_passive",
    "icone": "Calla_Gauntlets_Passive.webp",
    "nomFr": "Roublarde",
-   "recharge": 0,
+   "recharge": null,
    "weaponType": "Gauntlets"
   }
  ],
@@ -3338,7 +3340,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "king_book_passive",
    "icone": "King_Book_Passive.webp",
    "nomFr": "Protection de l'Arbre sacré",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Book"
   },
   {
@@ -3365,7 +3367,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "king_staff_skill_rmb",
    "icone": "King_Staff_ActiveThird.webp",
    "nomFr": "Bâton de tempête",
-   "recharge": 7.0,
+   "recharge": 7.5,
    "weaponType": "Staff"
   },
   {
@@ -3392,7 +3394,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "king_staff_passive",
    "icone": "King_Staff_Passive.webp",
    "nomFr": "Roi des fées",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Staff"
   },
   {
@@ -3446,7 +3448,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "king_wand_passive",
    "icone": "King_Wand_Passive.webp",
    "nomFr": "Protection de la fée",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Wand"
   }
  ],
@@ -3475,7 +3477,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "klotho_book_skill_rmb",
    "icone": "Klotho_Book_ActiveThird.webp",
    "nomFr": "Rune de givre : Rituel de concentration",
-   "recharge": 29.0,
+   "recharge": 29.1,
    "weaponType": "Book"
   },
   {
@@ -3502,7 +3504,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "klotho_book_passive",
    "icone": "Klotho_Book_Passive.webp",
    "nomFr": "Résonance de rune de givre",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Book"
   },
   {
@@ -3520,7 +3522,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "klotho_rapier_skill_e",
    "icone": "Klotho_Rapier_NormalSkill.webp",
    "nomFr": "Tempête d'entailles",
-   "recharge": 17.0,
+   "recharge": 17.5,
    "weaponType": "Rapier"
   },
   {
@@ -3529,7 +3531,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "klotho_rapier_skill_rmb_ready",
    "icone": "Klotho_Rapier_ActiveThird.webp",
    "nomFr": "Traque des inscriptions : Chaîne perçante",
-   "recharge": 23.0,
+   "recharge": 23.8,
    "weaponType": "Rapier"
   },
   {
@@ -3556,14 +3558,14 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "klotho_rapier_passive",
    "icone": "Klotho_Rapier_Passive.webp",
    "nomFr": "Inscription de faille",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Rapier"
   },
   {
    "categorie": "NORMAL",
    "descriptionFr": "Inflige des dégâts égaux à [#1A7331]149%[-] de l'attaque.\n1er coup : 22%\n2e coup : 24%\n3e coup : 39%\n4e coup : 64%",
    "gameId": "klotho_staff_normalatk_enchant_ready",
-   "icone": "common_Staff_normalAttack.webp",
+   "icone": "Klotho_Staff_NormalAtk_Enchant.webp",
    "nomFr": "Projection dimensionnelle",
    "recharge": null,
    "weaponType": "Staff"
@@ -3574,7 +3576,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "klotho_staff_skill_e",
    "icone": "Klotho_Staff_NormalSkill.webp",
    "nomFr": "Onde dimensionnelle",
-   "recharge": 21.0,
+   "recharge": 21.4,
    "weaponType": "Staff"
   },
   {
@@ -3583,7 +3585,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "klotho_staff_skill_rmb",
    "icone": "Klotho_Staff_ActiveThird.webp",
    "nomFr": "Amélioration dimensionnelle",
-   "recharge": 25.0,
+   "recharge": 25.8,
    "weaponType": "Staff"
   },
   {
@@ -3610,7 +3612,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "klotho_staff_passive",
    "icone": "Klotho_Staff_Passive.webp",
    "nomFr": "Résonance de rune dimensionnelle",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Staff"
   }
  ],
@@ -3630,7 +3632,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "lancelot_gauntlets_skill_e_ready",
    "icone": "Lancelot_Gauntlets_NormalSkill.webp",
    "nomFr": "Pluie de flèches",
-   "recharge": 23.0,
+   "recharge": 23.5,
    "weaponType": "Gauntlets"
   },
   {
@@ -3666,7 +3668,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "lancelot_gauntlets_passive",
    "icone": "Lancelot_Gauntlets_SkillPassive.webp",
    "nomFr": "Lecture du cœur",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Gauntlets"
   },
   {
@@ -3684,7 +3686,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "lancelot_staff_skill_e",
    "icone": "Lancelot_Staff_NormalSkilll_1.webp",
    "nomFr": "Lance sacrée",
-   "recharge": 17.0,
+   "recharge": 17.8,
    "weaponType": "Staff"
   },
   {
@@ -3693,7 +3695,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "lancelot_staff_skill_q",
    "icone": "Lancelot_Staff_ActiveThird_1.webp",
    "nomFr": "Ruée lumineuse",
-   "recharge": 10.0,
+   "recharge": 10.6,
    "weaponType": "Staff"
   },
   {
@@ -3709,7 +3711,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "categorie": "ULTIMATE",
    "descriptionFr": "Inflige des dégâts égaux à [#1A7331]353%[-] de l'attaque. Utiliser une attaque combinée avec l'attaque ultime du héros en tant que base réinitialise le temps de recharge de toutes les compétences du héros.",
    "gameId": "lancelot_staff_skill_r_enchant",
-   "icone": "Lancelot_Staff_UltimateSkill_1.webp",
+   "icone": "Lancelot_Staff_NormalAtk_Enchant_2.webp",
    "nomFr": "Chemin radieux",
    "recharge": null,
    "weaponType": "Staff"
@@ -3720,7 +3722,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "lancelot_staff_passive",
    "icone": "Lancelot_Staff_SkillPassive.webp",
    "nomFr": "Perspicacité",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Staff"
   },
   {
@@ -3738,7 +3740,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "lancelot_sword1h_skill_e_atk1",
    "icone": "Lancelot_Sword1h_NormalSkill_1.webp",
    "nomFr": "Fendoir des cieux",
-   "recharge": 21.0,
+   "recharge": 21.2,
    "weaponType": "Sword1h"
   },
   {
@@ -3774,7 +3776,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "lancelot_sword1h_passive",
    "icone": "Lancelot_Sword1h_SkillPassive.webp",
    "nomFr": "Œil de l'esprit",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword1h"
   }
  ],
@@ -3830,7 +3832,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "manny_staff_passive",
    "icone": "Manny_Staff_Passive.webp",
    "nomFr": "Prêtresse des dragons",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Staff"
   },
   {
@@ -3857,7 +3859,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "manny_sword1h_skill_rmb",
    "icone": "Manny_Sword1h_ActiveThird.webp",
    "nomFr": "Lame de givre tournoyante",
-   "recharge": 11.0,
+   "recharge": 11.2,
    "weaponType": "Sword1h"
   },
   {
@@ -3884,7 +3886,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "manny_sword1h_passive",
    "icone": "Manny_Sword1h_Passive.webp",
    "nomFr": "Prêtresse à l'épée",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword1h"
   },
   {
@@ -3902,7 +3904,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "manny_sworddual_skill_e",
    "icone": "Manny_SwordDual_NormalSkill.webp",
    "nomFr": "Rupture d'âme gelée",
-   "recharge": 26.0,
+   "recharge": 26.9,
    "weaponType": "SwordDual"
   },
   {
@@ -3911,7 +3913,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "manny_sworddual_skill_rmb",
    "icone": "Manny_SwordDual_ActiveThird.webp",
    "nomFr": "Ruée du pic de givre",
-   "recharge": 13.0,
+   "recharge": 13.6,
    "weaponType": "SwordDual"
   },
   {
@@ -3938,7 +3940,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "manny_sworddual_passive",
    "icone": "Manny_SwordDual_Passive.webp",
    "nomFr": "Prêtresse du givre",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "SwordDual"
   }
  ],
@@ -3994,7 +3996,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "melascula_lance_passive",
    "icone": "Melascula_Lance_SkillPassive.webp",
    "nomFr": "Marque de l'esprit vengeur",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Lance"
   },
   {
@@ -4012,7 +4014,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "melascula_rapier_skill_e_atk1",
    "icone": "Melascula_Rapier_NormalSkill_1.webp",
    "nomFr": "Grâce impie",
-   "recharge": 21.0,
+   "recharge": 21.4,
    "weaponType": "Rapier"
   },
   {
@@ -4021,7 +4023,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "melascula_rapier_skill_q",
    "icone": "Melascula_Rapier_ActiveThird_1.webp",
    "nomFr": "Débordement d'âmes",
-   "recharge": 19.0,
+   "recharge": 19.3,
    "weaponType": "Rapier"
   },
   {
@@ -4048,7 +4050,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "melascula_rapier_passive",
    "icone": "Melascula_Rapier_SkillPassive.webp",
    "nomFr": "Soif d'âmes",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Rapier"
   },
   {
@@ -4066,7 +4068,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "melascula_shield_skill_e",
    "icone": "Melascula_Shield_NormalSkill.webp",
    "nomFr": "Traque de la vipère",
-   "recharge": 22.0,
+   "recharge": 22.5,
    "weaponType": "Shield"
   },
   {
@@ -4102,7 +4104,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "melascula_shield_passive",
    "icone": "Melascula_Shield_SkillPassive.webp",
    "nomFr": "Étreinte de la vipère",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Shield"
   }
  ],
@@ -4131,7 +4133,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "meliodas_axe_skill_rmb_ready",
    "icone": "Meliodas_Axe_ActiveThird.webp",
    "nomFr": "Pulvérisation des abysses",
-   "recharge": 25.0,
+   "recharge": 25.8,
    "weaponType": "Axe"
   },
   {
@@ -4158,7 +4160,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "meliodas_axe_passive",
    "icone": "Meliodas_Axe_Passive.webp",
    "nomFr": "Maître des coups",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Axe"
   },
   {
@@ -4212,7 +4214,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "meliodas_sword1h_passive",
    "icone": "Meliodas_Sword1h_Passive.webp",
    "nomFr": "Maître de la vitesse",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword1h"
   },
   {
@@ -4266,7 +4268,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "meliodas_sworddual_passive",
    "icone": "Meliodas_SwordDual_Passive.webp",
    "nomFr": "Maître de l'esprit",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "SwordDual"
   }
  ],
@@ -4293,7 +4295,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "categorie": "ACTIVE_THIRD",
    "descriptionFr": "Inflige des dégâts égaux à [#1A7331]150%[-] de l'attaque.\n1er coup : 21%\n2e coup : 25%\n3e coup : 39%\n4e coup : 65%",
    "gameId": "merlin_book_normalatk_enchant_ready",
-   "icone": "Merlin_Book_ActiveThird.webp",
+   "icone": "Merlin_Enchant_Book_NormalAttack.webp",
    "nomFr": "Gel spatial",
    "recharge": null,
    "weaponType": "Book"
@@ -4331,7 +4333,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "merlin_book_passive",
    "icone": "Merlin_Book_Passive.webp",
    "nomFr": "Givre infini",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Book"
   },
   {
@@ -4349,7 +4351,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "merlin_staff_skill_e",
    "icone": "Merlin_Staff_NormalSkill.webp",
    "nomFr": "Poursuite pourpre",
-   "recharge": 16.0,
+   "recharge": 16.5,
    "weaponType": "Staff"
   },
   {
@@ -4358,7 +4360,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "merlin_staff_skill_q",
    "icone": "Merlin_Staff_ActiveThird.webp",
    "nomFr": "Chaleur illusoire",
-   "recharge": 9.0,
+   "recharge": 9.4,
    "weaponType": "Staff"
   },
   {
@@ -4385,7 +4387,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "merlin_staff_passive",
    "icone": "Merlin_Staff_Passive.webp",
    "nomFr": "Noyau ardent",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Staff"
   },
   {
@@ -4401,7 +4403,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "categorie": "NORMAL_SKILL",
    "descriptionFr": "Inflige des dégâts égaux à [#1A7331]159%[-] de l'attaque.\nUtiliser cette attaque [#1A7331]2 fois[-] en [#1A7331]7s[-] permet l'utilisation de [#3C22D6]Compétence normale : Jugement divin[-] pendant [#1A7331]5s[-].\n\n[#3C22D6]Jugement divin[-]\nInflige des dégâts égaux à [#1A7331]329%[-] de l'attaque. La dernière frappe réduit le temps de recharge de [#1A7331]5[-].",
    "gameId": "merlin_wand_skill_e_enchant",
-   "icone": "Merlin_Wand_NormalSkill.webp",
+   "icone": "Merlin_Enchant_Wand_NormalSkill.webp",
    "nomFr": "Jugement foudroyant",
    "recharge": null,
    "weaponType": "Wand"
@@ -4412,7 +4414,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "merlin_wand_skill_q",
    "icone": "Merlin_Wand_ActiveThird.webp",
    "nomFr": "Champ électromagnétique",
-   "recharge": 16.0,
+   "recharge": 16.5,
    "weaponType": "Wand"
   },
   {
@@ -4439,7 +4441,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "merlin_wand_passive",
    "icone": "Merlin_Wand_Passive.webp",
    "nomFr": "Court-circuit",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Wand"
   }
  ],
@@ -4468,7 +4470,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "slader_axe_skill_rmb_ready",
    "icone": "Slader_Axe_ActiveThird.webp",
    "nomFr": "Frappe chargée",
-   "recharge": 9.0,
+   "recharge": 9.4,
    "weaponType": "Axe"
   },
   {
@@ -4495,7 +4497,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "slader_axe_passive",
    "icone": "Slader_Axe_Passive.webp",
    "nomFr": "Tache de sang",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Axe"
   },
   {
@@ -4513,7 +4515,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "slader_cudgel3c_skill_e",
    "icone": "Slader_Cudgel3c_NormalSkill.webp",
    "nomFr": "Chaîne perforante",
-   "recharge": 16.0,
+   "recharge": 16.2,
    "weaponType": "Cudgel3c"
   },
   {
@@ -4522,7 +4524,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "slader_cudgel3c_skill_rmb",
    "icone": "Slader_Cudgel3c_ActiveThird.webp",
    "nomFr": "Perforation en chaîne",
-   "recharge": 10.0,
+   "recharge": 10.5,
    "weaponType": "Cudgel3c"
   },
   {
@@ -4549,7 +4551,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "slader_cudgel3c_passive",
    "icone": "Slader_Cudgel3c_Passive.webp",
    "nomFr": "Masque rugissant",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Cudgel3c"
   },
   {
@@ -4576,7 +4578,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "slader_sword2h_skill_rmb_1",
    "icone": "Slader_Sword2h_ActiveThird.webp",
    "nomFr": "Frappe finale",
-   "recharge": 7.0,
+   "recharge": 7.5,
    "weaponType": "Sword2h"
   },
   {
@@ -4603,7 +4605,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "slader_sword2h_passive",
    "icone": "Slader_Sword2h_Passive.webp",
    "nomFr": "Flamme ardente",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword2h"
   }
  ],
@@ -4623,7 +4625,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tioreh_book_skill_e",
    "icone": "Tioreh_Book_NormalSkill.webp",
    "nomFr": "Éjection ardente",
-   "recharge": 20.0,
+   "recharge": 20.8,
    "weaponType": "Book"
   },
   {
@@ -4659,7 +4661,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tioreh_book_passive",
    "icone": "Tioreh_Book_Passive.webp",
    "nomFr": "Bénédiction des esprits : dragon",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Book"
   },
   {
@@ -4686,7 +4688,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tioreh_staff_skill_rmb",
    "icone": "Tioreh_Staff_ActiveThird.webp",
    "nomFr": "Éclosion céleste",
-   "recharge": 10.0,
+   "recharge": 10.2,
    "weaponType": "Staff"
   },
   {
@@ -4713,7 +4715,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tioreh_staff_passive",
    "icone": "Tioreh_Staff_Passive.webp",
    "nomFr": "Bénédiction des esprits : ours",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Staff"
   },
   {
@@ -4740,7 +4742,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tioreh_wand_skill_rmb_ready",
    "icone": "Tioreh_Wand_ActiveThird.webp",
    "nomFr": "Étreinte de l'ours",
-   "recharge": 8.0,
+   "recharge": 8.5,
    "weaponType": "Wand"
   },
   {
@@ -4767,7 +4769,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tioreh_wand_passive",
    "icone": "Tioreh_Wand_Passive.webp",
    "nomFr": "Bénédiction des esprits : renard",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Wand"
   }
  ],
@@ -4787,7 +4789,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tristan_sword1h_skill_e",
    "icone": "Tristan_Sword1H_NormalSkill.webp",
    "nomFr": "Vent perforant",
-   "recharge": 17.0,
+   "recharge": 17.9,
    "weaponType": "Sword1h"
   },
   {
@@ -4796,7 +4798,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tristan_sword1h_skill_rmb",
    "icone": "Tristan_Sword1H_ActiveThird.webp",
    "nomFr": "Épée de tempête",
-   "recharge": 9.0,
+   "recharge": 9.3,
    "weaponType": "Sword1h"
   },
   {
@@ -4823,7 +4825,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tristan_sword1h_passive",
    "icone": "Tristan_Sword1h_Passive.webp",
    "nomFr": "Esprit aiguisé",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword1h"
   },
   {
@@ -4850,7 +4852,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tristan_sword2h_skill_rmb_ready",
    "icone": "Tristan_Sword2H_ActiveThird.webp",
    "nomFr": "Taillade de Feu infinie",
-   "recharge": 8.0,
+   "recharge": 8.4,
    "weaponType": "Sword2h"
   },
   {
@@ -4877,7 +4879,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tristan_sword2h_passive",
    "icone": "Tristan_Sword2H_Passive.webp",
    "nomFr": "Sens de la justice",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "Sword2h"
   },
   {
@@ -4895,7 +4897,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tristan_sworddual_skill_e",
    "icone": "Tristan_SwordDual_NormalSkill.webp",
    "nomFr": "Taillade verticale",
-   "recharge": 16.0,
+   "recharge": 16.2,
    "weaponType": "SwordDual"
   },
   {
@@ -4904,7 +4906,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tristan_sworddual_skill_rmb",
    "icone": "Tristan_SwordDual_ActiveThird.webp",
    "nomFr": "Double taillade infernale",
-   "recharge": 7.0,
+   "recharge": 7.8,
    "weaponType": "SwordDual"
   },
   {
@@ -4931,7 +4933,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "gameId": "tristan_sworddual_passive",
    "icone": "Tristan_SwordDual_Passive.webp",
    "nomFr": "Esprit vigoureux",
-   "recharge": 0.0,
+   "recharge": null,
    "weaponType": "SwordDual"
   }
  ]

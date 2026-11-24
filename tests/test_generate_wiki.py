@@ -56,6 +56,18 @@ class ExtractionTests(unittest.TestCase):
             final.pop("khala")
             self.assertEqual(json.dumps(final, ensure_ascii=False), json.dumps(historic, ensure_ascii=False))
 
+    def test_les_corrections_du_jeu_remplacent_et_exigent_leur_cible(self):
+        table = {"derieri_axe_skill_q": {"heros": "derieri", "recharge": 12.6},
+                 "derieri_axe_passive": {"heros": "derieri", "recharge": None}}
+        competences = module.competences_du_payload(PAYLOAD)
+        corrigees = module.corrige("derieri", competences, table)
+        self.assertEqual([c["recharge"] for c in corrigees], [None, 12.6])
+        self.assertEqual(competences[1]["recharge"], 12, "l'entree n'est pas mutee")
+        self.assertEqual(module.corrige("ban", competences, table), competences,
+                         "une correction ne vise que son heros")
+        with mock.patch.object(module, "corrections", return_value=table),                 self.assertRaises(module.CatalogueIncomplet):
+            module.corrige_catalogue({"derieri": competences[:1]})
+
     def test_client_local_sans_reseau_et_couverture_declaree(self):
         with mock.patch.object(module._gen, "fetch", side_effect=AssertionError("réseau")):
             skills = module.competences_du("khala")
